@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>title</title>
+</head>
+<body>
+	<div id='app'>
+		<div class="layout-i">
+			<div class="module-apple js-module" data-module-id='1' data-module-type='apple' data-model-data='%7B%22title%22%3A%22This%20is%20apples%20title%22%2C%22body%22%3A%22This%20is%20apples%20body%22%7D' data-parent='master'>
+				<h1>This is apples title</h1>
+				<div>This is apples body</div>
+			</div>
+			<div class="module-orange js-module" data-module-id='2' data-module-type='orange' data-model-data='%7B%7D' data-parent='master'>
+				<h1>This is module orange title</h1>
+				<div>This is module orange body</div>
+			</div>
+			<div class="module-tangerine js-module" data-module-id='3' data-module-type='tangerine' data-model-data='%7B%7D' data-parent='master'>
+				<h2>test title</h2>
+				<div>
+					<div class="module-sharon js-module" data-module-id='dynamic1_77598' data-module-type='sharon' data-model-data='%7B%22title%22%3A%22test%20title%22%2C%22items%22%3A%5B%7B%22title%22%3A%22item%201%22%2C%22body%22%3A%22item%201%20body%22%7D%2C%7B%22title%22%3A%22item%202%22%2C%22body%22%3A%22item%202%20body%22%7D%2C%7B%22title%22%3A%22item%203%22%2C%22body%22%3A%22item%203%20body%22%7D%5D%7D' data-parent='3'>
+						<h4>item 1</h4>
+						<div>item 1 body</div>
+						<h4>item 2</h4>
+						<div>item 2 body</div>
+						<h4>item 3</h4>
+						<div>item 3 body</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+<script type="text/javascript" src="../libs/hogan.js"></script>
+<script type="text/javascript" src="../../lib/fruitmachine.js"></script>
+<script>
+
+
+FruitMachine.templates({
+	'i': Hogan.compile('<div class="layout-i">{{{module_1}}}{{{module_2}}}{{{module_3}}}</div>'),
+	'apple': Hogan.compile('<div class="module-apple {{{fm_classes}}}" {{{fm_attrs}}}><h1>{{title}}</h1><div>{{body}}</div></div>'),
+	'orange': Hogan.compile('<div class="module-orange {{{fm_classes}}}" {{{fm_attrs}}}><h1>This is module orange title</h1><div>This is module orange body</div></div>'),
+	'tangerine': Hogan.compile('<div class="module-tangerine {{{fm_classes}}}" {{{fm_attrs}}}>{{#modules}}<h2>{{title}}</h2><div>{{{module}}}</div>{{/modules}}</div>'),
+	'sharon': Hogan.compile('<div class="module-sharon {{{fm_classes}}}" {{{fm_attrs}}}>{{#items}}<h4>{{title}}</h4><div>{{body}}</div>{{/items}}</div>')
+});
+
+
+
+var definition = {
+	_id: 'master',
+	module: 'i',
+	children: [
+		{
+			id: 1,
+			module: 'apple'
+		},
+		{
+			id: 2,
+			module: 'orange',
+		},
+		{
+			id: 3,
+			module: 'tangerine',
+			children: []
+		}
+	]
+};
+
+
+
+definition.el = document.getElementById('app').firstElementChild
+
+console.time('foo');
+var myView = new FruitMachine.View(definition);
+console.timeEnd('foo');
+//myView.setup();
+
+
+//
+
+
+setTimeout(function() {
+
+	console.time('fm - update');
+
+	var tangerineView = myView.child('tangerine');
+
+	var sharonView = new FruitMachine.View({
+		module: 'sharon',
+		data: {
+			title: 'test title new',
+			items: [
+				{
+					title: 'item 1',
+					body: 'item 1 body'
+				},
+				{
+					title: 'item 2',
+					body: 'item 2 body'
+				},
+				{
+					title: 'item 3',
+					body: 'item 3 body'
+				}
+			]
+		}
+	});
+
+	// Appending a view that doesn't contain a
+	// View.el will just add the new View as a child
+	// at the index specified. If it does contain an
+	// element then we will actually insert it into the DOM.
+	tangerineView.add(sharonView);
+
+//debugger;
+	tangerineView
+		.render()
+		.setup();
+
+console.timeEnd('fm - update');
+
+}, 2000);
+
+
+
+</script>
+</body>
+</html>

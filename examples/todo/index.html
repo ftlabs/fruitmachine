@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Fruit Machine - TODO App</title>
+</head>
+<body>
+	<div id='app'></div>
+
+	<!-- templates -->
+	<div style='display: none;'>
+
+		<!-- layout-i -->
+		<div id='template-layout'>
+			<div class='layout {{{fm_classes}}}' {{{fm_attrs}}}>
+				<div class='layout_header'>{{{module1}}}</div>
+				<div class='layout_content'>
+					<div class='layout_list'>{{{module2}}}</div>
+					<div class='layout_body'>{{{module3}}}</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- module-pineapple -->
+		<div id='template-pineapple'>
+			<div class='module-pineapple {{{fm_classes}}}' {{{fm_attrs}}}>
+				<form class='module-pineapple_form'><input class='module-pineapple_input' type='text' /></form>
+			</div>
+		</div>
+
+		<!-- template-banana -->
+		<div id='template-banana'>
+			<div class='module-banana {{{fm_classes}}}' {{{fm_attrs}}}>
+				{{#modules}}{{{module}}}{{/modules}}
+			</div>
+		</div>
+
+		<!-- template-stawberry -->
+		<div id='template-strawberry'>
+			<div class='module-stawberry {{{fm_classes}}}' {{{fm_attrs}}}>{{title}} <button class='js-delete-item'>×</button></div>
+		</div>
+	</div>
+<script type="text/javascript" src="../libs/hogan.js"></script>
+<script type="text/javascript" src="../libs/delegate.js"></script>
+<script type="text/javascript" src="../../lib/fruitmachine.js"></script>
+<script type="text/javascript" src="modules/pineapple.js"></script>
+<script type="text/javascript" src="modules/strawberry.js"></script>
+<script>
+
+
+var items = [
+	{
+		itemId: '1',
+		title: 'Water the garden'
+	},
+	{
+		itemId: '2',
+		title: 'Bake some bread'
+	},
+	{
+		itemId: '3',
+		title: 'Wash the car'
+	}
+];
+
+/**
+ * Usage
+ */
+
+// Register module templates
+FruitMachine.templates({
+	'layout': Hogan.compile(document.getElementById('template-layout').innerHTML),
+	'pineapple': Hogan.compile(document.getElementById('template-pineapple').innerHTML),
+	'banana': Hogan.compile(document.getElementById('template-banana').innerHTML),
+	'strawberry': Hogan.compile(document.getElementById('template-strawberry').innerHTML)
+});
+
+// Define our view structure
+var structure = {
+	_id: 'master',
+	module: 'layout',
+	children: [
+		{
+			id: 2,
+			module: 'pineapple'
+		},
+		{
+			id: 3,
+			module: 'banana',
+			children: []
+		}
+	]
+};
+
+// Create the FruitMachine View
+var myView = new FruitMachine.View(structure);
+var bananaView = myView.child('banana');
+
+
+items.forEach(function(item) {
+	bananaView.add(new FruitMachine.View({ module: 'strawberry', data: item }));
+});
+
+// Render the view, inject it into the DOM and call setup.
+myView
+	.render()
+	.inject(document.getElementById('app'))
+	.setup();
+
+
+myView.child('pineapple').on('formsubmit', function(value) {
+	var newItem = new FruitMachine.View({ module: 'strawberry', data: { title: value } });
+	newItem.render();
+	bananaView.add(newItem, { at: 0 });
+});
+
+</script>
+</body>
+</html>

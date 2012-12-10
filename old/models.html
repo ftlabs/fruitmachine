@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>title</title>
+</head>
+<body>
+	<div id='app'></div>
+<script type="text/javascript" src="hogan.js"></script>
+<script>
+
+
+var templates = {
+	'fruit/layout-i': '<div class="layout-i"><div class="js-slot" data-slot="1">{{{slot_1}}}</div><div class="js-slot" data-slot="2">{{{slot_2}}}</div><div class="js-slot" data-slot="3">{{{slot_3}}}</div></div>',
+	'fruit/module-apple': '<div class="module-apple"><h1>{{title}}</h1><div>{{body}}</div></div>',
+	'fruit/module-orange': '<div class="module-orange"><h1>This is module orange title</h1><div>This is module orange body</div></div>',
+	'fruit/module-tangerine': '<div class="module-tangerine">{{#slots}}<h2>{{title}}</h2><div class="js-slot" data-slot="{{id}}">{{{html}}}</div>{{/slots}}</div>',
+	'fruit/module-sharon': '<div class="module-sharon">{{#items}}<h4>{{title}}</h4><div>{{body}}</div>{{/items}}</div>'
+};
+
+function extend(original, source) {
+	//Array.prototype.slice.call()
+	for (var prop in source) { original[prop] = source[prop]; }
+	return original;
+}
+
+function extendStatic(original) {
+
+	// Loop over every argument after the first.
+	Array.prototype.slice.call(arguments, 1).forEach(function(source) {
+		for (var prop in source) {
+			if (source.hasOwnProperty(prop)) {
+				original[prop] = source[prop];
+			}
+		}
+	});
+
+	return original
+}
+
+
+function pick(original, props) {
+	var filtered = {};
+
+	for (var prop in original) {
+		if (original.hasOwnProperty(prop) && props.indexOf(prop) > -1) {
+			filtered[prop] = original[prop];
+		}
+	}
+
+	return filtered;
+}
+
+
+function toNode(string) {
+	var el = document.createElement('div');
+	el.innerHTML = string;
+	return el.firstChild;
+}
+
+
+
+
+var structure = {
+	module: 'i',
+	template: Hogan.compile(templates['fruit/layout-i']),
+	children: [
+		{
+			id: 1,
+			module: 'apple',
+			template: Hogan.compile(templates['fruit/module-apple']),
+			data: {
+				title: 'This is apples title',
+				body: 'This is apples body'
+			}
+		},
+		{
+			id: 2,
+			module: 'orange',
+			template: Hogan.compile(templates['fruit/module-orange'])
+		},
+		{
+			id: 3,
+			module: 'tangerine',
+			template: Hogan.compile(templates['fruit/module-tangerine']),
+			children: [
+				{
+					id: 4,
+					module: 'sharon',
+					template: Hogan.compile(templates['fruit/module-sharon']),
+					data: {
+						title: 'test title',
+						items: [
+							{
+								title: 'item 1',
+								body: 'item 1 body'
+							},
+							{
+								title: 'item 2',
+								body: 'item 2 body'
+							},
+							{
+								title: 'item 3',
+								body: 'item 3 body'
+							}
+						]
+					}
+				},
+				{
+					id: 5,
+					module: 'sharon',
+					template: Hogan.compile(templates['fruit/module-sharon']),
+					data: {
+						title: 'test title two',
+						items: [
+							{
+								title: 'item 1',
+								body: 'item 1 body'
+							},
+							{
+								title: 'item 2',
+								body: 'item 2 body'
+							},
+							{
+								title: 'item 3',
+								body: 'item 3 body'
+							}
+						]
+					}
+				},
+				{
+					id: 6,
+					module: 'sharon',
+					template: Hogan.compile(templates['fruit/module-sharon']),
+					data: {
+						title: 'test title three',
+						items: [
+							{
+								title: 'item 1',
+								body: 'item 1 body'
+							},
+							{
+								title: 'item 2',
+								body: 'item 2 body'
+							},
+							{
+								title: 'item 3',
+								body: 'item 3 body'
+							}
+						]
+					}
+				}
+			]
+		}
+	]
+};
+
+var modelOptions = ['module', 'id', 'template'];
+
+var FruitMachineModel = function(data) {
+	extend(this, pick(data, modelOptions));
+
+	this.models = [];
+	this._locals = data.data || {};
+	this._globals = data._globals || { models: {} };
+
+	if (this.id) {
+		this._globals.models[this.id] = this;
+	}
+
+	(data.children || []).forEach(this.addModel, this);
+
+	delete this.children;
+};
+
+
+extend(FruitMachineModel.prototype, {
+
+	get: function(key) {
+		return key ? (this[key] || this._locals[key]) : this._locals;
+	},
+
+	set: function(data, val) {
+		if (typeof data === 'string') {
+			this._locals[data] = val;
+		} else {
+			extend(this._locals, data);
+		}
+	},
+
+	getModel: function(id) {
+		return this._globals.models[id];
+	},
+
+	addModel: function(data) {
+		data._globals = this._globals;
+		this.models.push(new FruitMachineModel(data));
+		return this;
+	},
+
+	removeModel: function(id) {}
+});
+
+
+var viewOptions = ['root', 'el', 'model'];
+
+
+var FruitMachineView = function(options) {
+	this._globals = {};
+	this.id = options.model.id;
+	this.model = options.model;
+	this.root = options.root;
+	this.views = [];
+
+	// Setup the template
+	this.template = this.template || this.model.template;
+
+	// Accept a string or node as the view element.
+	this.el = (typeof options.el === 'string') ? toNode(options.el) : options.el;
+
+	// Search the this view element for slots and store them in
+	// the view global slot storage object.
+	this._globals.slotNodes = this._getSlotNodes(this.el);
+
+	// Create views frrom each of this models sub-models.
+	(this.model.models || []).forEach(this.addView, this)
+};
+
+
+extend(FruitMachineView.prototype, {
+
+	addView: function(model) {
+		var rootNode = this._globals.slotNodes[model.id];
+		this.views.push(new FruitMachineView({ model: model, root: rootNode }));
+		return this;
+	},
+
+	getView: function() {
+
+	},
+
+	render: function(options) {
+		var asString = options && options.asString;
+		var html;
+
+		// Create slots array on the parent model. This allows view templates
+		// to iterate over sub views if they wish, instead of just inserting sub
+		// views by their slot id (eg. slot_x).
+		this.model.set('slots', []);
+
+		this.views.forEach(this._renderSubview, this);
+
+		// Mustache render template
+		html = this.template.render(this.model.get());
+
+		// If user asked for string, just return string.
+		if (asString) {
+			return html;
+		}
+
+		// Completely reconstruct this view and all sub-views, passing in the
+		// newly rendered html to use as this views element.
+		this.constructor.call(this, extend(this, { el: html }));
+
+		// Then inject the new view element into the root node.
+		this.inject(this.root);
+
+		// Return this for chaining.
+		return this;
+	},
+
+	_renderSubview: function(view) {
+		var parent = this,
+			html;
+
+		// Render this sub-view as a string. Render is
+		// a sub module recursive function.
+		html = view.render({ asString: true });
+
+		// Make the sub view html available to the parent model. So that when the
+		// parent model is rendered it can print the sub view html into the correct slot.
+		parent.model.get('slots').push(extendStatic({ html: html }, view.model, view.model.get()));
+		parent.model.set('slot_' + view.model.id, html);
+	},
+
+
+	inject: function(el) {
+
+		if (!el) {
+			return this;
+		}
+
+		el.innerHTML = '';
+		el.appendChild(this.el);
+		this.root = el;
+
+		return this;
+	},
+
+
+	_getSlotNodes: function(el) {
+		var els, slotNodes = {};
+
+		if (!el || !el.getElementsByClassName) {
+			return {};
+		}
+
+		els = el.getElementsByClassName('js-slot');
+
+		Array.prototype.forEach.call(els, function(el) {
+			slotNodes[el.getAttribute('data-slot')] = el;
+		});
+
+		return slotNodes;
+	}
+});
+
+console.profile('timer');
+var model = new FruitMachineModel(structure);
+
+
+var view = new FruitMachineView({
+	// If the view already exists, pass in the relevant root element
+	//el: '<div>Rendered models</div>',
+	model: model
+});
+
+//debugger;
+
+view.render();
+
+
+view.inject(document.getElementById('app'));
+
+console.profileEnd('timer');
+</script>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<meta charset="UTF-8">
+	<title>title</title>
+	</head>
+	<body>
+		<div class='js-view'></div>
+	<script type="text/javascript" src='https://raw.github.com/janl/mustache.js/master/mustache.js'></script>
+	<script>
+
+		function extend(original, source) {
+			for (var prop in source) { original[prop] = source[prop]; }
+			return original;
+		}
+
+		var templates = {
+			'fruit/layout-i': '<div class="layout-i"><div class="js-slot" data-slot="1">{{{slot_1}}}</div><div class="js-slot" data-slot="2">{{{slot_2}}}</div><div class="js-slot" data-slot="3">{{{slot_3}}}</div></div>',
+			'fruit/module-apple': '<div class="module-apple"><h1>This is module apple title</h1><div>This is module apple body</div></div>',
+			'fruit/module-orange': '<div class="module-orange"><h1>This is module orange title</h1><div>This is module orange body</div></div>',
+			'fruit/module-tangerine': '<div class="module-tangerine">{{#slots}}<h4>{{title}}</h4><div class="js-slot" data-slot="{{slot}}">{{{html}}}</div>{{/slots}}</div>',
+			'fruit/module-sharon': '<div class="module-sharon"><div>{{body}}</div></div>'
+		};
+
+
+		var FruitMachineRender = (function() {
+
+			var reservedKeys = ['template', 'slot', 'data'];
+
+			function render(template, data) {
+				var html;
+
+				template = templates[data.template];
+
+				// Make all the data available on a single level.
+				extend(data, data.data || {});
+
+				// Create a slots array if one hasn't been created already.
+				data.slots = [];
+
+				// Render each of the sub views first as this view will
+				// depend on rendered html from its sub views.
+				(data.subviews || []).forEach(renderSubview(data));
+
+				// Then render this view.
+				return Mustache.render(template, data);
+			}
+
+			function renderSubview(parentData) {
+				return function(subviewData) {
+
+					// Render the sub view.
+					var html = render(subviewData.template, subviewData);
+
+					// Push this sub view's data and rendered html into the parent view's
+					// slots array so that it can choose to loop over sub views to render
+					// them if it wishes.
+					parentData.slots.push(extend(subviewData, { html: html }));
+
+					// Store the rendered html on the parent data so that it
+					// can insert a sub view's html by the slot number.
+					parentData['slot_' + subviewData.slot] = html;
+				}
+			}
+
+			return render;
+		})();
+
+
+		var structure = {
+			layout: 'i',
+			template: 'fruit/layout-i',
+			subviews: [
+				{
+					module: 'apple',
+					template: 'fruit/module-apple',
+					slot: 1
+				},
+				{
+					module: 'orange',
+					template: 'fruit/module-orange',
+					slot: 2
+				},
+				{
+					module: 'tangerine',
+					template: 'fruit/module-tangerine',
+					slot: 3,
+					subviews: [
+						{
+							module: 'sharon',
+							template: 'fruit/module-sharon',
+							slot: 4,
+							data: {
+								title: "First module title",
+								body: "Body text"
+							}
+						},
+						{
+							module: 'sharon',
+							template: 'fruit/module-sharon',
+							slot: 5,
+							data: {
+								title: "Second module title",
+								body: "Another body text"
+							}
+						},
+						{
+							module: 'sharon',
+							template: 'fruit/module-sharon',
+							slot: 6,
+							data: {
+								title: "Third module title",
+								body: "Some more body text"
+							}
+						}
+					]
+				}
+			]
+		}
+
+		console.time('FruitMachineRender');
+		document.body.innerHTML = FruitMachineRender(structure.template, structure);
+		console.timeEnd('FruitMachineRender');
+	</script>
+	</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>title</title>
+</head>
+<body>
+	<div class="app" id="js-app">
+		<div class="layout-i">
+			<div class="js-slot" data-slot="1">
+				<div class="module-apple">
+					<h1>This is module apple title</h1>
+					<div>This is module apple body</div>
+				</div>
+			</div>
+			<div class="js-slot" data-slot="2">
+				<div class="module-orange">
+					<h1>This is module orange title</h1>
+					<div>This is module orange body</div>
+				</div>
+			</div>
+			<div class="js-slot" data-slot="3">
+				<div class="module-tangerine">
+					<h4>First module title</h4>
+					<div class="js-slot" data-slot="4">
+						<div class="module-sharon">
+							<div>Body text</div>
+						</div>
+					</div>
+					<h4>Second module title</h4>
+					<div class="js-slot" data-slot="5">
+						<div class="module-sharon">
+							<div>Another body text</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+<script type="text/javascript" src='https://raw.github.com/janl/mustache.js/master/mustache.js'></script>
+<script type="text/javascript" src='fruitmachine.js'></script>
+<script>
+
+	var structure = {
+		layout: 'i',
+		template: 'fruit/layout-i',
+		subviews: [
+			{
+				module: 'apple',
+				template: 'fruit/module-apple',
+				slot: 1
+			},
+			{
+				module: 'orange',
+				template: 'fruit/module-orange',
+				slot: 2
+			},
+			{
+				module: 'tangerine',
+				template: 'fruit/module-tangerine',
+				slot: 3,
+				subviews: [
+					{
+						module: 'sharon',
+						template: 'fruit/module-sharon',
+						slot: 4
+					},
+					{
+						module: 'sharon',
+						template: 'fruit/module-sharon',
+						slot: 5
+					},
+					{
+						module: 'sharon',
+						template: 'fruit/module-sharon',
+						slot: 6
+					}
+				]
+			}
+		]
+	};
+
+	var structure2 = {
+		layout: 'i',
+		template: 'fruit/layout-i',
+		subviews: {
+			'1': {
+				module: 'apple',
+				template: 'fruit/module-apple',
+				slot: 1
+			},
+			'2': {
+				module: 'orange',
+				template: 'fruit/module-orange',
+				slot: 2
+			},
+			'3': {
+				module: 'tangerine',
+				template: 'fruit/module-tangerine',
+				slot: 3,
+				subviews: {
+					'4': {
+						module: 'sharon',
+						template: 'fruit/module-sharon',
+						slot: 4
+					},
+					'5': {
+						module: 'sharon',
+						template: 'fruit/module-sharon',
+						slot: 5
+					},
+					'6': {
+						module: 'sharon',
+						template: 'fruit/module-sharon',
+						slot: 6
+					}
+				}
+			}
+		}
+	};
+
+
+	var app = document.getElementById('js-app');
+
+	var fruitMachineView = new FruitMachine.View({
+		root: app.cloneNode(true),
+		structure: structure
+	}).inject(app);
+
+
+
+//debugger;
+	setTimeout(function() {
+		console.time('fruit');
+
+		fruitMachineView.getSubview('tangerine')
+			.reset({
+				subviews: [
+					{
+						module: 'sharon',
+						template: 'fruit/module-sharon',
+						slot: 4
+					}
+				]
+			})
+			.render();
+
+		console.timeEnd('fruit');
+
+		debugger;
+	}, 2000);
+
+
+
+
+
+</script>
+</body>
+</html>

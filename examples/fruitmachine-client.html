@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>title</title>
+</head>
+<body>
+	<div id='app'></div>
+<script type="text/javascript" src="hogan.js"></script>
+<script type="text/javascript" src="../lib/fruitmachine.js"></script>
+<script>
+
+
+FruitMachine.templates({
+	'i': Hogan.compile('<div class="layout-i">{{{module_1}}}{{{module_2}}}{{{module_3}}}</div>'),
+	'apple': Hogan.compile('<div class="module-apple {{{fm_classes}}}" {{{fm_attrs}}}><h1>{{title}}</h1><div>{{body}}</div></div>'),
+	'orange': Hogan.compile('<div class="module-orange {{{fm_classes}}}" {{{fm_attrs}}}><h1>This is module orange title</h1><div>This is module orange body</div></div>'),
+	'tangerine': Hogan.compile('<div class="module-tangerine {{{fm_classes}}}" {{{fm_attrs}}}>{{#modules}}<h2>{{title}}</h2><div>{{{module}}}</div>{{/modules}}</div>'),
+	'sharon': Hogan.compile('<div class="module-sharon {{{fm_classes}}}" {{{fm_attrs}}}>{{#items}}<h4>{{title}}</h4><div>{{body}}</div>{{/items}}</div>')
+});
+
+
+var structure = {
+	_id: 'master',
+	module: 'i',
+	children: [
+		{
+			_id: 1,
+			module: 'apple',
+			data: {
+				title: 'This is apples title',
+				body: 'This is apples body'
+			}
+		},
+		{
+			_id: 2,
+			module: 'orange',
+		},
+		{
+			_id: 3,
+			module: 'tangerine',
+			children: []
+		}
+	]
+};
+
+//console.profile('FM');
+var myView = new FruitMachine.View(structure);
+
+
+myView.el
+	.render()
+	.inject(document.getElementById('app'))
+	.setup();
+//console.profileEnd('FM');
+
+//
+
+setTimeout(function() {
+
+//console.profile('FM Update');
+	var tangerineView = myView.child('tangerine');
+
+	var sharonView = new FruitMachine.View({
+		module: 'sharon',
+		data: {
+			title: 'test title new',
+			items: [
+				{
+					title: 'item 1',
+					body: 'item 1 body'
+				},
+				{
+					title: 'item 2',
+					body: 'item 2 body'
+				},
+				{
+					title: 'item 3',
+					body: 'item 3 body'
+				}
+			]
+		}
+	});
+
+	// Appending a view that doesn't contain a
+	// View.el will just add the new View as a child
+	// at the index specified. If it does contain an
+	// element then we will actually insert it into the DOM.
+	tangerineView.add(sharonView);
+//debugger;
+	tangerineView
+		.render()
+		.setup();
+
+//console.profileEnd('FM Update');
+
+}, 2000);
+
+
+
+</script>
+</body>
+</html>
