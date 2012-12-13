@@ -1,3 +1,12 @@
+/**
+ * Create a circularly-linked list
+ *
+ * Adapted from original version by James Coglan.
+ *
+ * @fileOverview
+ * @codingstandard ftlabs-jsv2
+ * @copyright The Financial Times Limited [All Rights Reserved]
+ */
 
 this.CircularList = (function () {
 	'use strict';
@@ -162,7 +171,7 @@ this.CircularList = (function () {
  * Create a DOM event delegator
  *
  * @fileOverview
- * @codingstandard ftlabs-jslint
+ * @codingstandard ftlabs-jsv2
  * @copyright The Financial Times Limited [All Rights Reserved]
  */
 
@@ -292,7 +301,9 @@ this.Delegate = (function(that) {
 		}
 		specificList = listenerList[event.type];
 
-		while (target) {
+		// If the fire function actually causes the specific list to be destroyed,
+		// Need check that the specific list is still populated
+		while (target && specificList.length > 0) {
 			listener = specificList.first;
 			do {
 
@@ -309,7 +320,10 @@ this.Delegate = (function(that) {
 				}
 
 				listener = listener.next;
-			} while (listener !== specificList.first);
+
+			// If the fire function actually causes the specific list object to be destroyed,
+			// need a way of getting out of here so check listener is set
+			} while (listener !== specificList.first && listener);
 
 			// TODO:MCG:20120117: Need a way to check if event#stopProgagation was called. If so, break looping through the DOM.
 			// Stop if the delegation root has been reached
