@@ -1,50 +1,51 @@
-/*! fruitmachine - v0.1.0 - 2012-12-10
+/*! fruitmachine - v0.1.0 - 2013-01-02
 * https://github.com/wilsonpage/fruitmachine
-* Copyright (c) 2012 Wilson Page; Licensed MIT */
+* Copyright (c) 2013 Wilson Page; Licensed MIT */
 
+/*jslint browser:true, node:true*/
 (function(root) {
 	'use strict';
-	var FruitMachine = typeof exports === 'object' ? exports : root['FruitMachine'] = {};
+	var FruitMachine = typeof exports === 'object' ? exports : root.FruitMachine = {};
 
 	// Current Version
 	FruitMachine.VERSION = '0.0.1';
 
-	/**
-	 * Turn on for debug messages.
-	 *
-	 * @constant
-	 * @type {Boolean|Number}
-	 */
-	var debug = 0;
+	// Create local references to some native methods.
+	var slice = Array.prototype.slice;
 
 	/**
-	 * SETTINGS
+	 * Settings
 	 */
 
-	var SETTINGS = FruitMachine.SETTINGS = {
-		breakpointDebounce: 50,
+	var SETTINGS = {
 		slotClass: 'js-module',
 		moduleIdAttr: 'data-module-id',
 		moduleTypeAttr: 'data-module-type',
 		moduleDataAttr: 'data-model-data',
 		moduleParentAttr: 'data-parent',
-		mustacheSlotVarPrefix: 'module',
-		mustacheSlotArrayName: 'modules'
+		mustacheSlotArrayName: 'children',
+		templates: undefined,
+		debug: 0
 	};
 
-	var templates = {};
+	/**
+	 * Sets a values onto the internal settings.
+	 *
+	 * @param  {String|Object} key
+	 * @param  {*|null} val [description]
+	 * @return void
+	 */
 
-	// User must define their templates before creating any Models or Views.
-	var setTemplates = FruitMachine['templates'] = function(params) {
-		util.extend(templates, params);
+	FruitMachine.set = function(key, val) {
+		if (typeof key === 'string') {
+			SETTINGS[key] = val;
+		} else {
+			util.extend(SETTINGS, val);
+		}
 	};
 
-	// Create local references to some native methods.
-	var slice = Array.prototype.slice;
-	var splice = Array.prototype.splice;
-	var forEach = Array.prototype.forEach;
-
-	// An object that you can store your extended View classes in under module type.
+	// An object that stores your extended View
+	// classes in under module type.
 	FruitMachine.Views = {};
 
 	/**
@@ -55,11 +56,9 @@
 
 		attributes: function(attributes) {
 			var list = [];
-
 			for (var key in attributes) {
 				list.push(key + "='" + attributes[key] + "'");
 			}
-
 			return list.join(' ');
 		},
 
@@ -72,7 +71,6 @@
 		unescape: window.unescape,
 
 		extend: function(original) {
-
 			// Loop over every argument after the first.
 			slice.call(arguments, 1).forEach(function(source) {
 				for (var prop in source) {
@@ -83,42 +81,41 @@
 			return original;
 		},
 
-
 		inherits: function(protoProps, staticProps) {
 			var parent = this;
-		    var child;
+			var child;
 
-		    // The constructor function for the new subclass is either defined by you
-		    // (the "constructor" property in your `extend` definition), or defaulted
-		    // by us to simply call the parent's constructor.
-		    if (protoProps && protoProps.hasOwnProperty('constructor')) {
-		      child = protoProps.constructor;
-		    } else {
-		      child = function(){ parent.apply(this, arguments); };
-		    }
+			// The constructor function for the new subclass is either defined by you
+			// (the "constructor" property in your `extend` definition), or defaulted
+			// by us to simply call the parent's constructor.
+			if (protoProps && protoProps.hasOwnProperty('constructor')) {
+				child = protoProps.constructor;
+			} else {
+				child = function(){ parent.apply(this, arguments); };
+			}
 
-		    // Inherit class (static) properties from parent.
-		    util.extend(child, parent);
+			// Inherit class (static) properties from parent.
+			util.extend(child, parent);
 
-		    // Set the prototype chain to inherit from `parent`, without calling
-		    // `parent`'s constructor function.
-		    util.ctor.prototype = parent.prototype;
-		    child.prototype = new util.ctor();
+			// Set the prototype chain to inherit from `parent`, without calling
+			// `parent`'s constructor function.
+			util.ctor.prototype = parent.prototype;
+			child.prototype = new util.ctor();
 
-		    // Add prototype properties (instance properties) to the subclass,
-		    // if supplied.
-		    if (protoProps) util.extend(child.prototype, protoProps);
+			// Add prototype properties (instance properties) to the subclass,
+			// if supplied.
+			if (protoProps) util.extend(child.prototype, protoProps);
 
-		    // Add static properties to the constructor function, if supplied.
-		    if (staticProps) util.extend(child, staticProps);
+			// Add static properties to the constructor function, if supplied.
+			if (staticProps) util.extend(child, staticProps);
 
-		    // Correctly set child's `prototype.constructor`.
-		    child.prototype.constructor = child;
+			// Correctly set child's `prototype.constructor`.
+			child.prototype.constructor = child;
 
-		    // Set a convenience property in case the parent's prototype is needed later.
-		    child.__super__ = parent.prototype;
+			// Set a convenience property in case the parent's prototype is needed later.
+			child.__super__ = parent.prototype;
 
-		    return child;
+			return child;
 		},
 
 		insertChild: function(child, parent, index) {
@@ -136,6 +133,10 @@
 			} else {
 				array.push(item);
 			}
+		},
+
+		isArray: function(a) {
+			return (a instanceof Array);
 		},
 
 		/**
@@ -173,21 +174,11 @@
 		})()
 	};
 
-	// Backbone.Events
-	// -----------------
+	/**
+	 * Events
+	 */
 
-	// Regular expression used to split event strings
-	var eventSplitter = /\s+/;
-
-	// A module that can be mixed in to *any object* in order to provide it with
-	// custom events. You may bind with `on` or remove with `off` callback functions
-	// to an event; trigger`-ing an event fires all callbacks in succession.
-	//
-	//     var object = {};
-	//     _.extend(object, Backbone.Events);
-	//     object.on('expand', function(){ alert('expanded'); });
-	//     object.trigger('expand');
-	//
+	var splitter = /\s+/;
 	var Events = {
 
 		// Bind one or more space separated events, `events`, to a `callback`
@@ -196,19 +187,21 @@
 
 			var calls, event, node, tail, list;
 			if (!callback) return this;
-			events = events.split(eventSplitter);
+			events = events.split(splitter);
 			calls = this._callbacks || (this._callbacks = {});
 
 			// Create an immutable callback list, allowing traversal during
 			// modification.  The tail is an empty object that will always be used
 			// as the next node.
-			while (event = events.shift()) {
+			event = events.shift();
+			while (event) {
 				list = calls[event];
 				node = list ? list.tail : {};
 				node.next = tail = {};
 				node.context = context;
 				node.callback = callback;
 				calls[event] = {tail: tail, next: list ? list.next : node};
+				event = events.shift();
 			}
 
 			return this;
@@ -229,7 +222,7 @@
 
 			// Loop through the listed events and contexts, splicing them out of the
 			// linked list of callbacks if appropriate.
-			events = events ? events.split(eventSplitter) : Object.keys(calls);
+			events = events ? events.split(splitter) : Object.keys(calls);
 			while (event = events.shift()) {
 				node = calls[event];
 				delete calls[event];
@@ -256,7 +249,7 @@
 			var event, node, calls, tail, args, all, rest;
 			if (!(calls = this._callbacks)) return this;
 			all = calls.all;
-			events = events.split(eventSplitter);
+			events = events.split(splitter);
 			rest = slice.call(arguments, 1);
 
 			// For each event, walk through the linked list of callbacks twice,
@@ -268,6 +261,7 @@
 						node.callback.apply(node.context || this, rest);
 					}
 				}
+
 				if (node = all) {
 					tail = node.tail;
 					args = [event].concat(rest);
@@ -285,17 +279,12 @@
 	 * VIEW
 	 */
 
-	var viewOptions = ['module', 'el', 'parent', '_globals'];
-
-	var View = FruitMachine['View'] = function(options) {
-		// Use a custom extended class if it exists for this module type
-		// else use the default base view class.
+	var View = FruitMachine.View = function(options) {
 		var Constructor = FruitMachine.Views[options.module] || DefaultView;
 		return new Constructor(options);
 	};
 
 	var DefaultView = function(options) {
-		if (debug) console.log('Creating new view instance...');
 		var domChildren, i, l;
 		this._configure(options);
 
@@ -338,7 +327,6 @@
 
 	util.extend(DefaultView.prototype, Events, {
 
-
 		_configure: function(options) {
 			this.parent = options.parent;
 			this.el = options.el;
@@ -354,8 +342,11 @@
 		 * Public Methods
 		 */
 
-		// Fired when a View is instantiated, overwrite this yourself.
+		// Overwrite these yourself.
 		initialize: function() {},
+		onSetup: function() {},
+		onTeardown: function() {},
+		onDestroy: function() {},
 
 		_add: function(options) {
 			var hasChild = !!this._childHash[options._id || options.id];
@@ -366,9 +357,21 @@
 		},
 
 		add: function(view, options) {
+			var children;
 			var at = options && options.at;
 			var append = options && options.append;
-			if (debug) console.log('Adding view...');
+
+			// Is basic json arrays are passed in, we create view
+			// instances from them and add them to the parent view.
+			if (util.isArray(view)) {
+				children = view;
+
+				for (var i = 0, l = children.length; i < l; i++) {
+					this.add(new View(children[i]));
+				}
+
+				return this;
+			}
 
 			// Merge the global variable stores.
 			util.extend(this._globals.id, view._globals.id);
@@ -386,21 +389,19 @@
 			this._childHash[view.module] = this._childHash[view.module] || [];
 			this._childHash[view.module].push(view);
 
+			// We append the child to the parent view if there is a view
+			// element and the users hasn't flagged `append` false.
 			if (append !== false && view.el) {
 				util.insertChild(view.el, this.el, at);
 			}
 
-			// Return the newly created view.
+			// Allow chaining
 			return this;
-		},
-
-		remove: function(view, options) {
-
 		},
 
 		render: function(options) {
 			var html = this._toHTML(options);
-			var el, domChildren;
+			var el;
 
 			if (options && options.asString) return html;
 
@@ -409,13 +410,16 @@
 			// view element is not replaced, and we don't loose any delegate
 			// event listeners.
 			el = util.toNode(html);
-			if (this.el) util.replaceContent(el, this.el);
-			this.el = el;
+
+			if (this.el) {
+				util.replaceContent(el, this.el);
+			} else {
+				this.el = el;
+			}
 
 			// Update the View.els for each child View.
 			this.updateChildEls();
 			this.trigger('render');
-			if (debug) console.log('View instance rendered.');
 
 			// Return this for chaining.
 			return this;
@@ -423,25 +427,67 @@
 
 		updateChildEls: function() {
 			var domChildren = this._getDomChildren().all;
+
 			for (var i = 0, l = domChildren.length; i < l; i++) {
 				var child = domChildren[i];
 				this.id(child._id).el = child.el;
 			}
+
 			return this;
 		},
 
-		get: function(key) {
-			return key ? (this[key] || this._data[key]) : this._data;
-		},
+		/**
+		 * A single method for getting
+		 * and setting view data.
+		 *
+		 * Example:
+		 *
+		 *   // Getters
+		 *   var all = view.data();
+		 *   var one = view.data('myKey');
+		 *
+		 *   // Setters
+		 *   view.data('myKey', 'my value');
+		 *   view.data({
+		 *     myKey: 'my value',
+		 *     anotherKey: 10
+		 *   });
+		 *
+		 * @param  {String|Object|null} key
+		 * @param  {*} value
+		 * @return {*}
+		 */
+		data: function(key, value) {
 
-		set: function(data, val) {
-			if (typeof data === 'string') {
-				this._data[data] = val;
-			} else {
-				util.extend(this._data, data);
+			// If no key and no value have
+			// been passed then return the
+			// entire data store.
+			if (!key && !value) {
+				return this._data;
 			}
 
-			return this;
+			// If a string key has been
+			// passed, but no value
+			if (typeof key === 'string' && !value) {
+				return this._data[key];
+			}
+
+			// If the user has stated a key
+			// and a value. Set the value on
+			// the key.
+			if (key && value) {
+				this._data[key] = value;
+				this.trigger('datachange');
+				return this;
+			}
+
+			// If the key is an object literal
+			// then we extend the data store with it.
+			if ('object' === typeof key) {
+				util.extend(this._data, key);
+				this.trigger('datachange');
+				return this;
+			}
 		},
 
 		child: function(query) {
@@ -449,6 +495,13 @@
 			return result[0] || result;
 		},
 
+		/**
+		 * Returns an array of children
+		 * that match the query.
+		 *
+		 * @param  {String} query
+		 * @return {Array}
+		 */
 		children: function(query) {
 			return this._childHash[query];
 		},
@@ -465,22 +518,55 @@
 		},
 
 		setup: function() {
-			if (debug) console.log('Setting up view...');
 
-			// Call 'setup' on all subviews first (bottom up recursion).
+			// Call 'setup' on all subviews
+			// first (bottom up recursion).
 			for (var i = 0, l = this._children.length; i < l; i++) {
 				this._children[i].setup();
 			}
 
-			// We don't want to run setup on a module more than once, right?
-			if (this.isSetup) return this;
+			// If this is already setup, call
+			// `teardown` first so that we don't
+			// duplicate event bindings and shizzle.
+			if (this.isSetup) this.teardown();
 
-			// We trigger a 'setup' event that you can bind to
-			// inside you custom Views to perform any setup logic.
+			// We trigger a `setup` event and
+			// call the `onSetup` method. You can
+			// listen to the `setup` event, or
+			// overwrite the `onSetup` method in
+			// your custom views to do setup logic.
 			this.trigger('setup');
-
-			// Flag as setup
+			this.onSetup();
 			this.isSetup = true;
+
+			// For chaining
+			return this;
+		},
+
+		/**
+		 * Teardown calls the `teardown`
+		 * event on all children then on itself.
+		 *
+		 * Teardown allows custom views to listen to
+		 * the event and unbind event listeners etc.
+		 *
+		 * Teardown should be used if the view
+		 * itself is not going to be destroyed;
+		 * just updated in some way.
+		 *
+		 * @return {View}
+		 */
+		teardown: function() {
+			for (var i = 0, l = this._children.length; i < l; i++) {
+				this._children[i].teardown();
+			}
+
+			this.trigger('teardown');
+			this.onTeardown();
+			this.isSetup = false;
+
+			// For chaining
+			return this;
 		},
 
 		_detach: function(options) {
@@ -507,21 +593,44 @@
 			return this;
 		},
 
-		destroy: function(options) {
-			var detach = options && options.detach;
-
-			// Recursively run on children first (bottom up). We don't run
-			// view#_detach() on children as their references are cleared anyway.
-			for (var i = 0, l = this._children.length; i < l; i++) {
-				this._children[i].destroy({ skipEl: true });
+		empty: function() {
+			while (this._children.length) {
+				this._children[0].destroy();
 			}
 
-			// Detach this view from its parent and unless otherwise
+			return this;
+		},
+
+		destroy: function(options) {
+
+			// Recursively run on children
+			// first (bottom up). We don't run
+			// view#_detach() on children as
+			// their references are cleared anyway.
+			while (this._children.length) {
+				this._children[0].destroy({ skipEl: true });
+			}
+
+			// Run teardown so custom
+			// views can bind logic to it
+			this.teardown(options);
+
+			// Detach this view from its
+			// parent and unless otherwise
 			// stated, from the DOM.
 			this._detach(options);
 
-			// Trigger a destroy event for custom Views to bind to.
+			// Trigger a destroy event
+			// for custom Views to bind to.
 			this.trigger('destroy');
+			this.onDestroy();
+
+			// Set a flag to say this view
+			// has been destroyed. This is
+			// useful to check for after a
+			// slow ajax call that might come
+			// back after a view has been detroyed.
+			this.destroyed = true;
 
 			// Clear references.
 			this.el = this.module = this._id = this._globals = this._childHash = this._data = null;
@@ -532,14 +641,15 @@
 		 */
 
 		_toHTML: function(options) {
-			var template = this.template || templates[this.module];
+			var template = SETTINGS.templates(this.module);
 			var renderData = {};
 
-			// Don't template models that are flagged with render: false;
+			// Don't template models that
+			// are flagged with render: false;
 			if (this.render === false) return;
 
-			// Check we have a template and that it has a 'render' method.
-			if (!template || !template.render) return; //util.error(this.module + ' has no template or the template has no render method');
+			// Check we have a template
+			if (!template) return;
 
 			// Create an array to store child html in.
 			renderData[SETTINGS.mustacheSlotArrayName] = [];
@@ -549,25 +659,27 @@
 					var child = this._children[i];
 					var html = child._toHTML(options);
 
-					// If no html was generated we don't want to add a slot
-					// to the parent's render data, so return here.
+					// If no html was generated we
+					// don't want to add a slot to the
+					// parent's render data, so return here.
 					if (!html) return;
 
-					// Make the sub view html available to the parent model. So that when the
-					// parent model is rendered it can print the sub view html into the correct slot.
-					renderData[SETTINGS.mustacheSlotArrayName].push(util.extend({ module: html }, child._data));
-					renderData[SETTINGS.mustacheSlotVarPrefix + child._id] = html;
+					// Make the sub view html available
+					// to the parent model. So that when the
+					// parent model is rendered it can print
+					// the sub view html into the correct slot.
+					renderData[SETTINGS.mustacheSlotArrayName].push(util.extend({ child: html }, child._data));
+					renderData[child._id] = html;
 				}
 			}
 
 			// Prepare the render data.
-			renderData['fm_classes'] = 'js-module';
-			renderData['fm_attrs'] = this._makeAttrs(options);
+			renderData.fm_classes = SETTINGS.slotClass;
+			renderData.fm_attrs = this._makeAttrs(options);
 
 			// Call render template.
-			return template.render(util.extend(renderData, this._data));
+			return template(util.extend(renderData, this._data));
 		},
-
 
 		_makeAttrs: function(options) {
 			var attrs = {};
@@ -598,7 +710,6 @@
 		},
 
 		_getDomChildren: function() {
-			if (debug) console.log('Searching for module elements...');
 			var nodes;
 			var domChildren = { all: [], byParent: {} };
 			if (!this.el) return domChildren;
@@ -628,8 +739,8 @@
 		}
 	});
 
-	View['extend'] = function(module, options) {
-		FruitMachine.Views[module] = DefaultView.extend(options);
+	View.extend = function(module, protoProps, staticProps) {
+		FruitMachine.Views[module] = DefaultView.extend(protoProps, staticProps);
 	};
 
 	// We add the 'extend' static method to the FruitMachine base
@@ -637,6 +748,4 @@
 	// to add custom insteractions and logic to more complex modules.
 	// Redefining any of the View.prototype methods will overwrite them.
 	DefaultView.extend = util.inherits;
-
-	return FruitMachine;
 }(this));

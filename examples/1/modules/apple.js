@@ -1,4 +1,4 @@
-FruitMachine.View.extend('orange', {
+FruitMachine.View.extend('apple', {
 
 	initialize: function() {
 		var self = this;
@@ -7,12 +7,11 @@ FruitMachine.View.extend('orange', {
 		this.onItemClickBound = function() {
 			self.onItemClick.apply(self, arguments);
 		};
-		this.on('setup', this.onSetup, this);
 	},
 
 	onSetup: function() {
 		this.delegate = new Delegate(this.el);
-		this.delegate.on('click', '.module-orange_body', this.onItemClickBound);
+		this.delegate.on('click', '.module-apple-item', this.onItemClickBound);
 	},
 
 	onTeardown: function() {
@@ -21,6 +20,6 @@ FruitMachine.View.extend('orange', {
 	},
 
 	onItemClick: function(event, target) {
-		alert('article body click');
+		this.trigger('itemclick', target.getAttribute('data-id'));
 	}
 });

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>title</title>
+</head>
+<body>
+	<div id='app'></div>
+
+	<!-- templates -->
+	<div style='display: none;'>
+
+		<!-- layout-i -->
+		<div id='template-layout'>
+			<div class='layout {{{fm_classes}}}' {{{fm_attrs}}}>
+				<div class='layout_header'>{{{module1}}}</div>
+				<div class='layout_content'>
+					<div class='layout_list'>{{{uniqueId1}}}</div>
+					<div class='layout_body'>{{{uniqueId2}}}</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- module-apple -->
+		<div id='template-apple'>
+			<div class='module-apple {{{fm_classes}}}' {{{fm_attrs}}}>
+			{{#items}}
+				<div class='module-apple-item' data-id='{{articleId}}'>{{title}}</div>
+			{{/items}}
+			</div>
+		</div>
+
+		<!-- template-orange -->
+		<div id='template-orange'>
+			<div class='module-orange {{{fm_classes}}}' {{{fm_attrs}}}>
+				<div class='module-orange_date'>{{date}}</div>
+				<div class='module-orange_title'>{{title}}</div>
+				<div class='module-orange_body'>{{{body}}}</div>
+				<div class='module-orange_byline'>by {{author}}</div>
+			</div>
+		</div>
+	</div>
+<script type="text/javascript" src="../libs/hogan.js"></script>
+<script type="text/javascript" src="../libs/delegate.js"></script>
+<script type="text/javascript" src="../../lib/fruitmachine.js"></script>
+<script type="text/javascript" src="modules/apple.js"></script>
+<script type="text/javascript" src="modules/orange.js"></script>
+<script>
+
+/**
+ * Dummy Data Stores
+ */
+
+// Mock synchronous API
+function getArticlesSync() {
+	return [
+		{
+			articleId: 'article1',
+			title: 'Article 1'
+		},
+		{
+			articleId: 'article2',
+			title: 'Article 2'
+		},
+		{
+			articleId: 'article3',
+			title: 'Article 3'
+		},
+		{
+			articleId: 'article4',
+			title: 'Article 4'
+		},
+		{
+			articleId: 'article5',
+			title: 'Article 5'
+		}
+	];
+}
+
+// Mock asynchonous API
+function getFullArticleAsync(id, callback) {
+	var database = {
+		article1: {
+			date: '3rd December 2012',
+			title: 'This is the first title',
+			body: '<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium.</p>',
+			author: 'John Smith'
+		},
+		article2: {
+			date: '3rd December 2012',
+			title: 'This is the second title',
+			body: '<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium.</p>',
+			author: 'John Smith'
+		},
+		article3: {
+			date: '3rd December 2012',
+			title: 'This is the third title',
+			body: '<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium.</p>',
+			author: 'John Smith'
+		},
+		article4: {
+			date: '3rd December 2012',
+			title: 'This is the forth title',
+			body: '<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium.</p>',
+			author: 'John Smith'
+		},
+		article5: {
+			date: '3rd December 2012',
+			title: 'This is the fith title',
+			body: '<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium.</p>',
+			author: 'John Smith'
+		}
+	};
+
+	setTimeout(function() {
+		callback(database[id]);
+	}, 100);
+}
+
+/**
+ * Usage
+ */
+
+// Register module templates
+var templates = {
+	'layout': Hogan.compile(document.getElementById('template-layout').innerHTML),
+	'apple': Hogan.compile(document.getElementById('template-apple').innerHTML),
+	'orange': Hogan.compile(document.getElementById('template-orange').innerHTML)
+};
+
+FruitMachine.set('templates', function(module) {
+	if (!templates[module]) return;
+	return function(data) {
+		return templates[module].render(data);
+	};
+});
+
+// Define our view structure
+var structure = {
+	module: 'layout',
+	children: [
+		{
+			id: 'uniqueId1',
+			module: 'apple'
+		},
+		{
+			id: 'uniqueId2',
+			module: 'orange',
+		}
+	]
+};
+
+function setArticle(id) {
+	getFullArticleAsync(id, function(article) {
+		myView.child('orange')
+			.data(article)
+			.render()
+			.setup();
+	});
+}
+
+// Create the FruitMachine View
+var myView = new FruitMachine.View(structure);
+
+// Get some data from our database.
+var articles = getArticlesSync();
+
+// Set some data on module apple.
+myView
+	.child('apple')
+	.data({ items: articles });
+
+// Render the view, inject it into the DOM and call setup.
+myView
+	.render()
+	.inject(document.getElementById('app'))
+	.setup();
+
+// Make an async call for the first article data
+setArticle(articles[0].articleId);
+
+// Setup a listener on the 'apple' view.
+myView.child('apple').on('itemclick', setArticle);
+
+</script>
+</body>
+</html>
