@@ -7,39 +7,36 @@
 <body>
 	<div id='app'></div>
 
-	<!-- templates -->
-	<div style='display: none;'>
-
-		<!-- layout-i -->
-		<div id='template-layout'>
-			<div class='layout {{{fm_classes}}}' {{{fm_attrs}}}>
-				<div class='layout_header'>{{{module1}}}</div>
-				<div class='layout_content'>
-					<div class='layout_list'>{{{uniqueId1}}}</div>
-					<div class='layout_body'>{{{uniqueId2}}}</div>
-				</div>
-			</div>
-		</div>
-
-		<!-- module-apple -->
-		<div id='template-apple'>
-			<div class='module-apple {{{fm_classes}}}' {{{fm_attrs}}}>
-			{{#items}}
-				<div class='module-apple-item' data-id='{{articleId}}'>{{title}}</div>
-			{{/items}}
-			</div>
-		</div>
-
-		<!-- template-orange -->
-		<div id='template-orange'>
-			<div class='module-orange {{{fm_classes}}}' {{{fm_attrs}}}>
-				<div class='module-orange_date'>{{date}}</div>
-				<div class='module-orange_title'>{{title}}</div>
-				<div class='module-orange_body'>{{{body}}}</div>
-				<div class='module-orange_byline'>by {{author}}</div>
-			</div>
+<!-- layout-i -->
+<script type="text/template" id='template-layout'>
+	<div class='layout {{{fm_classes}}}' {{{fm_attrs}}}>
+		<div class='layout_header'>{{{module1}}}</div>
+		<div class='layout_content'>
+			<div class='layout_list'>{{{uniqueId1}}}</div>
+			<div class='layout_body'>{{{uniqueId2}}}</div>
 		</div>
 	</div>
+</script>
+
+<!-- module-apple -->
+<script type="text/template" id='template-apple'>
+	<div class='module-apple {{{fm_classes}}}' {{{fm_attrs}}}>
+	{{#items}}
+		<div class='module-apple-item' data-id='{{articleId}}'>{{title}}</div>
+	{{/items}}
+	</div>
+</script>
+
+<!-- template-orange -->
+<script type="text/template" id='template-orange'>
+	<div class='module-orange {{{fm_classes}}}' {{{fm_attrs}}}>
+		<div class='module-orange_date'>{{date}}</div>
+		<div class='module-orange_title'>{{title}}</div>
+		<div class='module-orange_body'>{{{body}}}</div>
+		<div class='module-orange_byline'>by {{author}}</div>
+	</div>
+</script>
+
 <script type="text/javascript" src="../libs/hogan.js"></script>
 <script type="text/javascript" src="../libs/delegate.js"></script>
 <script type="text/javascript" src="../../lib/fruitmachine.js"></script>

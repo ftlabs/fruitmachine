@@ -101,11 +101,10 @@ var structure = {
 var myView = new FruitMachine.View(structure);
 var bananaView = myView.child('banana');
 
-
+// Add each of our items as strawberry
+// child views of the banana view.
 items.forEach(function(item) {
-	var view = new FruitMachine.View({ module: 'strawberry', data: item });
-	debugger;
-	bananaView.add(view);
+	bananaView.add(new FruitMachine.View({ module: 'strawberry', data: item }));
 });
 
 // Render the view, inject it into the DOM and call setup.
@@ -114,12 +113,20 @@ myView
 	.inject(document.getElementById('app'))
 	.setup();
 
-
+// Add a callback to the `formsubmit` event
+// emitted by the pineapple view.
 myView.child('pineapple').on('formsubmit', function(value) {
-	var newItem = new FruitMachine.View({ module: 'strawberry', data: { title: value } });
-debugger;
-	newItem.render();
 
+	// Create a new view using the data submitted
+	var newItem = new FruitMachine.View({ module: 'strawberry', data: { title: value } });
+
+	// Render and init events
+	newItem
+		.render()
+		.setup();
+
+	// Add the new view to the banana view
+	// at the first index
 	bananaView.add(newItem, { at: 0 });
 });
 
