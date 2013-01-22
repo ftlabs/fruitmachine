@@ -1,6 +1,6 @@
 FruitMachine.View.extend('strawberry', {
 
-	initialize: function() {},
+	onInitialize: function() {},
 
 	onSetup: function() {
 		this.delegate = new Delegate(this.el);

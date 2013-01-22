@@ -1,6 +1,6 @@
 FruitMachine.View.extend('pineapple', {
 
-	initialize: function() {
+	onInitialize: function() {
 		var self = this;
 		this.els = {};
 
