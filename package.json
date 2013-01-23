@@ -29,7 +29,8 @@
   },
   "devDependencies": {
     "grunt": "~0.3.17",
-    "grunt-closure-compiler": "*"
+    "grunt-closure-compiler": "*",
+    "buster": "*"
   },
   "keywords": []
 }

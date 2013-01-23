@@ -1,35 +1,11 @@
-/*global require:true */
-var fruitmachine = require('../lib/fruitmachine.js');
+buster.testCase('Defaults', {
+	"Invoking a view should trigger the 'beforeinitialize' event.'": function() {
+		var spy = this.spy();
+		
+		FruitMachine.on("beforeinitialize", spy, null);
+	
+		var view = FruitMachine.View({});
 
-/*
-  ======== A Handy Little Nodeunit Reference ========
-  https://github.com/caolan/nodeunit
-
-  Test methods:
-    test.expect(numAssertions)
-    test.done()
-  Test assertions:
-    test.ok(value, [message])
-    test.equal(actual, expected, [message])
-    test.notEqual(actual, expected, [message])
-    test.deepEqual(actual, expected, [message])
-    test.notDeepEqual(actual, expected, [message])
-    test.strictEqual(actual, expected, [message])
-    test.notStrictEqual(actual, expected, [message])
-    test.throws(block, [error], [message])
-    test.doesNotThrow(block, [error], [message])
-    test.ifError(value)
-*/
-
-exports['awesome'] = {
-  setUp: function(done) {
-    // setup here
-    done();
-  },
-  'no args': function(test) {
-    test.expect(1);
-    // tests here
-    test.equal(fruitmachine.awesome(), 'awesome', 'should be awesome.');
-    test.done();
-  }
-};
+		assert.called(spy);
+	}	
+});
