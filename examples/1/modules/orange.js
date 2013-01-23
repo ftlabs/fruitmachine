@@ -1,6 +1,6 @@
 FruitMachine.View.extend('orange', {
 
-	initialize: function() {
+	onInitialize: function() {
 		var self = this;
 
 		// Bind the view context to this function.
