@@ -1,4 +1,4 @@
-/*! fruitmachine - v0.1.0 - 2013-01-02
+/*! fruitmachine - v0.1.0 - 2013-01-23
 * https://github.com/wilsonpage/fruitmachine
 * Copyright (c) 2013 Wilson Page; Licensed MIT */
 
@@ -22,7 +22,7 @@
 		moduleIdAttr: 'data-module-id',
 		moduleTypeAttr: 'data-module-type',
 		moduleDataAttr: 'data-model-data',
-		moduleParentAttr: 'data-parent',
+		parentAttr: 'data-parent',
 		mustacheSlotArrayName: 'children',
 		templates: undefined,
 		debug: 0
@@ -48,6 +48,11 @@
 	// classes in under module type.
 	FruitMachine.Views = {};
 
+	function error() {
+		if (!console) return;
+		console.error.apply(console, arguments);
+	}
+
 	/**
 	 * Util
 	 */
@@ -69,6 +74,15 @@
 		// that work on the client and server that aren't so verbose.
 		escape: window.escape,
 		unescape: window.unescape,
+
+		/**
+		 * Extends the first object with
+		 * the properties of any subsequent
+		 * objects passed as arguments.
+		 *
+		 * @param  {[type]} original [description]
+		 * @return {[type]}          [description]
+		 */
 
 		extend: function(original) {
 			// Loop over every argument after the first.
@@ -118,6 +132,17 @@
 			return child;
 		},
 
+		/**
+		 * Inserts a child element into the
+		 * stated parent element. The child is
+		 * appended unless an index is stated.
+		 *
+		 * @param  {Element} child
+		 * @param  {Element} parent
+		 * @param  {Number} index
+		 * @return void
+		 */
+
 		insertChild: function(child, parent, index) {
 			if (!parent) return;
 			if (typeof index !== 'undefined') {
@@ -126,6 +151,16 @@
 				parent.appendChild(child);
 			}
 		},
+
+		/**
+		 * Inserts an item into an array.
+		 * Has the option to state an index.
+		 *
+		 * @param  {*} item
+		 * @param  {Array} array
+		 * @param  {Number} index
+		 * @return void
+		 */
 
 		insert: function(item, array, index) {
 			if (typeof index !== 'undefined') {
@@ -140,24 +175,26 @@
 		},
 
 		/**
-		 * Replaces the contents of the one node with contents
-		 * of another.
+		 * Replaces the first node
+		 * with the second.
 		 *
-		 * http://jsperf.com/replacing-element-vs-replacing-contents/3
-		 *
-		 * @param  {Element} replacement
-		 * @param  {Element} current
+		 * @param  {Element} el1
+		 * @param  {Element} el2
 		 * @return {Element}
 		 */
 
-		replaceContent: function(replacement, current) {
-			current.innerHTML = '';
-			var children = replacement.childNodes;
-			for (var i = 0, l = children.length; i < l; i++) {
-				current.appendChild(children[0]);
-			}
-			return current;
+		replaceEl: function(el1, el2) {
+			if (!el1.parentNode) return;
+			el1.parentNode.replaceChild(el2, el1);
+			return el2;
 		},
+
+		/**
+		 * Turns an html string into an element
+		 *
+		 * @param  {String} string
+		 * @return {Element}
+		 */
 
 		toNode: function(string) {
 			if (typeof string !== 'string') return string;
@@ -166,12 +203,38 @@
 			return el.firstElementChild;
 		},
 
+		/**
+		 * Generates a unique id
+		 *
+		 * @param {String} prefix
+		 * @return {String}
+		 */
+
 		uniqueId: (function() {
 			var counter = 1;
 			return function(prefix) {
 				return (prefix || '') + (counter++) + '_' + Math.round(Math.random() * 100000);
 			};
-		})()
+		})(),
+
+		/**
+		 * Attempts to read and JSON parse
+		 * any data found on the passed element's
+		 * `data-module-data` attribute.
+		 *
+		 * If a data attribute is found, it is
+		 * removed after it is read.
+		 *
+		 * @param  {[type]} node [description]
+		 * @return {[type]}      [description]
+		 */
+		extractEmbeddedData: function(el) {
+			var data = el.getAttribute(SETTINGS.moduleDataAttr);
+			if (!data) return {};
+			data = JSON.parse(util.unescape(data));
+			el.removeAttribute(SETTINGS.moduleDataAttr);
+			return data;
+		}
 	};
 
 	/**
@@ -275,6 +338,11 @@
 		}
 	};
 
+	// Mix Events into the Fruit Machine so
+	// plugins can be written and
+	// hooks listened to.
+	util.extend(FruitMachine, Events);
+
 	/**
 	 * VIEW
 	 */
@@ -284,88 +352,100 @@
 		return new Constructor(options);
 	};
 
+	/**
+	 * Creates a new view instance.
+	 *
+	 * @constructor
+	 * @param {Object} options
+	 */
+
 	var DefaultView = function(options) {
-		var domChildren, i, l;
+		var htmlChildren, i, l;
 		this._configure(options);
 
 		// Save a reference to this model in the globals.
 		this._globals.id[this._id] = this;
 
-		// Don't look for module nodes in the view element if we have flagged not to.
-		// When we initiate children we don't want to as the parent will have detected
-		// all module nodes already when the master View was instantiated.
-		if (!options.skipFindModuleNodes) {
-			this._globals.dom = this._getDomChildren();
-		}
+		// Search for children in the html
+		htmlChildren = this._childrenFromHtml(this._id);
 
-		// Find any DOM children with this parent
-		domChildren = this._globals.dom.byParent && this._globals.dom.byParent[this._id];
-
-		// First we create View instances for each child found in the DOM.
-		//
-		// This loop is for creating views from children which *have* DOM context.
-		if (domChildren) {
-			for (i = 0, l = domChildren.length; i < l; i++) {
-				this._add(domChildren[i]);
+		// If html children were found,
+		// turn them into Views.
+		if (htmlChildren) {
+			for (i = 0, l = htmlChildren.length; i < l; i++) {
+				this._add(htmlChildren[i]);
 			}
 		}
 
-		// ...then we create View instances for each child in the definition.
-		// The internal _add method wont add a child if one already exists on
-		// the parent with the same _id.
-		//
-		// This loop is for creating fresh child views with *no* DOM context.
 		if (options.children) {
 			for (i = 0, l = options.children.length; i < l; i++) {
 				this._add(options.children[i]);
 			}
 		}
 
+		// Hook for plugins so that functionality
+		// can be triggered before Fruit Machine
+		// object initialization.
+		FruitMachine.trigger('beforeinitialize', this);
+
 		this.initialize.call(this, options);
 	};
 
-
+	// Extend the prototype
 	util.extend(DefaultView.prototype, Events, {
-
-		_configure: function(options) {
-			this.parent = options.parent;
-			this.el = options.el;
-			this.module = options.module;
-			this._id = options._id || options.id || util.uniqueId('dynamic');
-			this._children = [];
-			this._globals = options._globals || { id: {}, domChildren: {} };
-			this._childHash = {};
-			this._data = options.data || {};
-		},
 
 		/**
 		 * Public Methods
 		 */
 
-		// Overwrite these yourself.
+		// Overwrite these yourself
+		// inside your custom view logic.
 		initialize: function() {},
 		onSetup: function() {},
 		onTeardown: function() {},
 		onDestroy: function() {},
 
-		_add: function(options) {
-			var hasChild = !!this._childHash[options._id || options.id];
-			if (hasChild) return;
-			options._globals = this._globals;
-			options.skipFindModuleNodes = true;
-			this.add(new View(options), { append: false });
+		/**
+		 * Declares whether a view has
+		 * a child that matches a standard
+		 * child query (id or module name).
+		 *
+		 * @param  {String}  query
+		 * @return {Boolean}
+		 */
+
+		hasChild: function(query) {
+			return !!this.child(query);
 		},
+
+		/**
+		 * Adds a child view.
+		 *
+		 * By default the view is appended,
+		 * and if the View has an element,
+		 * it is inserted into the parent
+		 * element.
+		 *
+		 * Options:
+		 *   - `at` A specific index at which to add
+		 *   - `append` Staes if the View element is added to the parent
+		 *
+		 * @param {View|Object|Array} view
+		 * @param {View} options
+		 */
 
 		add: function(view, options) {
 			var children;
 			var at = options && options.at;
 			var append = options && options.append;
 
-			// Is basic json arrays are passed in, we create view
-			// instances from them and add them to the parent view.
-			if (util.isArray(view)) {
-				children = view;
-
+			// If the view passed in is not an instance
+			// of `DefaultView` then we need to turn the
+			// json into a View instance and re-add it.
+			// Array#concat() ensures we're always
+			// dealing with an Array.
+			if (!(view instanceof DefaultView)) {
+				children = [].concat(view);
 				for (var i = 0, l = children.length; i < l; i++) {
 					this.add(new View(children[i]));
 				}
@@ -373,10 +453,13 @@
 				return this;
 			}
 
-			// Merge the global variable stores.
+			// Dont add this child if it already exists
+			if (this.hasChild(view.id())) return this;
+
+			// Merge the global id reference stores
 			util.extend(this._globals.id, view._globals.id);
 
-			// Set a refercne back to the parent.
+			// Set a refercne back to the parent
 			view.parent = this;
 			util.insert(view, this._children, at);
 
@@ -399,23 +482,42 @@
 			return this;
 		},
 
+		/**
+		 * Renders a View instance.
+		 *
+		 * Options:
+		 *   - `asString` Simply returns html.
+		 *   - `embedData` Embeds view data as an html attribute
+		 *   - `forClient` Adds extra attributes for client interpretation
+		 *
+		 * @param  {[type]} options [description]
+		 * @return {[type]}         [description]
+		 */
+
 		render: function(options) {
 			var html = this._toHTML(options);
-			var el;
+			var asString = options && options.asString;
+			var newEl;
 
-			if (options && options.asString) return html;
+			// Check html has been generated
+			if ('undefined' === typeof html) return this;
+
+			// Return html string if requested
+			if (asString) return html;
 
 			// Replace the contents of the current element with the
 			// newly rendered element. We do this so that the original
 			// view element is not replaced, and we don't loose any delegate
 			// event listeners.
-			el = util.toNode(html);
+			newEl = util.toNode(html);
 
-			if (this.el) {
-				util.replaceContent(el, this.el);
-			} else {
-				this.el = el;
-			}
+			// If the view has an element,
+			// replace it with the new element.
+			if (this.el) util.replaceEl(this.el, newEl);
+
+			// Set the new rendered element
+			// as the view's element.
+			this.el = newEl;
 
 			// Update the View.els for each child View.
 			this.updateChildEls();
@@ -425,12 +527,29 @@
 			return this;
 		},
 
-		updateChildEls: function() {
-			var domChildren = this._getDomChildren().all;
+		/**
+		 * Fetches all child View elements,
+		 * then allocates each element to
+		 * a View instance by id.
+		 *
+		 * This is run when View#render() is
+		 * called to assign newly rendered
+		 * View elements to their View instances.
+		 *
+		 * @return {[type]} [description]
+		 */
 
-			for (var i = 0, l = domChildren.length; i < l; i++) {
-				var child = domChildren[i];
-				this.id(child._id).el = child.el;
+		updateChildEls: function() {
+			var i, l, htmlChildren;
+
+			this._purgeChildrenFromHtmlCache();
+			htmlChildren = this._childrenFromHtml();
+
+			for (i = 0, l = htmlChildren.length; i < l; i++) {
+				var child = htmlChildren[i];
+				var match = this.id(child._id);
+				if (!match) continue;
+				match.el = child.el;
 			}
 
 			return this;
@@ -457,6 +576,7 @@
 		 * @param  {*} value
 		 * @return {*}
 		 */
+
 		data: function(key, value) {
 
 			// If no key and no value have
@@ -477,7 +597,8 @@
 			// the key.
 			if (key && value) {
 				this._data[key] = value;
-				this.trigger('datachange');
+				this.trigger('datachange', key, value);
+				this.trigger('datachange:' + key, value);
 				return this;
 			}
 
@@ -486,29 +607,61 @@
 			if ('object' === typeof key) {
 				util.extend(this._data, key);
 				this.trigger('datachange');
+				for (var prop in key) this.trigger('datachange:' + key, key[prop]);
 				return this;
 			}
 		},
 
+		/**
+		 * Returns a single immediate
+		 * child View instance.
+		 *
+		 * Accepts a module type or view id.
+		 *
+		 * @param  {[type]} query [description]
+		 * @return {[type]}       [description]
+		 */
+
 		child: function(query) {
 			var result = this._childHash[query];
-			return result[0] || result;
+			return result ? result[0] || result : null;
 		},
 
 		/**
 		 * Returns an array of children
-		 * that match the query.
+		 * that match the query. If no
+		 * query is passed, all children
+		 * are returned.
 		 *
-		 * @param  {String} query
+		 * @param  {String} [query]
 		 * @return {Array}
 		 */
+
 		children: function(query) {
-			return this._childHash[query];
+			return query ? this._childHash[query] : this._children;
 		},
+
+		/**
+		 * Returns a View instance by id or
+		 * if no argument is given the id
+		 * of the view.
+		 *
+		 * @param  {String} id
+		 * @return {View|String}
+		 */
 
 		id: function(id) {
 			return id ? this._globals.id[id] : this._id;
 		},
+
+		/**
+		 * Replaced the contents of the
+		 * passed element with the view
+		 * element.
+		 *
+		 * @param  {Element} el
+		 * @return {FruitMachine.View}
+		 */
 
 		inject: function(el) {
 			if (!el) return this;
@@ -516,6 +669,15 @@
 			el.appendChild(this.el);
 			return this;
 		},
+
+		/**
+		 * Calls the `onSetup` event and
+		 * triggers the `setup` event to
+		 * allow you to do custom setup logic
+		 * inside your custom views.
+		 *
+		 * @return {FruitMachine.View}
+		 */
 
 		setup: function() {
 
@@ -528,7 +690,22 @@
 			// If this is already setup, call
 			// `teardown` first so that we don't
 			// duplicate event bindings and shizzle.
-			if (this.isSetup) this.teardown();
+			if (this.isSetup) this.teardown({ shallow: true });
+
+			// If a view doesn't have an element
+			// we will not proceed to setup.
+			//
+			// A view may not have an element
+			// for the following reason
+			//   - The {{{fm_classes}}} and {{{fm_attrs}}} hooks
+			//     may not be present on the template.
+			//   - A child view's html hasn't been printed
+			//     into the parent view's template.
+			if (!this.el) return error("FruitMachine - No view.el found for view: '%s'", this.id());
+
+			// Trigger the beforesetup event so that
+			// FruitMachine plugins can hook into them
+			FruitMachine.trigger('beforesetup', this);
 
 			// We trigger a `setup` event and
 			// call the `onSetup` method. You can
@@ -554,12 +731,26 @@
 		 * itself is not going to be destroyed;
 		 * just updated in some way.
 		 *
+		 * Options:
+		 *   - `shallow` Don't teardown recursively
+		 *
 		 * @return {View}
 		 */
-		teardown: function() {
-			for (var i = 0, l = this._children.length; i < l; i++) {
-				this._children[i].teardown();
+
+		teardown: function(options) {
+			var shallow = options && options.shallow;
+
+			// If the shollow options is not
+			// declared, run teardown recursively.
+			if (!shallow) {
+				for (var i = 0, l = this._children.length; i < l; i++) {
+					this._children[i].teardown();
+				}
 			}
+
+			// Trigger the beforeteardown event so that
+			// FruitMachine plugins can hook into them
+			FruitMachine.trigger('beforeteardown', this);
 
 			this.trigger('teardown');
 			this.onTeardown();
@@ -569,9 +760,123 @@
 			return this;
 		},
 
+		/**
+		 * Destroys all children.
+		 *
+		 * @return {View}
+		 */
+
+		empty: function() {
+			while (this._children.length) {
+				this._children[0].destroy();
+			}
+
+			return this;
+		},
+
+		/**
+		 * Recursively destroys all child views.
+		 * This includes running `teardown`,
+		 * detaching itself from the DOM and parent
+		 * and unsetting any referenced.
+		 *
+		 * A `destroy` event is triggered and
+		 * the `onDestroy` method is called.
+		 * This allows you to bind to this event
+		 * and destroy logic inside your custom views.
+		 *
+		 * @param  {Object} options
+		 * @return void
+		 */
+
+		destroy: function(options) {
+
+			// Recursively run on children
+			// first (bottom up).
+			//
+			// We don't waste time removing
+			// the child elements as they will
+			// get removed when the parent
+			// element is removed.
+			while (this._children.length) {
+				this._children[0].destroy({ skipEl: true });
+			}
+
+			// Run teardown so custom
+			// views can bind logic to it
+			this.teardown(options);
+
+			// Hook for plugins so that functionality
+			// can be triggered before Fruit Machine
+			// object destruction.
+			FruitMachine.trigger('beforedestroy', this);
+
+			// Detach this view from its
+			// parent and unless otherwise
+			// stated, from the DOM.
+			this._detach(options);
+
+			// Trigger a destroy event
+			// for custom Views to bind to.
+			this.trigger('destroy');
+			this.onDestroy();
+
+			// Set a flag to say this view
+			// has been destroyed. This is
+			// useful to check for after a
+			// slow ajax call that might come
+			// back after a view has been detroyed.
+			this.destroyed = true;
+
+			// Clear references
+			this.el = this.module = this._id = this._globals = this._childHash = this._data = null;
+		},
+
+		/**
+		 * Private Methods
+		 */
+
+		/**
+		 * Configure all options passed
+		 * into the constructor.
+		 *
+		 * @param  {Object} options
+		 * @return void
+		 */
+
+		_configure: function(options) {
+			this.parent = options.parent;
+			this.el = options.el;
+			this.module = options.module;
+			this._id = options._id || options.id || util.uniqueId('dynamic');
+			this._children = [];
+			this._globals = options._globals || { id: {} };
+			this._childHash = {};
+			this._data = util.extend({}, options.data);
+		},
+
+		/**
+		 * An internal api to add child
+		 * views. It ensures that globals
+		 * are inherited and views with elements
+		 * are not appends to the parent view.
+		 *
+		 * @param {Objecy} options
+		 */
+
+		_add: function(options) {
+
+			// Make sure the globals are passed on
+			// as this includes important data.
+			options._globals = this._globals;
+
+			// Don't append the element into the parent element
+			this.add(new View(options), { append: false });
+		},
+
 		_detach: function(options) {
-			var i;
 			var skipEl = options && options.skipEl;
+			var i;
 
 			// Remove the view el from the DOM
 			if (!skipEl && this.el && this.el.parentNode) this.el.parentNode.removeChild(this.el);
@@ -593,51 +898,17 @@
 			return this;
 		},
 
-		empty: function() {
-			while (this._children.length) {
-				this._children[0].destroy();
-			}
-
-			return this;
-		},
-
-		destroy: function(options) {
-
-			// Recursively run on children
-			// first (bottom up). We don't run
-			// view#_detach() on children as
-			// their references are cleared anyway.
-			while (this._children.length) {
-				this._children[0].destroy({ skipEl: true });
-			}
-
-			// Run teardown so custom
-			// views can bind logic to it
-			this.teardown(options);
-
-			// Detach this view from its
-			// parent and unless otherwise
-			// stated, from the DOM.
-			this._detach(options);
-
-			// Trigger a destroy event
-			// for custom Views to bind to.
-			this.trigger('destroy');
-			this.onDestroy();
-
-			// Set a flag to say this view
-			// has been destroyed. This is
-			// useful to check for after a
-			// slow ajax call that might come
-			// back after a view has been detroyed.
-			this.destroyed = true;
-
-			// Clear references.
-			this.el = this.module = this._id = this._globals = this._childHash = this._data = null;
-		},
-
 		/**
-		 * Private Methods
+		 * Recursively renders a view,
+		 * and all child views, returning
+		 * and html string.
+		 *
+		 * Options:
+		 *   - `embedData` Embeds view data as an html attribute
+		 *   - `forClient` Adds extra attributes for client interpretation
+		 *
+		 * @param  {Object} options
+		 * @return {String}
 		 */
 
 		_toHTML: function(options) {
@@ -649,7 +920,7 @@
 			if (this.render === false) return;
 
 			// Check we have a template
-			if (!template) return;
+			if (!template) return "";
 
 			// Create an array to store child html in.
 			renderData[SETTINGS.mustacheSlotArrayName] = [];
@@ -659,29 +930,36 @@
 					var child = this._children[i];
 					var html = child._toHTML(options);
 
-					// If no html was generated we
-					// don't want to add a slot to the
-					// parent's render data, so return here.
-					if (!html) return;
-
 					// Make the sub view html available
 					// to the parent model. So that when the
 					// parent model is rendered it can print
 					// the sub view html into the correct slot.
-					renderData[SETTINGS.mustacheSlotArrayName].push(util.extend({ child: html }, child._data));
+					renderData[SETTINGS.mustacheSlotArrayName].push(util.extend({ child: html }, child.data()));
 					renderData[child._id] = html;
 				}
 			}
 
 			// Prepare the render data.
 			renderData.fm_classes = SETTINGS.slotClass;
-			renderData.fm_attrs = this._makeAttrs(options);
+			renderData.fm_attrs = this._htmlAttrs(options);
 
 			// Call render template.
-			return template(util.extend(renderData, this._data));
+			return template(util.extend(renderData, this.data()));
 		},
 
-		_makeAttrs: function(options) {
+		/**
+		 * Creates an html attribute string
+		 * for this view element.
+		 *
+		 * Options:
+		 *   - `embedData` Embeds view.data() as an html attribute
+		 *   - `forClient` Adds extra attributes for client interpretation
+		 *
+		 * @param  {Object} options
+		 * @return {String}
+		 */
+
+		_htmlAttrs: function(options) {
 			var attrs = {};
 			var embedData = options && options.embedData;
 			var forClient = options && options.forClient;
@@ -690,8 +968,10 @@
 			attrs[SETTINGS.moduleIdAttr] = this._id;
 			attrs[SETTINGS.moduleTypeAttr] = this.module;
 
+			// If embedded data has been requested
+			// stringify and escape the
 			if (embedData) {
-				attrs[SETTINGS.moduleDataAttr] = util.escape(JSON.stringify(this._data));
+				attrs[SETTINGS.moduleDataAttr] = util.escape(JSON.stringify(this.data()));
 			}
 
 			if (forClient && this.parent) {
@@ -701,42 +981,68 @@
 			return util.attributes(attrs);
 		},
 
-		_extractEmbeddedData: function(node) {
-			var data = node.getAttribute(SETTINGS.moduleDataAttr);
-			if (!data) return {};
-			data = JSON.parse(util.unescape(data));
-			node.removeAttribute(SETTINGS.moduleDataAttr);
-			return data;
-		},
+		/**
+		 * Returns all child views found
+		 * in the current View's html.
+		 *
+		 * @return {Array}
+		 */
 
-		_getDomChildren: function() {
-			var nodes;
-			var domChildren = { all: [], byParent: {} };
-			if (!this.el) return domChildren;
+		_childrenFromHtml: function(parentId) {
+			var els, el, child;
+			var children = [];
+			var cache = this._globals.childrenFromHtml;
 
-			nodes = this.el.getElementsByClassName(SETTINGS.slotClass);
+			if (!this.el) return children;
 
-			// Loop over each module node found.
-			for (var i = 0, l = nodes.length; i < l; i++) {
-				var node = nodes[i];
-				var child = {
-					el: node,
-					_id: node.getAttribute(SETTINGS.moduleIdAttr) || util.uniqueId('unknown'),
-					module: node.getAttribute(SETTINGS.moduleTypeAttr) || 'undefined',
-					parentId: node.getAttribute(SETTINGS.moduleParentAttr),
-					data: this._extractEmbeddedData(node)
+			// If a cache exists, use that
+			if (cache) return parentId ? cache[parentId] : cache;
+
+			// Else, create a cache
+			cache = this._globals.childrenFromHtml = [];
+
+			// Look for child elements
+			els = this.el.getElementsByClassName(SETTINGS.slotClass);
+
+			// Loop over each element found
+			for (var i = 0, l = els.length; i < l; i++) {
+				el = els[i];
+
+				child = {
+					el: el,
+					_id: el.getAttribute(SETTINGS.moduleIdAttr) || util.uniqueId('unknown'),
+					module: el.getAttribute(SETTINGS.moduleTypeAttr) || 'undefined',
+					parentId: el.getAttribute(SETTINGS.parentAttr),
+					data: util.extractEmbeddedData(el)
 				};
 
-				domChildren.all.push(child);
+				// If a parent id has not been
+				// stated, or the parentId matches
+				// the html attribute parent id,
+				// add this child to the array.
+				if (!parentId || parentId === child.parentId) children.push(child);
 
-				if (child.parentId) {
-					domChildren.byParent[child.parentId] = domChildren.byParent[child.parentId] || [];
-					domChildren.byParent[child.parentId].push(child);
-				}
+				// Cache this child
+				cache.push(child);
+				cache[child.parentId] = cache[child.parentId] || [];
+				cache[child.parentId].push(child);
 			}
 
-			return domChildren;
+			return children;
+		},
+
+		/**
+		 * Purges any cached children from html,
+		 * so that when `childrenFromHtml` is next
+		 * run it will search for new elements.
+		 *
+		 * @return void
+		 */
+
+		_purgeChildrenFromHtmlCache: function() {
+			delete this._globals.childrenFromHtml;
 		}
+
 	});
 
 	View.extend = function(module, protoProps, staticProps) {
