@@ -428,3 +428,81 @@ buster.testCase('View#setup()', {
 		FruitMachine.off('beforesetup');
 	}
 });
+
+buster.testCase('View#teardown()', {
+	setUp: helpers.createView,
+
+	"Setup should recurse.": function() {
+		var spy1 = this.spy(this.view, 'onSetup');
+		var spy2 = this.spy(this.view.child('orange'), 'onSetup');
+
+		this.view
+			.render()
+			.setup();
+
+		assert.called(spy1);
+		assert.called(spy2);
+	},
+
+	"Setup should not be run if the view has no element.": function() {
+		var spy1 = this.spy(this.view, 'onSetup');
+		var spy2 = this.spy(this.view.child('orange'), 'onSetup');
+
+		this.view
+			.setup();
+
+		refute.called(spy1);
+		refute.called(spy2);
+	},
+
+	"Should not recurse if used with the `shallow` option.": function() {
+		var spy1 = this.spy(this.view, 'onSetup');
+		var spy2 = this.spy(this.view.child('orange'), 'onSetup');
+
+		this.view
+			.render()
+			.setup({ shallow: true });
+
+		assert.called(spy1);
+		refute.called(spy2);
+	},
+
+	"The `beforesetup` event should be fired once for each module.": function() {
+		var spy = this.spy();
+		FruitMachine.on('beforesetup', spy);
+
+		this.view
+			.render()
+			.setup();
+
+		assert.isTrue(spy.calledTwice);
+	},
+
+	"onSetup should be called on a registered custom view.": function() {
+		var spy = this.spy(interactions.apple, 'onSetup');
+		var view;
+
+		FruitMachine.View.extend('apple', interactions.apple);
+
+		view = new FruitMachine.View(layout);
+		view.render();
+		view.setup();
+
+		assert.called(spy);
+		interactions.apple.onSetup.restore();
+	},
+
+	"Once setup, a View should be flagged as such.": function() {
+		this.view
+			.render()
+			.setup();
+
+		assert.isTrue(this.view.isSetup);
+		assert.isTrue(this.view.child('orange').isSetup);
+	},
+
+	tearDown: function() {
+		helpers.destroyView.call(this);
+		FruitMachine.off('beforesetup');
+	}
+});

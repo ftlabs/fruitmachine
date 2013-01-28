@@ -125,15 +125,12 @@ var templates = {
 	'orange': Hogan.compile(document.getElementById('template-orange').innerHTML)
 };
 
-FruitMachine.set('templates', function(module) {
-	if (!templates[module]) return;
-	return function(data) {
-		return templates[module].render(data);
-	};
+FruitMachine.templates(function(module) {
+	return templates[module];
 });
 
 // Define our view structure
-var structure = {
+var layout = {
 	module: 'layout',
 	children: [
 		{
@@ -157,7 +154,7 @@ function setArticle(id) {
 }
 
 // Create the FruitMachine View
-var myView = new FruitMachine.View(structure);
+var myView = new FruitMachine(layout);
 
 // Get some data from our database.
 var articles = getArticlesSync();
@@ -167,7 +164,9 @@ myView
 	.child('apple')
 	.data({ items: articles });
 
-// Render the view, inject it into the DOM and call setup.
+// Render the view,
+// inject it into the
+// DOM and call setup.
 myView
 	.render()
 	.inject(document.getElementById('app'))

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Fruit Machine - TODO App</title>
+<style>
+
+	.module-strawberry {
+
+	}
+
+	.module-strawberry:after {
+		content: "small";
+	}
+
+	@media all and (min-width: 430px) {
+
+		.module-strawberry:after {
+			content: "large";
+		}
+	}
+
+</style>
+
+
+</head>
+<body>
+	<div id='app'></div>
+
+<!-- layout-i -->
+<script type="text/template" id="template-layout">
+	<div class='layout {{{fm_classes}}}' {{{fm_attrs}}}>
+		<div class='layout_header'>{{{1}}}</div>
+		<div class='layout_content'>
+			<div class='layout_list'>{{{2}}}</div>
+			<div class='layout_body'>{{{3}}}</div>
+		</div>
+	</div>
+</script>
+
+<!-- module-pineapple -->
+<script type="text/template" id="template-pineapple">
+	<div class='module-pineapple {{{fm_classes}}}' {{{fm_attrs}}}>
+		<form class='module-pineapple_form'>
+			<input class='module-pineapple_input' type='text' placeholder='Add a new item...' />
+		</form>
+	</div>
+</script>
+
+<!-- template-banana -->
+<script type="text/template" id="template-banana">
+	<div class="module-banana" {{{fm_attrs}}}><div>{{title}}</div></div>
+</script>
+
+<!-- template-stawberry -->
+<script type="text/template" id="template-strawberry">
+	<div class="module-strawberry" {{{fm_attrs}}}>{{title}}</div>
+</script>
+<script type="text/javascript" src="../libs/hogan.js"></script>
+<script type="text/javascript" src="../../lib/fruitmachine.js"></script>
+<script type="text/javascript" src="helpers/fruitmachine-breakpoints.js"></script>
+<script>
+
+var onAppResize = function(callback) {
+	window.addEventListener('resize', callback);
+};
+
+var templates = {
+	'layout': Hogan.compile(document.getElementById('template-layout').innerHTML),
+	'pineapple': Hogan.compile(document.getElementById('template-pineapple').innerHTML),
+	'banana': Hogan.compile(document.getElementById('template-banana').innerHTML),
+	'strawberry': Hogan.compile(document.getElementById('template-strawberry').innerHTML)
+};
+
+FruitMachine.templates(templates);
+
+// FruitMachine.templates(function(module) {
+// 	return templates[module];
+// });
+
+
+var Strawberry = FruitMachine.module('strawberry', {
+	helpers: ['breakpoint'],
+	template: templates.strawberry,
+
+	onSetup: function() {
+		var breakpoint = this.breakpoint.get();
+		var breakpointSetup = this.onSetups[breakpoint];
+
+		//var breakpointCallback = this.breakpoint.callback();
+		//onAppResize(breakpointCallback);
+		if (breakpointSetup) breakpointSetup();
+
+		this.on('breakpointchange', this.onBreakpointChange);
+	},
+
+	onTeardown: function() {
+		var breakpoint = this.breakpoint.get();
+		var breakpointTeardown = this.onTeardowns[breakpoint];
+
+		// Run the custom teardown
+		// for the current breakpoint
+		if (breakpointTeardown) breakpointTeardown();
+
+		// Unbind all events
+		this.off();
+	},
+
+	onBreakpointChange: function(current, previous) {
+		var teardown = this.onTeardowns[previous];
+		var setup = this.onSetups[current];
+		if (teardown) teardown();
+		if (setup) setup();
+	},
+
+	onSetups: {
+		small: function() {
+			console.log('setup:small');
+		},
+
+		large: function() {
+			console.log('setup:large');
+		}
+	},
+
+	onTeardowns: {
+		small: function() {
+			console.log('teardown:small');
+		},
+		large: function() {
+			console.log('teardown:large');
+		}
+	}
+});
+
+
+var view = new FruitMachine.View({ module: 'strawberry' });
+
+document.body.appendChild(view.node());
+view.setup();
+
+</script>
+</body>
+</html>
