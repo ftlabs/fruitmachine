@@ -1326,10 +1326,10 @@ require.define("/lib/fruitmachine.js",function(require,module,exports,__dirname,
 }());
 });
 
-require.define("/examples/express/client/routes/index.js",function(require,module,exports,__dirname,__filename,process,global){var page = require('../page-js');
-var home = require('../page-home');
-var about = require('../page-about');
-var links = require('../page-links');
+require.define("/examples/express/lib/routes/index.js",function(require,module,exports,__dirname,__filename,process,global){var page = require('../pagejs');
+var home = require('../page-home/client');
+var about = require('../page-about/client');
+var links = require('../page-links/client');
 
 page('/', home);
 page('/about', about);
@@ -1338,7 +1338,7 @@ page('/links', links);
 page({ dispatch: false });
 });
 
-require.define("/examples/express/client/page-js/index.js",function(require,module,exports,__dirname,__filename,process,global){;(function(){
+require.define("/examples/express/lib/pagejs/index.js",function(require,module,exports,__dirname,__filename,process,global){;(function(){
 
   /**
    * Perform initial dispatch.
@@ -1754,25 +1754,33 @@ require.define("/examples/express/client/page-js/index.js",function(require,modu
 })();
 });
 
-require.define("/examples/express/client/page-home/index.js",function(require,module,exports,__dirname,__filename,process,global){var LayoutA = require('../layout-a');
-var content = document.querySelector('.js-app_content');
+require.define("/examples/express/lib/page-home/client.js",function(require,module,exports,__dirname,__filename,process,global){var content = document.querySelector('.js-app_content');
+var View = require('./view');
 
 var database = {
 	title: 'This is the Home page'
 };
 
 module.exports = function() {
-	var view = new LayoutA();
-
-	view.child('apple')
-		.data({ title: database.title });
-
+	var view = View(database);
 	view.render();
 	view.inject(content);
 };
 });
 
-require.define("/examples/express/client/layout-a/index.js",function(require,module,exports,__dirname,__filename,process,global){var FruitMachine = require('../../../../lib/fruitmachine');
+require.define("/examples/express/lib/page-home/view.js",function(require,module,exports,__dirname,__filename,process,global){var LayoutA = require('../layout-a');
+
+module.exports = function(data) {
+	var view = new LayoutA();
+
+	view.child('apple')
+		.data({ title: data.title });
+
+	return view;
+};
+});
+
+require.define("/examples/express/lib/layout-a/index.js",function(require,module,exports,__dirname,__filename,process,global){var FruitMachine = require('../../../../lib/fruitmachine');
 var apple = require('../module-apple');
 var template = require('./template');
 
@@ -1788,54 +1796,70 @@ module.exports = FruitMachine.module('layout-a', {
 });
 });
 
-require.define("/examples/express/client/module-apple/index.js",function(require,module,exports,__dirname,__filename,process,global){var FruitMachine = require('../../../../lib/fruitmachine.js');
+require.define("/examples/express/lib/module-apple/index.js",function(require,module,exports,__dirname,__filename,process,global){var FruitMachine = require('../../../../lib/fruitmachine.js');
 var template = require('./template');
 FruitMachine.templates({ apple: template });
 });
 
-require.define("/examples/express/client/module-apple/template.js",function(require,module,exports,__dirname,__filename,process,global){module.exports = new Hogan(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div class=\"module-apple\" ");_.b(_.t(_.f("fm_attrs",c,p,0)));_.b(">");_.b("\n" + i);_.b("	<div class=\"module-apple_title\">");_.b(_.v(_.f("title",c,p,0)));_.b("</div>");_.b("\n" + i);_.b("</div>");return _.fl();;});
+require.define("/examples/express/lib/module-apple/template.js",function(require,module,exports,__dirname,__filename,process,global){module.exports = new Hogan(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div class=\"module-apple\" ");_.b(_.t(_.f("fm_attrs",c,p,0)));_.b(">");_.b("\n" + i);_.b("	<div class=\"module-apple_title\">");_.b(_.v(_.f("title",c,p,0)));_.b("</div>");_.b("\n" + i);_.b("</div>");return _.fl();;});
 });
 
-require.define("/examples/express/client/layout-a/template.js",function(require,module,exports,__dirname,__filename,process,global){module.exports = new Hogan(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div class='layout-a' ");_.b(_.t(_.f("fm_attrs",c,p,0)));_.b(">");_.b("\n" + i);_.b("	<div class='layout-a_slot-1'>");_.b(_.t(_.f("my_apple",c,p,0)));_.b("</div>");_.b("\n" + i);_.b("	<div class='layout-a_region-1'>");_.b("\n" + i);_.b("		<div class='layout-a_slot-2'>");_.b(_.t(_.f("slot_2",c,p,0)));_.b("</div>");_.b("\n" + i);_.b("		<div class='layout-a_slot-3'>");_.b(_.t(_.f("slot_3",c,p,0)));_.b("</div>");_.b("\n" + i);_.b("	</div>");_.b("\n" + i);_.b("</div>");return _.fl();;});
+require.define("/examples/express/lib/layout-a/template.js",function(require,module,exports,__dirname,__filename,process,global){module.exports = new Hogan(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div class='layout-a' ");_.b(_.t(_.f("fm_attrs",c,p,0)));_.b(">");_.b("\n" + i);_.b("	<div class='layout-a_slot-1'>");_.b(_.t(_.f("my_apple",c,p,0)));_.b("</div>");_.b("\n" + i);_.b("	<div class='layout-a_region-1'>");_.b("\n" + i);_.b("		<div class='layout-a_slot-2'>");_.b(_.t(_.f("slot_2",c,p,0)));_.b("</div>");_.b("\n" + i);_.b("		<div class='layout-a_slot-3'>");_.b(_.t(_.f("slot_3",c,p,0)));_.b("</div>");_.b("\n" + i);_.b("	</div>");_.b("\n" + i);_.b("</div>");return _.fl();;});
 });
 
-require.define("/examples/express/client/page-about/index.js",function(require,module,exports,__dirname,__filename,process,global){var LayoutA = require('../layout-a');
-var content = document.querySelector('.js-app_content');
+require.define("/examples/express/lib/page-about/client.js",function(require,module,exports,__dirname,__filename,process,global){var content = document.querySelector('.js-app_content');
+var View = require('./view');
 
 var database = {
 	title: 'This is the About page'
 };
 
 module.exports = function() {
-	var view = new LayoutA();
-
-	view.child('apple')
-		.data({ title: database.title });
-
+	var view = View(database);
 	view.render();
 	view.inject(content);
 };
 });
 
-require.define("/examples/express/client/page-links/index.js",function(require,module,exports,__dirname,__filename,process,global){var LayoutA = require('../layout-a');
-var content = document.querySelector('.js-app_content');
+require.define("/examples/express/lib/page-about/view.js",function(require,module,exports,__dirname,__filename,process,global){var LayoutA = require('../layout-a');
+
+module.exports = function(data) {
+	var view = new LayoutA();
+
+	view.child('apple')
+		.data({ title: data.title });
+
+	return view;
+};
+});
+
+require.define("/examples/express/lib/page-links/client.js",function(require,module,exports,__dirname,__filename,process,global){var content = document.querySelector('.js-app_content');
+var View = require('./view');
 
 var database = {
 	title: 'This is the Links page'
 };
 
 module.exports = function() {
-	var view = new LayoutA();
-
-	view.child('apple')
-		.data({ title: database.title });
-
+	var view = View(database);
 	view.render();
 	view.inject(content);
 };
 });
 
-require.define("/examples/express/client/boot/index.js",function(require,module,exports,__dirname,__filename,process,global){Hogan = require('hogan.js/lib/template').Template;
+require.define("/examples/express/lib/page-links/view.js",function(require,module,exports,__dirname,__filename,process,global){var LayoutA = require('../layout-a');
+
+module.exports = function(data) {
+	var view = new LayoutA();
+
+	view.child('apple')
+		.data({ title: data.title });
+
+	return view;
+};
+});
+
+require.define("/examples/express/lib/boot/index.js",function(require,module,exports,__dirname,__filename,process,global){Hogan = require('hogan.js/lib/template').Template;
 
 var FruitMachine = require('../../../lib/fruitmachine');
 var routes = require('../routes');
@@ -1845,5 +1869,5 @@ view = new FruitMachine(window.layout);
 
 
 });
-require("/examples/express/client/boot/index.js");
+require("/examples/express/lib/boot/index.js");
 })();

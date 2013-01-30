@@ -5,15 +5,15 @@ var hogan = require('hogan.js');
 var fs = require('fs');
 var path = require('path');
 var root = __dirname + '/../';
-var command = 'find client/**/*.hjs';
+var command = 'find lib/**/*.hjs';
 
 exec(command, { cwd: root }, function(err, stdout) {
 	var templates = stdout.trim().split('\n');
 	templates.forEach(compile);
-
 });
 
 function compile(filepath) {
+	console.log(filepath);
 	filepath = root + filepath;
 	var string = fs.readFileSync(filepath, 'utf8');
 	var fn = 'module.exports = new Hogan(' + hogan.compile(string, { asString: true }) + ');';

@@ -1,7 +1,0 @@
-<div class='layout-a' {{{fm_attrs}}}>
-	<div class='layout-a_slot-1'>{{{my_apple}}}</div>
-	<div class='layout-a_region-1'>
-		<div class='layout-a_slot-2'>{{{slot_2}}}</div>
-		<div class='layout-a_slot-3'>{{{slot_3}}}</div>
-	</div>
-</div>
