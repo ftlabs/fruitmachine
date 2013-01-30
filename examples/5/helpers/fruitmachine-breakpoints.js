@@ -1,8 +1,8 @@
 
-FruitMachine.helper('breakpoint', function(Helper) {
+FruitMachine.helper('breakpoint', function(fm) {
 
 	/**
-	 * Global
+	 * Setup
 	 */
 
 	var Events = {};
@@ -11,27 +11,20 @@ FruitMachine.helper('breakpoint', function(Helper) {
 		Events.trigger('resize');
 	}
 
-	Helper.attach = function onAttach(FM) {
-		// Merge event emitter into Breakpoints
-		FM.util.mixin(Events, FM.Events);
-		window.addEventListener('resize', onWindowResize);
-	};
-
-	Helper.detach = function onDetach(FM) {
-		window.removeEventListener('resize', onWindowResize);
-	};
+	// Merge event emitter into Breakpoints
+	fm.util.mixin(Events, fm.Events);
+	if (window) window.addEventListener('resize', onWindowResize);
 
 	/**
 	 * Instance
 	 */
 
-	var Breakpoint = Helper.exports = function(view) {
+	var Breakpoint = function(view) {
 		this.view = view;
 	};
 
 	Breakpoint.prototype.onSetup = function() {
 		var self = this;
-		this.el = this.view.el();
 
 		this.onResizeBound = function() {
 			self.onResize.call(self);
@@ -58,13 +51,14 @@ FruitMachine.helper('breakpoint', function(Helper) {
 	};
 
 	Breakpoint.prototype.get = function() {
-		if (!this.el) return;
-		return getComputedStyle(this.el, ':after').content;
+		var el = !this.view.el();
+		if (el) return;
+		return getComputedStyle(el, ':after').content;
 	};
 
 	Breakpoint.prototype.onTeardown = function() {
-
+		Events.off('resize', this.onResizeBound);
 	};
 
-	return Helper;
-}({}));
+	return Breakpoint;
+});

@@ -1,0 +1,1 @@
+module.exports = new Hogan(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div class=\"module-apple\" ");_.b(_.t(_.f("fm_attrs",c,p,0)));_.b(">");_.b("\n" + i);_.b("	<div class=\"module-apple_title\">");_.b(_.v(_.f("title",c,p,0)));_.b("</div>");_.b("\n" + i);_.b("</div>");return _.fl();;});

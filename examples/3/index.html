@@ -75,7 +75,7 @@ var templates = {
 
 
 FruitMachine.templates(function(module) {
-	return templates[module].render(data);
+	return templates[module];
 });
 
 // Define our view structure
@@ -96,13 +96,13 @@ var layout = {
 };
 
 // Create the FruitMachine View
-var myView = new FruitMachine.View(layout);
+var myView = new FruitMachine(layout);
 var bananaView = myView.child('banana');
 
 // Add each of our items as strawberry
 // child views of the banana view.
 items.forEach(function(item) {
-	bananaView.add(new FruitMachine({ module: 'strawberry', model: item }));
+	bananaView.add(new FruitMachine({ module: 'strawberry', data: item }));
 });
 
 // Render the view, inject it into the DOM and call setup.
@@ -114,9 +114,9 @@ myView
 // Add a callback to the `formsubmit` event
 // emitted by the pineapple view.
 myView.child('pineapple').on('formsubmit', function(value) {
-
+debugger;
 	// Create a new view using the data submitted
-	var newItem = new FruitMachine({ module: 'strawberry', model: { title: value } });
+	var newItem = new FruitMachine({ module: 'strawberry', data: { title: value } });
 
 	// Render and init events
 	newItem

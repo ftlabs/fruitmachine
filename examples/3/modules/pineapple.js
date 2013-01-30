@@ -1,4 +1,4 @@
-FruitMachine.View.extend('pineapple', {
+FruitMachine.module('pineapple', {
 
 	onInitialize: function() {
 		var self = this;
@@ -9,8 +9,9 @@ FruitMachine.View.extend('pineapple', {
 	},
 
 	onSetup: function() {
-		this.els.form = this.el.querySelector('.module-pineapple_form');
-		this.els.input = this.el.querySelector('.module-pineapple_input');
+		var el = this.el();
+		this.els.form = el.querySelector('.module-pineapple_form');
+		this.els.input = el.querySelector('.module-pineapple_input');
 		this.els.form.addEventListener('submit', this.onFormSubmitBound);
 	},
 

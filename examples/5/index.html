@@ -134,9 +134,10 @@ var Strawberry = FruitMachine.module('strawberry', {
 });
 
 
-var view = new FruitMachine.View({ module: 'strawberry' });
+var view = new FruitMachine({ module: 'strawberry' });
 
-document.body.appendChild(view.node());
+view.render();
+view.inject(document.body)
 view.setup();
 
 </script>
