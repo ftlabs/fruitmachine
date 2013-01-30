@@ -676,7 +676,7 @@ require.define("/lib/fruitmachine.js",function(require,module,exports,__dirname,
     options = options || {};
     if (options.module) return create(options);
     this._configure(options);
-    this.add(options.children || this.views);
+    this.add(options.views || this.views);
     this.onInitialize(options);
   };
 
@@ -758,7 +758,7 @@ require.define("/lib/fruitmachine.js",function(require,module,exports,__dirname,
       return function(prefix, suffix) {
         prefix = prefix || 'id';
         suffix = suffix || 'a';
-        return [prefix, ++i, suffix].join('-');
+        return [prefix, (++i) * Math.round(Math.random() * 100000), suffix].join('-');
       };
     }())
   };
@@ -1247,12 +1247,12 @@ require.define("/lib/fruitmachine.js",function(require,module,exports,__dirname,
 
     toJSON: function() {
       var json = {};
-      var children = this.children();
-      json.children = [];
+      var views = this.children();
+      json.views = [];
 
       // Recurse
-      for (var i = 0, l = children.length; i < l; i++) {
-        json.children.push(children[i].toJSON());
+      for (var i = 0, l = views.length; i < l; i++) {
+        json.views.push(views[i].toJSON());
       }
 
       json.id = this.id();
@@ -1768,15 +1768,38 @@ module.exports = function() {
 };
 });
 
-require.define("/examples/express/lib/page-home/view.js",function(require,module,exports,__dirname,__filename,process,global){var LayoutA = require('../layout-a');
+require.define("/examples/express/lib/page-home/view.js",function(require,module,exports,__dirname,__filename,process,global){var FruitMachine = require('../../../../lib/fruitmachine');
+
+// Require these views so that
+// FruitMachine registers them
+var LayoutA = require('../layout-a');
+var ModuleApple = require('../module-apple');
+var ModuleOrange = require('../module-orange');
+var ModuleBanana = require('../module-banana');
 
 module.exports = function(data) {
-	var view = new LayoutA();
+	var layout = {
+		module: 'layout-a',
+		views: [
+			{
+				id: 'slot_1',
+				module: 'apple',
+				data: {
+					title: data.title
+				}
+			},
+			{
+				id: 'slot_2',
+				module: 'orange'
+			},
+			{
+				id: 'slot_3',
+				module: 'banana'
+			}
+		]
+	};
 
-	view.child('apple')
-		.data({ title: data.title });
-
-	return view;
+	return new FruitMachine(layout);
 };
 });
 
@@ -1786,13 +1809,7 @@ var template = require('./template');
 
 
 module.exports = FruitMachine.module('layout-a', {
-	template: template,
-	views: [
-		{
-			id: 'my_apple',
-			module: 'apple'
-		}
-	]
+	template: template
 });
 });
 
@@ -1804,7 +1821,25 @@ FruitMachine.templates({ apple: template });
 require.define("/examples/express/lib/module-apple/template.js",function(require,module,exports,__dirname,__filename,process,global){module.exports = new Hogan(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div class=\"module-apple\" ");_.b(_.t(_.f("fm_attrs",c,p,0)));_.b(">");_.b("\n" + i);_.b("	<div class=\"module-apple_title\">");_.b(_.v(_.f("title",c,p,0)));_.b("</div>");_.b("\n" + i);_.b("</div>");return _.fl();;});
 });
 
-require.define("/examples/express/lib/layout-a/template.js",function(require,module,exports,__dirname,__filename,process,global){module.exports = new Hogan(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div class='layout-a' ");_.b(_.t(_.f("fm_attrs",c,p,0)));_.b(">");_.b("\n" + i);_.b("	<div class='layout-a_slot-1'>");_.b(_.t(_.f("my_apple",c,p,0)));_.b("</div>");_.b("\n" + i);_.b("	<div class='layout-a_region-1'>");_.b("\n" + i);_.b("		<div class='layout-a_slot-2'>");_.b(_.t(_.f("slot_2",c,p,0)));_.b("</div>");_.b("\n" + i);_.b("		<div class='layout-a_slot-3'>");_.b(_.t(_.f("slot_3",c,p,0)));_.b("</div>");_.b("\n" + i);_.b("	</div>");_.b("\n" + i);_.b("</div>");return _.fl();;});
+require.define("/examples/express/lib/layout-a/template.js",function(require,module,exports,__dirname,__filename,process,global){module.exports = new Hogan(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div class='layout-a' ");_.b(_.t(_.f("fm_attrs",c,p,0)));_.b(">");_.b("\n" + i);_.b("	<div class='layout-a_slot-1'>");_.b(_.t(_.f("slot_1",c,p,0)));_.b("</div>");_.b("\n" + i);_.b("	<div class='layout-a_region-1'>");_.b("\n" + i);_.b("		<div class='layout-a_slot-2'>");_.b(_.t(_.f("slot_2",c,p,0)));_.b("</div>");_.b("\n" + i);_.b("		<div class='layout-a_slot-3'>");_.b(_.t(_.f("slot_3",c,p,0)));_.b("</div>");_.b("\n" + i);_.b("	</div>");_.b("\n" + i);_.b("</div>");return _.fl();;});
+});
+
+require.define("/examples/express/lib/module-orange/index.js",function(require,module,exports,__dirname,__filename,process,global){var FruitMachine = require('../../../../lib/fruitmachine.js');
+var template = require('./template');
+
+FruitMachine.templates({ orange: template });
+});
+
+require.define("/examples/express/lib/module-orange/template.js",function(require,module,exports,__dirname,__filename,process,global){module.exports = new Hogan(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div class='module-orange' ");_.b(_.t(_.f("fm_attrs",c,p,0)));_.b(">Module Orange</div>");return _.fl();;});
+});
+
+require.define("/examples/express/lib/module-banana/index.js",function(require,module,exports,__dirname,__filename,process,global){var FruitMachine = require('../../../../lib/fruitmachine.js');
+var template = require('./template');
+
+FruitMachine.templates({ banana: template });
+});
+
+require.define("/examples/express/lib/module-banana/template.js",function(require,module,exports,__dirname,__filename,process,global){module.exports = new Hogan(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div class='module-banana' ");_.b(_.t(_.f("fm_attrs",c,p,0)));_.b(">Module Banana</div>");return _.fl();;});
 });
 
 require.define("/examples/express/lib/page-about/client.js",function(require,module,exports,__dirname,__filename,process,global){var content = document.querySelector('.js-app_content');
@@ -1821,15 +1856,38 @@ module.exports = function() {
 };
 });
 
-require.define("/examples/express/lib/page-about/view.js",function(require,module,exports,__dirname,__filename,process,global){var LayoutA = require('../layout-a');
+require.define("/examples/express/lib/page-about/view.js",function(require,module,exports,__dirname,__filename,process,global){var FruitMachine = require('../../../../lib/fruitmachine');
+
+// Require these views so that
+// FruitMachine registers them
+var LayoutA = require('../layout-a');
+var ModuleApple = require('../module-apple');
+var ModuleOrange = require('../module-orange');
+var ModuleBanana = require('../module-banana');
 
 module.exports = function(data) {
-	var view = new LayoutA();
+	var layout = {
+		module: 'layout-a',
+		views: [
+			{
+				id: 'slot_1',
+				module: 'apple',
+				data: {
+					title: data.title
+				}
+			},
+			{
+				id: 'slot_2',
+				module: 'banana'
+			},
+			{
+				id: 'slot_3',
+				module: 'orange'
+			}
+		]
+	};
 
-	view.child('apple')
-		.data({ title: data.title });
-
-	return view;
+	return new FruitMachine(layout);
 };
 });
 
@@ -1847,27 +1905,48 @@ module.exports = function() {
 };
 });
 
-require.define("/examples/express/lib/page-links/view.js",function(require,module,exports,__dirname,__filename,process,global){var LayoutA = require('../layout-a');
+require.define("/examples/express/lib/page-links/view.js",function(require,module,exports,__dirname,__filename,process,global){var FruitMachine = require('../../../../lib/fruitmachine');
+
+// Require these views so that
+// FruitMachine registers them
+var LayoutA = require('../layout-a');
+var ModuleApple = require('../module-apple');
+var ModuleOrange = require('../module-orange');
+var ModuleBanana = require('../module-banana');
 
 module.exports = function(data) {
-	var view = new LayoutA();
+	var layout = {
+		module: 'layout-a',
+		views: [
+			{
+				id: 'slot_1',
+				module: 'orange'
+			},
+			{
+				id: 'slot_2',
+				module: 'apple',
+				data: {
+					title: data.title
+				}
+			},
+			{
+				id: 'slot_3',
+				module: 'banana'
+			}
+		]
+	};
 
-	view.child('apple')
-		.data({ title: data.title });
-
-	return view;
+	return new FruitMachine(layout);
 };
 });
 
-require.define("/examples/express/lib/boot/index.js",function(require,module,exports,__dirname,__filename,process,global){Hogan = require('hogan.js/lib/template').Template;
+require.define("/examples/express/lib/boot/index.js",function(require,module,exports,__dirname,__filename,process,global){global.Hogan = require('hogan.js/lib/template').Template;
+global.app = {};
 
 var FruitMachine = require('../../../lib/fruitmachine');
 var routes = require('../routes');
 
-view = new FruitMachine(window.layout);
-
-
-
+app.view = new FruitMachine(window.layout);
 });
 require("/examples/express/lib/boot/index.js");
 })();

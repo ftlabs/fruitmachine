@@ -1,8 +1,7 @@
-Hogan = require('hogan.js/lib/template').Template;
+global.Hogan = require('hogan.js/lib/template').Template;
+global.app = {};
 
 var FruitMachine = require('../../../lib/fruitmachine');
 var routes = require('../routes');
 
-view = new FruitMachine(window.layout);
-
-
+app.view = new FruitMachine(window.layout);

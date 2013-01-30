@@ -13,7 +13,6 @@ exec(command, { cwd: root }, function(err, stdout) {
 });
 
 function compile(filepath) {
-	console.log(filepath);
 	filepath = root + filepath;
 	var string = fs.readFileSync(filepath, 'utf8');
 	var fn = 'module.exports = new Hogan(' + hogan.compile(string, { asString: true }) + ');';
