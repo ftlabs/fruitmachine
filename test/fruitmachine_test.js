@@ -1,3 +1,8 @@
+
+/**
+ * Dummy Data
+ */
+
 var pearConfig = {
 	module: 'pear',
 	data: {
@@ -24,15 +29,26 @@ var layout = {
 };
 
 var templates = {
-	'apple': Hogan.compile('<div class="module-apple {{{fm_classes}}}" {{{fm_attrs}}}>{{{my_child_module}}}</div>'),
-	'orange': Hogan.compile('<div class="module-orange {{{fm_classes}}}" {{{fm_attrs}}}>{{text}}</div>'),
-	'pear': Hogan.compile('<div class="module-pear {{{fm_classes}}}" {{{fm_attrs}}}>{{text}}</div>')
+	'apple': Hogan.compile('{{{my_child_module}}}'),
+	'orange': Hogan.compile('{{text}}'),
+	'pear': Hogan.compile('{{text}}')
 };
 
-FruitMachine.set('templates', function(module) {
-	return function(data) {
-		return templates[module].render(data);
-	};
+
+
+var exampleHelper = function(fm) {
+
+	var Exports = function(view) {};
+	Exports.prototype.onSetup = function() {};
+	Exports.prototype.onTeardown = function() {};
+  Exports.prototype.method = function() {};
+
+	return Exports;
+};
+
+
+FruitMachine.templates(function(module) {
+	return templates[module];
 });
 
 var interactions = {
@@ -55,7 +71,7 @@ var interactions = {
 var helpers = {};
 
 helpers.createView = function() {
-	this.view = new FruitMachine.View(layout);
+	this.view = new FruitMachine(layout);
 };
 
 helpers.destroyView = function() {
@@ -63,44 +79,48 @@ helpers.destroyView = function() {
 	this.view = null;
 };
 
-helpers.domSandbox = function() {
+helpers.sandbox = function() {
 	document.body.insertAdjacentHTML('beforeend', '<div id="sandbox"></div>');
 	return document.getElementById('sandbox');
 };
 
+helpers.sandbox.empty = function() {
+	sandbox.innerHTML = '';
+};
 
-var sandbox = helpers.domSandbox();
+
+var sandbox = helpers.sandbox();
 
 
-buster.testCase('View', {
-	"setUp": function() {
-		this.view = new FruitMachine.View(layout);
-	},
+// buster.testCase('View', {
+// 	"setUp": function() {
+// 		this.view = new FruitMachine(layout);
+// 	},
 
-	"Invoking a view should trigger the `beforeinitialize` event.": function() {
-		var spy = this.spy();
-		var view;
+// 	"Invoking a view should trigger the `beforeinitialize` event.": function() {
+// 		var spy = this.spy();
+// 		var view;
 
-		FruitMachine.on("beforeinitialize", spy, null);
-		view = FruitMachine.View({});
+// 		FruitMachine.on("beforeinitialize", spy, null);
+// 		view = FruitMachine({});
 
-		assert.called(spy);
-	},
+// 		assert.called(spy);
+// 	},
 
-	"tearDown": function() {
-		this.view = null;
-		FruitMachine.off("beforeinitialize");
-	}
-});
+// 	"tearDown": function() {
+// 		this.view = null;
+// 		FruitMachine.off("beforeinitialize");
+// 	}
+// });
 
 
 buster.testCase('View#add()', {
 	"setUp": function() {
-		this.view = new FruitMachine.View(orangeConfig);
+		this.view = new FruitMachine(orangeConfig);
 	},
 
 	"Should add a View instance as a child.": function() {
-		var pear = new FruitMachine.View(pearConfig);
+		var pear = new FruitMachine(pearConfig);
 
 		this.view.add(pear);
 
@@ -118,70 +138,174 @@ buster.testCase('View#add()', {
 });
 
 
-buster.testCase('View#hasChild()', {
-	"Should return true for existent module type and id.": function() {
-		this.view = new FruitMachine.View(layout);
-		assert.isTrue(this.view.hasChild('orange'));
-		assert.isTrue(this.view.hasChild('my_child_module'));
-	},
-
-	"Should return false when for non-existent module type and id.": function() {
-		this.view = new FruitMachine.View(layout);
-		assert.isFalse(this.view.hasChild('banana'));
-		assert.isFalse(this.view.hasChild('non_existent_id'));
-	}
-});
-
-
 buster.testCase('View#render()', {
 	"setUp": helpers.createView,
 
 	"The master view should have an element post render.": function() {
 		this.view.render();
-		assert.defined(this.view.el);
-	},
-
-	"The child view should have an element post render.": function() {
-		var child = this.view.id('my_child_module');
-
-		this.view.render();
-		assert.defined(child.el);
-	},
-
-	"The `asString` option should return a string.": function() {
-		var result = this.view.render({ asString: true });
-
-		assert.equals(typeof result, 'string');
-	},
-
-	"The `forClient` option should include `data-parent` attributes": function() {
-		var result = this.view.render({ asString: true, forClient: true });
-		var hasParentAttrs = !!~result.indexOf('data-parent');
-
-		assert.isTrue(hasParentAttrs);
-	},
-
-	"A `render` event should be fired on the view.": function() {
-		var spy = this.spy();
-
-		this.view.on('render', spy);
-		this.view.render();
-		assert.called(spy);
+		assert.defined(this.view.el());
 	},
 
 	"Data should be present in the generated markup.": function() {
 		var orange = this.view.child('orange');
 
-		this.view.render();
-		assert.equals(orange.el.innerText, orangeConfig.data.text);
+		this.view
+			.render()
+			.inject(sandbox);
+
+		assert.equals(orange.el().innerText, orangeConfig.data.text);
 	},
 
 	"Child html should be present in the parent.": function() {
 		var firtChild;
 
 		this.view.render();
-		firstChild = this.view.el.firstElementChild;
-		assert.isTrue(firstChild.classList.contains('module-orange'));
+		firstChild = this.view.el().firstElementChild;
+		assert.isTrue(firstChild.classList.contains('orange'));
+	},
+
+	"tearDown": helpers.destroyView
+});
+
+
+buster.testCase('View#toHTML()', {
+	"setUp": helpers.createView,
+
+	"Should return a string": function() {
+		var html = this.view.toHTML();
+		assert.isTrue('string' === typeof html);
+	},
+
+	"Should use cache if available": function() {
+		var spy = this.spy(this.view.child('orange'), 'toHTML');
+
+		this.view.toHTML();
+		this.view.toHTML();
+
+		assert.isTrue(spy.calledOnce);
+	},
+
+	"Should purge cache if model is changed": function() {
+		var spy = this.spy(this.view.child('orange'), 'toHTML');
+
+		this.view.toHTML();
+		this.view.data({ foo: 'bar' });
+		this.view.toHTML();
+
+		assert.isTrue(spy.calledTwice);
+	},
+
+	"tearDown": helpers.destroyView
+});
+
+
+buster.testCase('View#el()', {
+	"setUp": helpers.createView,
+
+	"Should return undefined if not rendered": function() {
+		var el = this.view.el();
+		refute.defined(el);
+	},
+
+	"Should return an element if rendered directly": function() {
+		var el;
+		this.view.render();
+		el = this.view.el();
+		assert.defined(el);
+	},
+
+	"Should not run querySelector if the view has no parent view": function() {
+		var spy = this.spy(FruitMachine.util, 'querySelectorId');
+		var el;
+
+		this.view.render();
+		el = this.view.el();
+
+		assert.isFalse(spy.called);
+
+		FruitMachine.util.querySelectorId.restore();
+	},
+
+	"Should return the view element if the view was rendered indirectly": function() {
+		var spy = this.spy(FruitMachine.util, 'querySelectorId');
+		var el;
+
+		this.view.render();
+		el = this.view.child('orange').el();
+
+		assert.defined(el);
+		assert.called(spy);
+
+		FruitMachine.util.querySelectorId.restore();
+	},
+
+	"Should find element in the DOM if injected": function() {
+		var spy1 = this.spy(document, 'getElementById');
+		var spy2 = this.spy(FruitMachine.util, 'querySelectorId');
+		var el1, el2;
+
+		this.view
+			.render()
+			.inject(sandbox);
+
+		el1 = this.view.el();
+		el2 = this.view.child('orange').el();
+
+		assert.defined(el1);
+		assert.defined(el2);
+		assert.isTrue(spy1.calledTwice);
+		refute.called(spy2);
+
+		document.getElementById.restore();
+		FruitMachine.util.querySelectorId.restore();
+		helpers.sandbox.empty();
+	},
+
+	"Should return a different element if parent is re-rendered in DOM": function() {
+		var el1, el2;
+
+		this.view
+			.render()
+			.inject(sandbox);
+
+		el1 = this.view.child('orange').el();
+		this.view.render();
+		el2 = this.view.child('orange').el();
+
+		refute.equals(el1, el2);
+	},
+
+	"Should return a different element if parent is re-rendered in memory": function() {
+		var el1, el2;
+
+		this.view.render();
+
+		el1 = this.view.child('orange').el();
+		this.view.render();
+		el2 = this.view.child('orange').el();
+
+		refute.equals(el1, el2);
+	},
+
+	"tearDown": helpers.destroyView
+});
+
+
+buster.testCase('View#setElement()', {
+	"setUp": helpers.createView,
+
+	"Should clear child element caches on `setElement`": function() {
+		var el1, el2;
+
+		this.view
+			.render()
+			.inject(sandbox);
+
+		el1 = this.view.el();
+		el2 = this.view.child('orange').el();
+		this.view.render();
+
+		assert.isFalse(!!this.view.child('orange')._el);
 	},
 
 	"tearDown": helpers.destroyView
@@ -192,7 +316,7 @@ buster.testCase('View#data()', {
 	"setUp": helpers.createView,
 
 	"View#data() should return all data.": function() {
-		var view = new FruitMachine.View({ data: { a: 1, b: 2, c: 3 }});
+		var view = new FruitMachine({ data: { a: 1, b: 2, c: 3 }});
 		var data = view.data();
 		var length = 0;
 
@@ -216,7 +340,7 @@ buster.testCase('View#data()', {
 
 	"Changing the data source shouldn't impact the View's data store.": function() {
 		var source = { x: 1 };
-		var view = new FruitMachine.View({ module: 'apple', data: source });
+		var view = new FruitMachine({ module: 'apple', data: source });
 
 		source.x = 2;
 		refute.equals(view.data('x'), source.x);
@@ -226,7 +350,7 @@ buster.testCase('View#data()', {
 	"A `datachange` event should be fired.": function() {
 		var spy = this.spy();
 
-		this.view.on('datachange', spy);
+		this.view.model.on('change', spy);
 		this.view.data('foo', 'bar');
 		assert.called(spy);
 	},
@@ -234,7 +358,7 @@ buster.testCase('View#data()', {
 	"A `datachange:&lt;property&gt;` event should be fired.": function() {
 		var spy = this.spy();
 
-		this.view.on('datachange:foo', spy);
+		this.view.model.on('change:foo', spy);
 		this.view.data('foo', 'bar');
 		assert.called(spy);
 	},
@@ -244,8 +368,8 @@ buster.testCase('View#data()', {
 		var spy2 = this.spy();
 		var newData = { foo: 'foo', bar: 'bar' };
 
-		this.view.on('datachange:foo', spy1);
-		this.view.on('datachange:bar', spy2);
+		this.view.model.on('change:foo', spy1);
+		this.view.model.on('change:bar', spy2);
 		this.view.data(newData);
 		assert.called(spy1);
 		assert.called(spy2);
@@ -257,7 +381,7 @@ buster.testCase('View#data()', {
 
 buster.testCase('View#child()', {
 	"Should return the first child module with the specified type.": function() {
-		var view = new FruitMachine.View(orangeConfig);
+		var view = new FruitMachine(orangeConfig);
 		var child;
 
 		view.add(pearConfig);
@@ -267,7 +391,7 @@ buster.testCase('View#child()', {
 	},
 
 	"If there is more than one child of this module type, only the first is returned.": function() {
-		var view = new FruitMachine.View(orangeConfig);
+		var view = new FruitMachine(orangeConfig);
 		var child, firstChild;
 
 		view
@@ -281,7 +405,7 @@ buster.testCase('View#child()', {
 	},
 
 	"A child can be fetched by id.": function() {
-		var view = new FruitMachine.View(pearConfig);
+		var view = new FruitMachine(pearConfig);
 		var child, firstChild;
 
 		view.add(orangeConfig);
@@ -331,7 +455,7 @@ buster.testCase('View#id()', {
 
 	"Should the view's own id if no arguments given.": function() {
 		var id = 'a_view_id';
-		var view = new FruitMachine.View({ id: id });
+		var view = new FruitMachine({ id: id });
 		assert.equals(view.id(), id);
 	},
 
@@ -340,13 +464,17 @@ buster.testCase('View#id()', {
 
 buster.testCase('View#inject()', {
 	"Should inject the view element into the given element.": function() {
-		var view = new FruitMachine.View(layout).render();
-		view.inject(sandbox);
-		assert.equals(view.el, sandbox.firstElementChild);
+		var view = new FruitMachine(layout);
+
+		view
+			.render()
+			.inject(sandbox);
+
+		assert.equals(view.el(), sandbox.firstElementChild);
 	},
 
 	"tearDown": function() {
-		sandbox.innerHTML = '';
+		helpers.sandbox.empty();
 	}
 });
 
@@ -364,17 +492,9 @@ buster.testCase('View#setup()', {
 
 		assert.called(spy1);
 		assert.called(spy2);
-	},
 
-	"Setup should not be run if the view has no element.": function() {
-		var spy1 = this.spy(this.view, 'onSetup');
-		var spy2 = this.spy(this.view.child('orange'), 'onSetup');
-
-		this.view
-			.setup();
-
-		refute.called(spy1);
-		refute.called(spy2);
+		this.view.onSetup.restore();
+		this.view.child('orange').onSetup.restore();
 	},
 
 	"Should not recurse if used with the `shallow` option.": function() {
@@ -387,31 +507,24 @@ buster.testCase('View#setup()', {
 
 		assert.called(spy1);
 		refute.called(spy2);
-	},
 
-	"The `beforesetup` event should be fired once for each module.": function() {
-		var spy = this.spy();
-		FruitMachine.on('beforesetup', spy);
-
-		this.view
-			.render()
-			.setup();
-
-		assert.isTrue(spy.calledTwice);
+		this.view.onSetup.restore();
+		this.view.child('orange').onSetup.restore();
 	},
 
 	"onSetup should be called on a registered custom view.": function() {
 		var spy = this.spy(interactions.apple, 'onSetup');
 		var view;
 
-		FruitMachine.View.extend('apple', interactions.apple);
+		FruitMachine.module('apple', interactions.apple);
 
-		view = new FruitMachine.View(layout);
+		view = new FruitMachine(layout);
 		view.render();
 		view.setup();
 
 		assert.called(spy);
 		interactions.apple.onSetup.restore();
+		FruitMachine.module.clear('apple');
 	},
 
 	"Once setup, a View should be flagged as such.": function() {
@@ -423,86 +536,73 @@ buster.testCase('View#setup()', {
 		assert.isTrue(this.view.child('orange').isSetup);
 	},
 
-	tearDown: function() {
-		helpers.destroyView.call(this);
-		FruitMachine.off('beforesetup');
-	}
+	tearDown: helpers.destroyView
 });
 
 buster.testCase('View#teardown()', {
-	setUp: helpers.createView,
-
-	"Setup should recurse.": function() {
-		var spy1 = this.spy(this.view, 'onSetup');
-		var spy2 = this.spy(this.view.child('orange'), 'onSetup');
-
-		this.view
-			.render()
-			.setup();
-
-		assert.called(spy1);
-		assert.called(spy2);
+	setUp: function() {
+		helpers.createView.call(this);
+		this.spy1 = this.spy(this.view, 'onTeardown');
+		this.spy2 = this.spy(this.view.child('orange'), 'onTeardown');
 	},
 
-	"Setup should not be run if the view has no element.": function() {
-		var spy1 = this.spy(this.view, 'onSetup');
-		var spy2 = this.spy(this.view.child('orange'), 'onSetup');
-
+	"Teardown should recurse.": function() {
 		this.view
-			.setup();
+			.render()
+			.setup()
+			.teardown();
 
-		refute.called(spy1);
-		refute.called(spy2);
+		assert.called(this.spy1);
+		assert.called(this.spy2);
 	},
 
 	"Should not recurse if used with the `shallow` option.": function() {
-		var spy1 = this.spy(this.view, 'onSetup');
-		var spy2 = this.spy(this.view.child('orange'), 'onSetup');
-
 		this.view
 			.render()
-			.setup({ shallow: true });
+			.setup()
+			.teardown({ shallow: true });
 
-		assert.called(spy1);
-		refute.called(spy2);
+		assert.called(this.spy1);
+		refute.called(this.spy2);
 	},
 
-	"The `beforesetup` event should be fired once for each module.": function() {
-		var spy = this.spy();
-		FruitMachine.on('beforesetup', spy);
-
+	"onTeardown should be called if `setup()` is called twice.": function() {
 		this.view
-			.render()
+			.setup()
 			.setup();
 
-		assert.isTrue(spy.calledTwice);
-	},
-
-	"onSetup should be called on a registered custom view.": function() {
-		var spy = this.spy(interactions.apple, 'onSetup');
-		var view;
-
-		FruitMachine.View.extend('apple', interactions.apple);
-
-		view = new FruitMachine.View(layout);
-		view.render();
-		view.setup();
-
-		assert.called(spy);
-		interactions.apple.onSetup.restore();
-	},
-
-	"Once setup, a View should be flagged as such.": function() {
-		this.view
-			.render()
-			.setup();
-
-		assert.isTrue(this.view.isSetup);
-		assert.isTrue(this.view.child('orange').isSetup);
+		assert.called(this.spy1);
+		assert.called(this.spy2);
 	},
 
 	tearDown: function() {
+		this.spy1 = this.spy(this.view, 'onTeardown');
+		this.spy2 = this.spy(this.view.child('orange'), 'onTeardown');
 		helpers.destroyView.call(this);
-		FruitMachine.off('beforesetup');
 	}
+});
+
+
+buster.testCase('FruitMachine#helpers()', {
+  setUp: function() {
+    FruitMachine.helper('example', exampleHelper);
+
+    FruitMachine.module('apple', {
+      helpers: ['example']
+    });
+
+    this.view = new FruitMachine({
+      module: 'apple'
+    });
+  },
+
+  "helper should be present on the view": function() {
+
+    assert.defined(this.view.example);
+  },
+
+  tearDown: function() {
+    FruitMachine.helper.remove('example');
+    FruitMachine.module.clear('apple');
+  }
 });
