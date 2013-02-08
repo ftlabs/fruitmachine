@@ -36,7 +36,7 @@
 
 <!-- template-stawberry -->
 <script type="text/template" id="template-strawberry">
-	<div class='module-stawberry {{{fm_classes}}}' {{{fm_attrs}}}>{{title}} <button class='js-delete-item'>×</button></div>
+	<div class='module-stawberry' {{{fm_attrs}}}>{{title}} <button class='js-delete-item'>×</button></div>
 </script>
 <script type="text/javascript" src="../libs/hogan.js"></script>
 <script type="text/javascript" src="../libs/delegate.js"></script>
@@ -74,14 +74,12 @@ var templates = {
 };
 
 
-FruitMachine.set('templates', function(module) {
-	return function(data) {
-		return templates[module].render(data);
-	}
+FruitMachine.templates(function(module) {
+	return templates[module];
 });
 
 // Define our view structure
-var structure = {
+var layout = {
 	id: 'master',
 	module: 'layout',
 	children: [
@@ -98,13 +96,13 @@ var structure = {
 };
 
 // Create the FruitMachine View
-var myView = new FruitMachine.View(structure);
+var myView = new FruitMachine(layout);
 var bananaView = myView.child('banana');
 
 // Add each of our items as strawberry
 // child views of the banana view.
 items.forEach(function(item) {
-	bananaView.add(new FruitMachine.View({ module: 'strawberry', data: item }));
+	bananaView.add(new FruitMachine({ module: 'strawberry', data: item }));
 });
 
 // Render the view, inject it into the DOM and call setup.
@@ -116,9 +114,9 @@ myView
 // Add a callback to the `formsubmit` event
 // emitted by the pineapple view.
 myView.child('pineapple').on('formsubmit', function(value) {
-
+debugger;
 	// Create a new view using the data submitted
-	var newItem = new FruitMachine.View({ module: 'strawberry', data: { title: value } });
+	var newItem = new FruitMachine({ module: 'strawberry', data: { title: value } });
 
 	// Render and init events
 	newItem

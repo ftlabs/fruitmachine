@@ -1,9 +1,9 @@
-FruitMachine.View.extend('strawberry', {
+FruitMachine.module('strawberry', {
 
 	onInitialize: function() {},
 
 	onSetup: function() {
-		this.delegate = new Delegate(this.el);
+		this.delegate = new Delegate(this.el());
 		this.onDeleteButtonClick_d = this.onDeleteButtonClick.bind(this);
 		this.delegate.on('click', '.js-delete-item', this.onDeleteButtonClick_d);
 	},

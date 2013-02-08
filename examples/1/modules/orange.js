@@ -1,4 +1,4 @@
-FruitMachine.View.extend('orange', {
+FruitMachine.module('orange', {
 
 	onInitialize: function() {
 		var self = this;
@@ -10,12 +10,12 @@ FruitMachine.View.extend('orange', {
 	},
 
 	onSetup: function() {
-		this.delegate = new Delegate(this.el);
+		this.delegate = new Delegate(this.el());
 		this.delegate.on('click', '.module-orange_body', this.onItemClickBound);
 	},
 
 	onTeardown: function() {
-		this.delegate = new Delegate(this.el);
+		this.delegate = new Delegate(this.el());
 		this.delegate.off(this.onItemClickBound);
 	},
 
