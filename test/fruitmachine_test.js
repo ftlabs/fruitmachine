@@ -311,6 +311,12 @@ buster.testCase('View#setElement()', {
 	"tearDown": helpers.destroyView
 });
 
+buster.testCase('View#classes()', {
+	"setUp": helpers.createView,
+
+	"tearDown": helpers.destroyView
+});
+
 
 buster.testCase('View#data()', {
 	"setUp": helpers.createView,
