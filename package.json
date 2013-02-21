@@ -1,7 +1,7 @@
 {
   "name": "fruitmachine",
   "description": "Assembles dynamic views on the client and server",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "homepage": "https://github.com/wilsonpage/fruitmachine",
   "author": {
     "name": "Wilson Page",
