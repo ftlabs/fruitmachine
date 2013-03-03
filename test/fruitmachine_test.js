@@ -526,6 +526,21 @@ buster.testCase('View#setup()', {
     refute.isTrue(this.view.child('orange').isSetup);
   },
 
+  "onTeardown should be called if `setup()` is called twice.": function() {
+    var teardownSpy1 = this.spy(this.view, 'onTeardown');
+    var teardownSpy2 = this.spy(this.view.child('orange'), 'onTeardown');
+
+    //debugger;
+    this.view
+      .render()
+      .inject(sandbox)
+      .setup()
+      .setup();
+
+    assert.called(teardownSpy1);
+    assert.called(teardownSpy2);
+  },
+
   tearDown: function() {
     helpers.destroyView.call(this);
   }
@@ -559,17 +574,51 @@ buster.testCase('View#teardown()', {
     refute.called(this.spy2);
   },
 
-  "onTeardown should be called if `setup()` is called twice.": function() {
-    //debugger;
+  "Should not run if the view has not been setup": function() {
+    this.view
+      .render()
+      .teardown();
+
+    refute.called(this.spy1);
+    refute.called(this.spy2);
+  },
+
+  tearDown: function() {
+    helpers.destroyView.call(this);
+  }
+});
+
+buster.testCase('View#destroy()', {
+  setUp: function() {
+    helpers.createView.call(this);
+    this.onDestroySpy1 = this.spy(this.view, 'onDestroy');
+    this.onDestroySpy2 = this.spy(this.view.child('orange'), 'onDestroy');
+  },
+
+  "Should recurse.": function() {
     this.view
       .render()
       .inject(sandbox)
-      .setup()
       .setup();
 
-    assert.called(this.spy1);
-    assert.called(this.spy2);
+    this.view.destroy();
+
+    assert.called(this.onDestroySpy1);
+    assert.called(this.onDestroySpy2);
   },
+
+  "Should call teardown.": function() {
+    this.view
+      .render()
+      .inject(sandbox)
+      .setup();
+
+    this.view.destroy();
+
+    assert.called(this.onDestroySpy1);
+    assert.called(this.onDestroySpy2);
+  },
+
 
   tearDown: function() {
     helpers.destroyView.call(this);
