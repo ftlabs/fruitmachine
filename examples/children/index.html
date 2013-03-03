@@ -85,11 +85,11 @@ view
 	.render()
 	.inject(container);
 
-var apples = view.children('apple');
-var oranges = view.children('orange');
+//var apples = view.children('apple');
+//var oranges = view.children('orange');
 
-log("view.children('apple'); <i>//=> " + JSON.stringify(apples) + '</i>');
-log("view.children('orange'); <i>//=> " + JSON.stringify(oranges) + '</i>');
+exec("view.children('apple');");
+exec("view.children('orange');");
 
 </script>
 </body>
