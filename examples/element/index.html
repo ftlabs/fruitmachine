@@ -62,13 +62,26 @@ FruitMachine.templates(function(module) {
 	return templates[module];
 });
 
-var data = {
-	id: '1234',
-	name: 'Wilson',
-	twitter: 'wilsonpage'
-};
 
-var model = new FruitMachine.Model(data);
+FruitMachine.module('apple', {
+	onInitialize: function() {
+
+	},
+
+	onSetup: function() {
+		debugger;
+	},
+
+	onTeardown: function() {
+
+	},
+
+
+	onDestroy: function() {
+
+	}
+});
+
 
 // Define a FruitMachine view definition
 var layout = {
@@ -78,7 +91,11 @@ var layout = {
 		{
 			id: 'module_1',
 			module: 'apple',
-			model: model,
+			data: {
+				id: '1234',
+				name: 'Wilson',
+				twitter: 'wilsonpage'
+			},
 			children: [
 				{
 					id: 'module_4',
@@ -96,12 +113,10 @@ console.time('foo');
 var view = new FruitMachine(layout);
 var app = document.getElementById('app');
 
-// view
-// 	.render();
-
-console.time('inDOM');
-view.el();
-console.timeEnd('inDOM');
+view
+  .render()
+  .inject(app)
+  .setup();
 
 </script>
 </body>

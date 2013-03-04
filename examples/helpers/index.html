@@ -29,32 +29,28 @@
 
 <!-- layout-i -->
 <script type="text/template" id="template-layout">
-	<div class='layout {{{fm_classes}}}' {{{fm_attrs}}}>
 		<div class='layout_header'>{{{1}}}</div>
 		<div class='layout_content'>
 			<div class='layout_list'>{{{2}}}</div>
 			<div class='layout_body'>{{{3}}}</div>
 		</div>
-	</div>
 </script>
 
 <!-- module-pineapple -->
 <script type="text/template" id="template-pineapple">
-	<div class='module-pineapple {{{fm_classes}}}' {{{fm_attrs}}}>
 		<form class='module-pineapple_form'>
 			<input class='module-pineapple_input' type='text' placeholder='Add a new item...' />
 		</form>
-	</div>
 </script>
 
 <!-- template-banana -->
 <script type="text/template" id="template-banana">
-	<div class="module-banana" {{{fm_attrs}}}><div>{{title}}</div></div>
+	<div>{{title}}</div>
 </script>
 
 <!-- template-stawberry -->
 <script type="text/template" id="template-strawberry">
-	<div class="module-strawberry" {{{fm_attrs}}}>{{title}}</div>
+	{{title}}
 </script>
 <script type="text/javascript" src="../libs/hogan.js"></script>
 <script type="text/javascript" src="../../lib/fruitmachine.js"></script>
