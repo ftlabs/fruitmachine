@@ -1,10 +1,15 @@
 {
   "name": "fruitmachine",
   "description": "Assembles dynamic views on the client and server",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "main": "lib/fruitmachine.js",
   "scripts": [
     "lib/fruitmachine.js"
+  ],
+  "ignore": [
+    "examples/",
+    "test/",
+    "README.md"
   ],
   "license": "MIT"
 }
