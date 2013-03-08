@@ -6,5 +6,10 @@
   "scripts": [
     "lib/fruitmachine.js"
   ],
+  "ignore": [
+    "examples/",
+    "test/",
+    "README.md"
+  ],
   "license": "MIT"
 }
