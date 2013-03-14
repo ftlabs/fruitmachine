@@ -1,7 +1,7 @@
 {
   "name": "fruitmachine",
   "description": "Assembles dynamic views on the client and server",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "main": "lib/fruitmachine.js",
   "scripts": [
     "lib/fruitmachine.js"
