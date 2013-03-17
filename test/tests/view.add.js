@@ -1,11 +1,11 @@
 
 buster.testCase('View#add()', {
   "setUp": function() {
-    this.view = new FruitMachine(orangeConfig);
+    this.view = new FruitMachine(helpers.configs.fruityList);
   },
 
   "Should add a View instance as a child.": function() {
-    var pear = new FruitMachine(pearConfig);
+    var pear = new FruitMachine(helpers.configs.pear);
 
     this.view.add(pear);
 
@@ -13,7 +13,7 @@ buster.testCase('View#add()', {
   },
 
   "Should add a JSON config as a child.": function() {
-    this.view.add(pearConfig);
+    this.view.add(helpers.configs.pear);
     assert.equals(this.view.children().length, 1);
   },
 

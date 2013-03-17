@@ -15,7 +15,7 @@ buster.testCase('View#render()', {
       .inject(sandbox)
       .setup();
 
-    assert.equals(orange.el.innerText, orangeConfig.data.text);
+    assert.equals(orange.el.innerText, helpers.configs.orange.data.text);
   },
 
   "Child html should be present in the parent.": function() {

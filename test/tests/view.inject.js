@@ -1,7 +1,7 @@
 
 buster.testCase('View#inject()', {
   "Should inject the view element into the given element.": function() {
-    var view = new FruitMachine(layout);
+    var view = new FruitMachine(helpers.configs.apple);
 
     view
       .render()

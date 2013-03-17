@@ -31,7 +31,7 @@ buster.testCase('View#setup()', {
     var view;
 
     FruitMachine.module('apple', interactions.apple);
-    view = new FruitMachine(layout);
+    view = new FruitMachine(helpers.configs.apple);
 
     view
       .render()

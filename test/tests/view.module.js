@@ -1,0 +1,4 @@
+
+buster.testCase('View#module()', {
+
+});
