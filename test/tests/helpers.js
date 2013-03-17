@@ -43,6 +43,19 @@ buster.testCase('FruitMachine#helpers()', {
     assert.called(this.spys.destroy);
   },
 
+  "Should be able to pass functions into `helpers` array if helper hasn't been defined": function() {
+    var spy = this.spy();
+    var view = new helpers.Apple({
+      helpers: [
+        function(view) {
+          view.on('initialize', spy);
+        }
+      ]
+    });
+
+    assert.called(spy);
+  },
+
   tearDown: function() {
     this.view.destroy();
 
