@@ -6,11 +6,11 @@ buster.testCase('View#children()', {
 		var view = new FruitMachine(helpers.configs.fruityList);
     var children;
 
-    this.view
+    view
       .add(helpers.configs.pear)
       .add(helpers.configs.pear);
 
-    children = this.view.children();
+    children = view.children();
     assert.equals(children.length, 2);
   },
 
@@ -18,11 +18,11 @@ buster.testCase('View#children()', {
 		var view = new FruitMachine(helpers.configs.fruityList);
     var children;
 
-    this.view
+    view
       .add(helpers.configs.pear)
       .add(helpers.configs.pear);
 
-    children = this.view.children('pear');
+    children = view.children('pear');
     assert.equals(children.length, 2);
   }
 

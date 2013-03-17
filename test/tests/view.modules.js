@@ -2,10 +2,6 @@
 buster.testCase('View#modules()', {
   setUp: helpers.createView,
 
-  "Should return module type if no arguments given": function() {
-    assert.equals(this.view.module(), 'apple');
-  },
-
   "Should return all descendant views matching the given module type": function() {
     var oranges = this.view.modules('orange');
     var pears = this.view.modules('pear');
@@ -17,7 +13,7 @@ buster.testCase('View#modules()', {
   "Should return multiple views if they exist": function() {
     var oranges;
 
-    this.view.add(helpers.config.orange);
+    this.view.add(helpers.configs.orange);
     oranges = this.view.modules('orange');
 
     assert.equals(oranges.length, 2);

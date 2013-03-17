@@ -1,56 +1,37 @@
 buster.testCase('FruitMachine#helpers()', {
   setUp: function() {
+    this.spys = {
+      initialize: this.spy(helpers.helpers.example, 'initialize'),
+      setup: this.spy(helpers.helpers.example, 'setup'),
+      teardown: this.spy(helpers.helpers.example, 'teardown'),
+      destroy: this.spy(helpers.helpers.example, 'destroy')
+    };
 
     // Register helper
-    FruitMachine.helper('example', function(view) {
+    FruitMachine.helper('example', helpers.helpers.example.main);
 
-      view.on('initialize', function() {
-        view.exampleHelper = {};
-        view.exampleHelper.initialize = true;
-      });
-
-      view.on('setup', function() {
-        view.exampleHelper.setup = true;
-      });
-
-      view.on('teardown', function() {
-        view.exampleHelper.teardown = true;
-      });
-
-      view.on('destroy', function() {
-        view.exampleHelper.destroy = true;
-      });
-    });
-
-    // Define module
-    FruitMachine.module('apple', {
+    this.view = new FruitMachine({
+      module: 'apple',
       helpers: ['example']
     });
-
-    // Create view
-    this.view = new FruitMachine({
-      module: 'apple'
-    });
-  },
-
-  "helper should be present on the view": function() {
-    assert.defined(this.view.exampleHelper);
   },
 
   "helper `initialize` should have been called": function() {
-    assert.isTrue(this.view.exampleHelper.initialize);
+    assert.called(this.spys.initialize);
   },
 
   "helper `setup` should have been called": function() {
+
     this.view
       .render()
       .inject(sandbox)
       .setup();
 
-    assert.isTrue(this.view.exampleHelper.setup);
+    assert.called(this.spys.setup);
   },
 
   "helper `teardown` and `destroy` should have been called": function() {
+
     this.view
       .render()
       .inject(sandbox)
@@ -58,13 +39,19 @@ buster.testCase('FruitMachine#helpers()', {
       .teardown()
       .destroy();
 
-    assert.isTrue(this.view.exampleHelper.teardown);
-    assert.isTrue(this.view.exampleHelper.destroy);
+    assert.called(this.spys.teardown);
+    assert.called(this.spys.destroy);
   },
 
   tearDown: function() {
     this.view.destroy();
-    FruitMachine.helper.remove('example');
+
+    this.spys.initialize.restore();
+    this.spys.setup.restore();
+    this.spys.teardown.restore();
+    this.spys.destroy.restore();
+
+    FruitMachine.helper.clear('example');
     FruitMachine.module.clear('apple');
   }
 });

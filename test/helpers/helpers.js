@@ -1,4 +1,8 @@
-var helpers = {};
+var helpers = {
+  prototypes: {},
+  configs: {},
+  helpers: {}
+};
 
 /**
  * Templates
@@ -18,8 +22,6 @@ FruitMachine.templates(function(module) {
 /**
  * Views
  */
-
-helpers.configs = {};
 
 helpers.configs.pear = {
   module: 'pear',
@@ -55,6 +57,19 @@ helpers.configs.fruityList = {
 };
 
 
+helpers.helpers.example = {
+  main: function(view) {
+    view.on('initialize', helpers.helpers.example.initialize);
+    view.on('setup', helpers.helpers.example.setup);
+    view.on('teardown', helpers.helpers.example.teardown);
+    view.on('destroy', helpers.helpers.example.destroy);
+  },
+  initialize: function() {},
+  setup: function() {},
+  teardown: function() {},
+  destroy: function() {}
+};
+
 
 
 
@@ -76,6 +91,15 @@ var interactions = {
   }
 };
 
+helpers.prototypes.Apple = {
+  module: 'apple',
+  onInitialize: function() {},
+  onSetup: function() {},
+  onTeardown: function() {},
+  onDestroy: function() {}
+};
+
+helpers.Apple = FruitMachine.module(helpers.prototypes.Apple);
 
 
 helpers.createView = function() {

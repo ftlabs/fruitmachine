@@ -26,20 +26,17 @@ buster.testCase('View#setup()', {
     refute.called(this.spy2);
   },
 
-  "onSetup should be called on a registered custom view.": function() {
-    var spy = this.spy(interactions.apple, 'onSetup');
-    var view;
+  "Custom `onSetup` should be called over default": function() {
+    var spy = this.spy(helpers.Apple.prototype, 'onSetup');
+    var apple = new helpers.Apple();
 
-    FruitMachine.module('apple', interactions.apple);
-    view = new FruitMachine(helpers.configs.apple);
-
-    view
+    apple
       .render()
       .setup();
 
     assert.called(spy);
-    interactions.apple.onSetup.restore();
-    FruitMachine.module.clear('apple');
+    spy.restore();
+    refute.equals(FruitMachine.View.onSetup, apple.onSetup);
   },
 
   "Once setup, a View should be flagged as such.": function() {
