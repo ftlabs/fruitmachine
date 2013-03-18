@@ -4,24 +4,14 @@ var helpers = {
   helpers: {}
 };
 
-/**
- * Templates
- */
-
-var templates = {
+helpers.templates = {
   'apple': Hogan.compile('{{{my_child_module}}}'),
   'fruity-list': Hogan.compile('{{#children}}{{{child}}}{{/children}}'),
   'orange': Hogan.compile('{{text}}'),
   'pear': Hogan.compile('{{text}}')
 };
 
-FruitMachine.templates(function(module) {
-  return templates[module];
-});
-
-/**
- * Views
- */
+FruitMachine.templates(helpers.templates);
 
 helpers.configs.pear = {
   module: 'pear',
@@ -70,27 +60,6 @@ helpers.helpers.example = {
   destroy: function() {}
 };
 
-
-
-
-
-var interactions = {
-  apple: {
-    onInitialize: function() {
-
-    },
-    onSetup: function() {
-
-    },
-    onTeardown: function() {
-
-    },
-    onDestroy: function() {
-
-    }
-  }
-};
-
 helpers.prototypes.Apple = {
   module: 'apple',
   onInitialize: function() {},
@@ -100,7 +69,6 @@ helpers.prototypes.Apple = {
 };
 
 helpers.Apple = FruitMachine.module(helpers.prototypes.Apple);
-
 
 helpers.createView = function() {
   this.view = new FruitMachine(helpers.configs.apple);
