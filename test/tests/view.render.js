@@ -26,5 +26,41 @@ buster.testCase('View#render()', {
     assert.isTrue(firstChild.classList.contains('orange'));
   },
 
+  "Should be of the tag specified": function() {
+    var View = FruitMachine.module({
+      module: 'orange',
+      tag: 'ul'
+    });
+
+    var view = new View();
+    view.render();
+
+    assert.equals('UL', view.el.tagName);
+  },
+
+  "Should have classes on the element": function() {
+    var View = FruitMachine.module({
+      module: 'orange',
+      tag: 'ul',
+      classes: ['foo', 'bar']
+    });
+
+    var view = new View();
+    view.render();
+
+    assert.equals('orange foo bar', view.el.className);
+  },
+
+  "Should have and id attribute with the value of `fmid`": function() {
+    var View = FruitMachine.module({
+      module: 'orange'
+    });
+
+    var view = new View();
+    view.render();
+
+    assert.equals(view._fmid, view.el.id);
+  },
+
   "tearDown": helpers.destroyView
 });
