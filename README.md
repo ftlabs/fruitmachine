@@ -27,8 +27,7 @@ functionality.
 
 Options:
 
-  - `propagate` States whether the event
-     should bubble through parent views.
+ - `propagate` States whether the event should bubble through parent views.
 
 ### View#id();
 
@@ -45,8 +44,8 @@ view that matches the query.
 
 Example:
 
-  var child = view.child(<id>);
-  var child = view.child(<module>);
+    var child = view.child(<id>);
+    var child = view.child(<module>);
 
 ### View#children();
 
@@ -57,11 +56,11 @@ passed.
 
 Example:
 
-  // Return all direct children
-  view.children();
+    // Return all direct children
+    view.children();
 
-  // Return all children that match query.
-  view.children('orange');
+    // Return all children that match query.
+    view.children('orange');
 
 ### View#each();
 
@@ -127,16 +126,16 @@ and setting view data.
 
 Example:
 
-  // Getters
-  var all = view.data();
-  var one = view.data('myKey');
+    // Getters
+    var all = view.data();
+    var one = view.data('myKey');
 
-  // Setters
-  view.data('myKey', 'my value');
-  view.data({
-    myKey: 'my value',
-    anotherKey: 10
-  });
+    // Setters
+    view.data('myKey', 'my value');
+    view.data({
+        myKey: 'my value',
+        anotherKey: 10
+    });
 
 ### View#inDOM();
 

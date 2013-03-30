@@ -26,6 +26,8 @@ var readme = templates.readme.render({ pkg: pkg, docs: docs });
 
 fs.writeFile(__dirname + '/../README.md', readme);
 
+console.log(JSON.stringify(json, null, ' '));
+
 
 function preProcess(json) {
 
@@ -38,6 +40,10 @@ function preProcess(json) {
 	json.forEach(function(item) {
 		if (item.description.summary) {
 			item.description.summary = item.description.summary.replace(/<br \/>/g, ' ');
+		}
+
+		if (item.description.body) {
+			item.description.body = item.description.body.replace(/  /g, '    ');
 		}
 	});
 
