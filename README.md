@@ -36,23 +36,43 @@ Returns a decendent module
 by id, or if called with no
 arguments, returns this view's id.
 
+*Example:*
 
+    myView.id();
+    //=> 'my_view_id'
+
+    myView.id('my_other_views_id');
+    //=> View
 
 ### View#module();
 
 Returns the first descendent
 View with the passed module type.
+If called with no arguments the
+View's own module type is returned.
 
+*Example:*
 
+    // Assuming 'myView' has 3 descendent
+    // views with the module type 'apple'
+
+    myView.modules('apple');
+    //=> View
 
 ### View#modules();
 
 Returns a list of descendent
 Views that match the module
 type given (Similar to
-Element.querySelector();).
+Element.querySelectorAll();).
 
+*Example:*
 
+    // Assuming 'myView' has 3 descendent
+    // views with the module type 'apple'
+
+    myView.modules('apple');
+    //=> [ View, View, View ]
 
 ### View#child();
 
@@ -85,7 +105,11 @@ Calls the passed function
 for each of the view's
 children.
 
+*Example:*
 
+    myView.each(function(child) {
+        // Do stuff with each child view...
+    });
 
 ### View#toHTML();
 
@@ -147,7 +171,8 @@ a view is torn down, removed from it's
 current layout context and removed
 from the DOM.
 
-
+Your custom `onDestroy` method is
+called and a `destroy` event is fired.
 
 ### View#remove();
 
