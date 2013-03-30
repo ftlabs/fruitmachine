@@ -42,7 +42,7 @@ arguments, returns this view's id.
 Returns the first child
 view that matches the query.
 
-Example:
+*Example:*
 
     var child = view.child(<id>);
     var child = view.child(<module>);
@@ -54,7 +54,7 @@ a view's children and direct
 children, depending on arguments
 passed.
 
-Example:
+*Example:*
 
     // Return all direct children
     view.children();
@@ -67,6 +67,69 @@ Example:
 Calls the passed function
 for each of the view's
 children.
+
+
+
+### View#toHTML();
+
+Templates the view, including
+any descendent views returning
+an html string.
+
+All data in the views model is
+made accessible to the template.
+
+Child views are printed into the
+parent template by `id`. Alternatively
+children can be iterated over a a list
+and printed with `{{{child}}}}`.
+
+*Example:*
+
+    <div class="slot-1">{{{id_of_child_1}}}</div>
+    <div class="slot-2">{{{id_of_child_2}}}</div>
+
+    // or
+
+    {{#children}}
+        {{{child}}}
+    {{/children}}
+
+### View#render();
+
+Renders the view and replaces
+the `view.el` with a freshly
+rendered node.
+
+Fires a `render` event on the view.
+
+### View#setup();
+
+Sets up a view and all descendent
+views.
+
+Setup will be aborted if no `view.el`
+is found. If a view is already setup,
+teardown is run first to prevent a
+view being setup twice.
+
+Your custom `onSetup()` method is called
+and a `setup` event is fired on the view.
+
+### View#teardown();
+
+Tearsdown a view and all descendent
+views that have been setup.
+
+Your custom `onTeardown` method is
+called and a `teardown` event is fired.
+
+### View#destroy();
+
+Completely destroys a view. This means
+a view is torn down, removed from it's
+current layout context and removed
+from the DOM.
 
 
 
@@ -83,48 +146,12 @@ Destroys all children.
 
 
 
-### View#closestElement();
-
-Returns the closest root view
-element, walking up the chain
-until it finds one.
-
-
-
-### View#getElement();
-
-Returns the View's root element.
-
-If a cache is present it is used,
-else we search the DOM, else we
-find the closest element and
-perform a querySelector using
-the view._fmid.
-
-### View#setElement();
-
-Sets a root element on a view.
-If the view already has a root
-element, it is replaced.
-
-IMPORTANT: All descendent root
-element caches are purged so that
-the new correct elements are retrieved
-next time View#getElement is called.
-
-### View#purgeElementCaches();
-
-Recursively purges the
-element cache.
-
-
-
 ### View#data();
 
 A single method for getting
 and setting view data.
 
-Example:
+*Example:*
 
     // Getters
     var all = view.data();
@@ -136,20 +163,6 @@ Example:
         myKey: 'my value',
         anotherKey: 10
     });
-
-### View#inDOM();
-
-Detects whether a view is in
-the DOM (useful for debugging).
-
-
-
-### View#toNode();
-
-Templates the whole view and turns
-it into a real node.
-
-
 
 ### View#inject();
 
