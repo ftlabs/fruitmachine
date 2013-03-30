@@ -1,6 +1,6 @@
 {
   "name": "fruitmachine",
-  "description": "Assembles dynamic views on the client and server",
+  "description": "Assembles dynamic views on the client and server.",
   "version": "0.2.5",
   "homepage": "https://github.com/wilsonpage/fruitmachine",
   "author": {
@@ -30,7 +30,9 @@
   "devDependencies": {
     "grunt": "~0.3.17",
     "grunt-closure-compiler": "*",
-    "buster": "*"
+    "buster": "*",
+    "dox": "~0.4.3",
+    "hogan.js": "~2.0.0"
   },
   "keywords": []
 }
