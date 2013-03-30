@@ -1,0 +1,9 @@
+# {{pkg.name}}
+
+{{pkg.description}}
+## Documentation
+
+{{{docs}}}
+## License
+Copyright (c) 2012 {{pkg.author.name}}
+Licensed under the MIT license.
