@@ -38,6 +38,22 @@ arguments, returns this view's id.
 
 
 
+### View#module();
+
+Returns the first descendent
+View with the passed module type.
+
+
+
+### View#modules();
+
+Returns a list of descendent
+Views that match the module
+type given (Similar to
+Element.querySelector();).
+
+
+
 ### View#child();
 
 Returns the first child
