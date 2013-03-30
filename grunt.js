@@ -25,6 +25,7 @@ module.exports = function(grunt) {
     //
     'closure-compiler': {
       frontend: {
+        closurePath: '/usr/local/Cellar/closure-compiler/20120430/libexec/',
         js: 'lib/fruitmachine.js',
         jsOutputFile: 'dist/fruitmachine.min.js',
         options: {}
