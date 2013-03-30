@@ -43,7 +43,9 @@ function preProcess(json) {
 		}
 
 		if (item.description.body) {
-			item.description.body = item.description.body.replace(/  /g, '    ');
+			item.description.body = item.description.body
+				.replace(/  /g, '    ')
+				.replace(/Example:/g, '*Example:*');
 		}
 	});
 
