@@ -13,7 +13,7 @@ var pkg = require('../package');
  */
 
 var js = fs.readFileSync(__dirname + '/../lib/fruitmachine.js', 'utf8');
-var json = dox.parseComments(js);
+var json = dox.parseComments(js, { raw: true });
 var templates = {};
 
 templates.docs = hogan.compile(fs.readFileSync(__dirname + '/template.hogan', 'utf8'));
