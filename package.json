@@ -28,11 +28,17 @@
     "test": "grunt test"
   },
   "devDependencies": {
-    "grunt": "~0.3.17",
-    "grunt-closure-compiler": "*",
+    "grunt-contrib-jshint": "~0.2.0",
+    "grunt-contrib-watch": "~0.2.0",
+    "grunt-contrib-nodeunit": "~0.1.2",
+    "grunt-contrib-uglify": "~0.1.2",
+    "grunt-contrib-concat": "~0.1.2",
+    "grunt": "~0.4.1",
     "buster": "*",
     "dox": "~0.4.3",
-    "hogan.js": "~2.0.0"
+    "hogan.js": "~2.0.0",
+    "grunt-readme": "git://github.com/wilsonpage/grunt-readme.git",
+    "grunt-version": "git://github.com/wilsonpage/grunt-version.git"
   },
   "keywords": []
 }

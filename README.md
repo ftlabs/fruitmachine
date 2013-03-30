@@ -1,7 +1,7 @@
 # fruitmachine
 
 Assembles dynamic views on the client and server.
-## Documentation
+## API
 
 ### View();
 
@@ -9,25 +9,26 @@ View constructor
 
 
 
-### create();
+### View#add();
 
-Creates a new FruitMachine view
-using the options passed.
-
-If a module parameter is passed
-we attempt to find a registered
-module of that name to intantiate,
-else we use a default view instance.
-
-### View#trigger();
-
-Proxies the standard Event.trigger
-method so that we can add bubble
-functionality.
+Adds a child view(s) to another View.
 
 Options:
 
- - `propagate` States whether the event should bubble through parent views.
+ - `at` The child index at which to insert
+ - `inject` Injects the child's view element into the parent's
+
+### View#injectElement();
+
+Injects an element into the
+View's root element.
+
+By default the element is appended
+but then
+
+Options:
+
+ - `at` The index at which to insert.
 
 ### View#id();
 
@@ -74,10 +75,9 @@ children.
 
 Templates the view, including
 any descendent views returning
-an html string.
-
-All data in the views model is
-made accessible to the template.
+an html string. All data in the
+views model is made accessible
+to the template.
 
 Child views are printed into the
 parent template by `id`. Alternatively
@@ -188,6 +188,16 @@ to inflate serverside rendered
 views.
 
 
+
+### View#trigger();
+
+Proxies the standard Event.trigger
+method so that we can add bubble
+functionality.
+
+Options:
+
+ - `propagate` States whether the event should bubble through parent views.
 
 ### Model#get();
 
