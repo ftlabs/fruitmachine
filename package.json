@@ -1,6 +1,6 @@
 {
   "name": "fruitmachine",
-  "description": "Assembles dynamic views on the client and server.",
+  "description": "A modular view layout manager for client and server.",
   "version": "0.2.5",
   "homepage": "https://github.com/wilsonpage/fruitmachine",
   "author": {
