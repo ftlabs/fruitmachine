@@ -1,4 +1,10 @@
-FruitMachine.module('orange', {
+
+
+var template = Hogan.compile(document.getElementById('template-orange').innerHTML);
+
+var Orange = FruitMachine.module({
+	module: 'orange',
+	template: template,
 
 	onInitialize: function() {
 		var self = this;
@@ -10,12 +16,12 @@ FruitMachine.module('orange', {
 	},
 
 	onSetup: function() {
-		this.delegate = new Delegate(this.el());
+		this.delegate = new Delegate(this.el);
 		this.delegate.on('click', '.module-orange_body', this.onItemClickBound);
 	},
 
 	onTeardown: function() {
-		this.delegate = new Delegate(this.el());
+		this.delegate = new Delegate(this.el);
 		this.delegate.off(this.onItemClickBound);
 	},
 

@@ -1,4 +1,9 @@
-FruitMachine.module('apple', {
+
+var template = Hogan.compile(document.getElementById('template-apple').innerHTML);
+
+var Apple = FruitMachine.module({
+	module: 'apple',
+	template: template,
 
 	onInitialize: function() {
 		var self = this;
@@ -10,7 +15,7 @@ FruitMachine.module('apple', {
 	},
 
 	onSetup: function() {
-		this.delegate = new Delegate(this.el());
+		this.delegate = new Delegate(this.el);
 		this.delegate.on('click', '.module-apple-item', this.onItemClickBound);
 	},
 

@@ -39,7 +39,8 @@
 
 <script type="text/javascript" src="../libs/hogan.js"></script>
 <script type="text/javascript" src="../libs/delegate.js"></script>
-<script type="text/javascript" src="../../lib/fruitmachine.js"></script>
+<script type="text/javascript" src="../../dist/fruitmachine.js"></script>
+<script type="text/javascript" src="modules/layout.js"></script>
 <script type="text/javascript" src="modules/apple.js"></script>
 <script type="text/javascript" src="modules/orange.js"></script>
 <script>
@@ -118,18 +119,8 @@ function getFullArticleAsync(id, callback) {
  * Usage
  */
 
-// Register module templates
-var templates = {
-	'layout': Hogan.compile(document.getElementById('template-layout').innerHTML),
-	'apple': Hogan.compile(document.getElementById('template-apple').innerHTML),
-	'orange': Hogan.compile(document.getElementById('template-orange').innerHTML)
-};
 
-FruitMachine.templates(function(module) {
-	return templates[module];
-});
-
-// Define our view structure
+//Define our view structure
 var layout = {
 	module: 'layout',
 	children: [
@@ -152,16 +143,16 @@ function setArticle(id) {
 			.setup();
 	});
 }
-
+debugger;
 // Create the FruitMachine View
-var myView = new FruitMachine(layout);
+var myView = new FruitMachine.View(layout);
 
 // Get some data from our database.
 var articles = getArticlesSync();
 
 // Set some data on module apple.
 myView
-	.child('apple')
+	.module('apple')
 	.data({ items: articles });
 
 // Render the view,
@@ -176,7 +167,7 @@ myView
 setArticle(articles[0].articleId);
 
 // Setup a listener on the 'apple' view.
-myView.child('apple').on('itemclick', setArticle);
+myView.module('apple').on('itemclick', setArticle);
 
 </script>
 </body>
