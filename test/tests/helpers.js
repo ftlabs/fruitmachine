@@ -1,28 +1,43 @@
 buster.testCase('FruitMachine#helpers()', {
   setUp: function() {
-    this.spys = {
-      initialize: this.spy(helpers.helpers.example, 'initialize'),
-      setup: this.spy(helpers.helpers.example, 'setup'),
-      teardown: this.spy(helpers.helpers.example, 'teardown'),
-      destroy: this.spy(helpers.helpers.example, 'destroy')
+
+    var helper = this.helper = function(view) {
+      view.on('initialize', helper.initialize);
+      view.on('setup', helper.setup);
+      view.on('teardown', helper.teardown);
+      view.on('destroy', helper.destroy);
     };
 
-    // Register helper
-    FruitMachine.helper('example', helpers.helpers.example.main);
+    helper.initialize = function() {};
+    helper.setup = function() {};
+    helper.teardown = function() {};
+    helper.destroy = function() {};
 
-    this.view = new FruitMachine({
-      module: 'apple',
-      helpers: ['example']
-    });
+    this.spys = {
+      initialize: this.spy(this.helper, 'initialize'),
+      setup: this.spy(this.helper, 'setup'),
+      teardown: this.spy(this.helper, 'teardown'),
+      destroy: this.spy(this.helper, 'destroy')
+    };
+
   },
 
   "helper `initialize` should have been called": function() {
-    assert.called(this.spys.initialize);
+    var view = new FruitMachine({
+      module: 'apple',
+      helpers: [this.helper]
+    });
+
+    assert.isTrue(this.spys.initialize.called);
   },
 
   "helper `setup` should have been called": function() {
+    var view = new FruitMachine({
+      module: 'apple',
+      helpers: [this.helper]
+    });
 
-    this.view
+    view
       .render()
       .inject(sandbox)
       .setup();
@@ -31,8 +46,12 @@ buster.testCase('FruitMachine#helpers()', {
   },
 
   "helper `teardown` and `destroy` should have been called": function() {
+    var view = new FruitMachine({
+      module: 'apple',
+      helpers: [this.helper]
+    });
 
-    this.view
+    view
       .render()
       .inject(sandbox)
       .setup()
@@ -43,28 +62,10 @@ buster.testCase('FruitMachine#helpers()', {
     assert.called(this.spys.destroy);
   },
 
-  "Should be able to pass functions into `helpers` array if helper hasn't been defined": function() {
-    var spy = this.spy();
-    var view = new helpers.Apple({
-      helpers: [
-        function(view) {
-          view.on('initialize', spy);
-        }
-      ]
-    });
-
-    assert.called(spy);
-  },
-
   tearDown: function() {
-    this.view.destroy();
-
     this.spys.initialize.restore();
     this.spys.setup.restore();
     this.spys.teardown.restore();
     this.spys.destroy.restore();
-
-    FruitMachine.helper.clear('example');
-    FruitMachine.module.clear('apple');
   }
 });

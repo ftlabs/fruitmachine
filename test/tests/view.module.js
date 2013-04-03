@@ -1,34 +1,39 @@
 
 buster.testCase('View#module()', {
-	setUp: helpers.createView,
+	setUp: function() {
+    var layout = new Layout({});
+    var apple = new Apple({ id: 'slot_1' });
+    var orange = new Orange({ id: 'slot_2' });
+    var pear = new Pear({ id: 'slot_3' });
+
+    layout
+      .add(apple)
+      .add(orange)
+      .add(pear);
+
+    this.view = layout;
+  },
 
 	"Should return module type if no arguments given": function() {
-    assert.equals(this.view.module(), 'apple');
+    assert.equals(this.view.module(), 'layout');
   },
 
   "Should return the first child module with the specified type.": function() {
-    var view = new FruitMachine(helpers.configs.orange);
-    var child;
+    var child = this.view.module('pear');
 
-    view.add(helpers.configs.pear);
-    child = view.module('pear');
-
-    assert.equals(child.module(), 'pear');
+    assert.equals(child.id(), 'slot_3');
   },
 
   "If there is more than one child of this module type, only the first is returned.": function() {
-    var view = new FruitMachine(helpers.configs.orange);
-    var child, firstChild;
 
-    view
-      .add(helpers.configs.pear)
-      .add(helpers.configs.pear);
+    this.view
+      .add({ module: 'apple' });
 
-    child = view.module('pear');
-    firstChild = view.children()[0];
+    var child = this.view.module('apple');
+    var firstChild = this.view.children()[0];
+    var lastChild = this.view.children()[this.view.children().length-1];
 
     assert.equals(child, firstChild);
-  },
-
-  tearDown: helpers.destroyView
+    refute.equals(child, lastChild);
+  }
 });

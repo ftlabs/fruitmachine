@@ -1,6 +1,6 @@
 
 buster.testCase('View#render()', {
-  "setUp": helpers.createView,
+  setUp: helpers.createView,
 
   "The master view should have an element post render.": function() {
     this.view.render();
@@ -8,58 +8,57 @@ buster.testCase('View#render()', {
   },
 
   "Data should be present in the generated markup.": function() {
-    var orange = this.view.child('orange');
+    var text = 'some orange text';
+    var orange = new helpers.Views.Orange({
+      data: {
+        text: text
+      }
+    });
 
-    this.view
+    orange
       .render()
-      .inject(sandbox)
-      .setup();
+      .inject(sandbox);
 
-    assert.equals(orange.el.innerText, helpers.configs.orange.data.text);
+    assert.equals(orange.el.innerText, text);
   },
 
   "Child html should be present in the parent.": function() {
-    var firtChild;
+    var layout = new helpers.Views.Layout();
+    var apple = new helpers.Views.Apple({ id: 'slot_1' });
 
-    this.view.render();
-    firstChild = this.view.el.firstElementChild;
-    assert.isTrue(firstChild.classList.contains('orange'));
+    layout
+      .add(apple)
+      .render();
+
+    firstChild = layout.el.firstElementChild;
+
+    assert.isTrue(firstChild.classList.contains('apple'));
   },
 
   "Should be of the tag specified": function() {
-    var View = FruitMachine.module({
-      module: 'orange',
-      tag: 'ul'
-    });
+    var apple = new helpers.Views.Apple({ tag: 'ul' });
 
-    var view = new View();
-    view.render();
-
-    assert.equals('UL', view.el.tagName);
+    apple.render();
+    assert.equals('UL', apple.el.tagName);
   },
 
   "Should have classes on the element": function() {
-    var View = FruitMachine.module({
-      module: 'orange',
-      tag: 'ul',
+    var apple = new helpers.Views.Apple({
       classes: ['foo', 'bar']
     });
 
-    var view = new View();
-    view.render();
-
-    assert.equals('orange foo bar', view.el.className);
+    apple.render();
+    assert.equals('apple foo bar', apple.el.className);
   },
 
-  "Should have and id attribute with the value of `fmid`": function() {
-    var View = FruitMachine.module({
-      module: 'orange'
+  "Should have an id attribute with the value of `fmid`": function() {
+    var apple = new helpers.Views.Apple({
+      classes: ['foo', 'bar']
     });
 
-    var view = new View();
-    view.render();
+    apple.render();
 
-    assert.equals(view._fmid, view.el.id);
+    assert.equals(apple._fmid, apple.el.id);
   },
 
   "tearDown": helpers.destroyView

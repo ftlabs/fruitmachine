@@ -1,92 +1,112 @@
-var helpers = {
-  prototypes: {},
-  configs: {},
-  helpers: {}
-};
+var helpers = {};
 
-helpers.templates = {
+/**
+ * Templates
+ */
+
+var templates = helpers.templates = {
   'apple': Hogan.compile('{{{my_child_module}}}'),
-  'fruity-list': Hogan.compile('{{#children}}{{{child}}}{{/children}}'),
+  'layout': Hogan.compile('{{{slot_1}}}{{{slot_2}}}{{{slot_3}}}'),
+  'list': Hogan.compile('{{#children}}{{{child}}}{{/children}}'),
   'orange': Hogan.compile('{{text}}'),
   'pear': Hogan.compile('{{text}}')
 };
 
-FruitMachine.templates(helpers.templates);
+/**
+ * Module Definitions
+ */
 
-helpers.configs.pear = {
-  module: 'pear',
-  data: {
-    text: 'pear text'
-  }
-};
+helpers.Views = {};
 
-helpers.configs.orange = {
-  id: 'my_child_module',
-  module: 'orange',
-  data: {
-    text: 'orange text'
-  },
-  children: [
-    helpers.configs.pear
-  ]
-};
+var Layout = helpers.Views.Layout = FruitMachine.define({
+  module: 'layout',
+  template: templates.layout,
 
-helpers.configs.apple = {
-  module: 'apple',
-  data: {
-    text: 'a title'
-  },
-  children: [
-    helpers.configs.orange
-  ]
-};
-
-helpers.configs.fruityList = {
-  module: 'fruity-list',
-  children: []
-};
-
-
-helpers.helpers.example = {
-  main: function(view) {
-    view.on('initialize', helpers.helpers.example.initialize);
-    view.on('setup', helpers.helpers.example.setup);
-    view.on('teardown', helpers.helpers.example.teardown);
-    view.on('destroy', helpers.helpers.example.destroy);
-  },
-  initialize: function() {},
-  setup: function() {},
-  teardown: function() {},
-  destroy: function() {}
-};
-
-helpers.prototypes.Apple = {
-  module: 'apple',
   onInitialize: function() {},
   onSetup: function() {},
   onTeardown: function() {},
   onDestroy: function() {}
-};
+});
 
-helpers.Apple = FruitMachine.module(helpers.prototypes.Apple);
+var Apple = helpers.Views.Apple = FruitMachine.define({
+  module: 'apple',
+  template: templates.apple,
+
+  onInitialize: function() {},
+  onSetup: function() {},
+  onTeardown: function() {},
+  onDestroy: function() {}
+});
+
+var List = helpers.Views.List = FruitMachine.define({
+  module: 'list',
+  template: templates.list,
+
+  onInitialize: function() {},
+  onSetup: function() {},
+  onTeardown: function() {},
+  onDestroy: function() {}
+});
+
+var Orange = helpers.Views.Orange = FruitMachine.define({
+  module: 'orange',
+  template: templates.orange,
+
+  onInitialize: function() {},
+  onSetup: function() {},
+  onTeardown: function() {},
+  onDestroy: function() {}
+});
+
+var Pear = helpers.Views.Pear = FruitMachine.define({
+  module: 'pear',
+  template: templates.pear,
+
+  onInitialize: function() {},
+  onSetup: function() {},
+  onTeardown: function() {},
+  onDestroy: function() {}
+});
+
+/**
+ * Create View
+ */
 
 helpers.createView = function() {
-  this.view = new FruitMachine(helpers.configs.apple);
+  var layout = new Layout({});
+  var apple = new Apple({ id: 'slot_1' });
+  var orange = new Orange({ id: 'slot_2' });
+  var pear = new Pear({ id: 'slot_3' });
+
+  layout
+    .add(apple)
+    .add(orange)
+    .add(pear);
+
+  return this.view = layout;
 };
+
+/**
+ * Destroy View
+ */
 
 helpers.destroyView = function() {
   this.view.destroy();
   this.view = null;
 };
 
-helpers.sandbox = function() {
+/**
+ * Sandbox
+ */
+
+helpers.createSandbox = function() {
   document.body.insertAdjacentHTML('beforeend', '<div id="sandbox"></div>');
   return document.getElementById('sandbox');
 };
 
-helpers.sandbox.empty = function() {
-  sandbox.innerHTML = '';
+helpers.sandbox = helpers.createSandbox();
+
+helpers.emptySandbox = function() {
+  helpers.sandbox.innerHTML = '';
 };
 
-
-var sandbox = helpers.sandbox();

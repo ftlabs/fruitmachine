@@ -64,7 +64,7 @@ buster.testCase('View#getElement()', {
     // Restore spys
     document.getElementById.restore();
     FruitMachine.util.querySelectorId.restore();
-    helpers.sandbox.empty();
+    helpers.emptySandbox();
   },
 
   "Should return a different element if parent is re-rendered in DOM": function() {

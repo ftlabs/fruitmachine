@@ -1,16 +1,18 @@
 
 buster.testCase('View#inject()', {
-  "Should inject the view element into the given element.": function() {
-    var view = new FruitMachine(helpers.configs.apple);
+  setUp: helpers.createView,
 
-    view
+  "Should inject the view element into the given element.": function() {
+
+    this.view
       .render()
       .inject(sandbox);
 
-    assert.equals(view.el, sandbox.firstElementChild);
+    assert.equals(this.view.el, helpers.sandbox.firstElementChild);
   },
 
-  "tearDown": function() {
-    helpers.sandbox.empty();
+  tearDown: function() {
+    helpers.emptySandbox();
+    helpers.destroyView.call(this);
   }
 });

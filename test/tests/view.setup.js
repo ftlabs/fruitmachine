@@ -8,7 +8,6 @@ buster.testCase('View#setup()', {
   },
 
   "Setup should recurse.": function() {
-
     this.view
       .render()
       .setup();
@@ -27,8 +26,8 @@ buster.testCase('View#setup()', {
   },
 
   "Custom `onSetup` should be called over default": function() {
-    var spy = this.spy(helpers.Apple.prototype, 'onSetup');
-    var apple = new helpers.Apple();
+    var spy = this.spy(helpers.Views.Apple.prototype, 'onSetup');
+    var apple = new helpers.Views.Apple();
 
     apple
       .render()
