@@ -18,7 +18,10 @@ module.exports = function(grunt) {
         readme: 'docs/readme.hogan'
       },
       dist: {
-        src: 'lib/fruitmachine.js',
+        src: [
+          'lib/view.js',
+          'lib/model.js'
+        ],
         dest: 'README.md'
       }
     },
@@ -28,19 +31,28 @@ module.exports = function(grunt) {
         banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
       },
       build: {
-        src: 'lib/<%= pkg.name %>.js',
+        src: 'dist/<%= pkg.name %>.js',
         dest: 'dist/<%= pkg.name %>.min.js'
+      }
+    },
+
+    watch: {
+      scripts: {
+        files: ['lib/*.js'],
+        tasks: ['browserify']
       }
     }
   });
 
   grunt.loadNpmTasks('grunt-contrib-uglify');
-
-  // Load local tasks.
+  grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-readme');
   grunt.loadNpmTasks('grunt-version');
 
-  // Default task.
-  grunt.registerTask('default', ['uglify', 'readme']);
 
+  // Load local tasks
+  grunt.loadTasks('tasks');
+
+  // Default task.
+  grunt.registerTask('default', ['browserify', 'uglify', 'readme']);
 };
