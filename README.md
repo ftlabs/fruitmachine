@@ -1,6 +1,17 @@
 # fruitmachine
 
-Assembles dynamic views on the client and server.
+A modular view layout manager for client and server.
+
+The main advantages of FruitMachine over Backbone:
+- No deps
+- Can be retrofitted into a parts of a legacy system, it's not a religion
+- Serverside has been considered from the start
+- It doesn't care how you manage your data
+- Modules are designed to be reused in multiple contexts, you create layouts, not fixed views
+- A little more structured than Backbone
+
+## Usage
+
 ## API
 
 ### View();
@@ -240,74 +251,14 @@ Options:
 
  - `propagate` States whether the event should bubble through parent views.
 
+
+
 ### Model#get();
 
 Gets a value by key
 
 If no key is given, the
 whole model is returned.
-
-### module();
-
-Creates and registers a
-FruitMachine view constructor.
-
-
-
-### clear();
-
-Removes a module
-from the module store.
-
-If no module key is passed
-the entire store is cleared.
-
-### helper();
-
-Registers a helper
-
-
-
-### clear();
-
-Clears one or all
-registered helpers.
-
-
-
-### templates();
-
-Registers templates, or overwrites
-the `getTemplate` method with a
-custom template getter function.
-
-
-
-### getTemplate();
-
-The default get template method
-if FruitMachine.template is passed
-a function, this gets overwritten
-by that.
-
-
-
-### clear();
-
-Clear reference to a module's
-template, or clear all template
-references and resets the template
-getter method.
-
-
-
-### FruitMachine();
-
-The main library namespace doubling
-as a convenient alias for creating
-new views.
-
-
 
 
 ## License

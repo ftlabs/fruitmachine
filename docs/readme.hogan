@@ -14,7 +14,9 @@ The main advantages of FruitMachine over Backbone:
 
 ## API
 
-{{{docs}}}
+{{{view}}}
+
+{{{model}}}
 ## License
 Copyright (c) 2012 {{pkg.author.name}}
 Licensed under the MIT license.

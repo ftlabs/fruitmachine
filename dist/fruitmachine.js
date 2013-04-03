@@ -24,7 +24,7 @@ FruitMachine.VERSION = '0.2.5';
 FruitMachine.Events = require('./events');
 FruitMachine.View = require('./view');
 FruitMachine.Model = require('./model');
-FruitMachine.define = FruitMachine.module = require('./define');
+FruitMachine.define = require('./define');
 FruitMachine.util = require('./util');
 FruitMachine.store = require('./store');
 
@@ -218,7 +218,85 @@ exports.uniqueId = function(prefix, suffix) {
 module.exports = {
   modules: {}
 };
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
+
+/*jshint browser:true, node:true*/
+
+'use strict';
+
+var Events = require('./events');
+var util = require('./util');
+var mixin = util.mixin;
+
+/**
+ * Exports
+ */
+
+module.exports = Model;
+
+
+
+function Model(options) {
+  this.fmid = util.uniqueId('model');
+  this._data = mixin({}, options);
+}
+
+/**
+ * Gets a value by key
+ *
+ * If no key is given, the
+ * whole model is returned.
+ *
+ * @param  {String} key
+ * @return {*}
+ * @api public
+ */
+Model.prototype.get = function(key) {
+  return key
+    ? this._data[key]
+    : this._data;
+};
+
+Model.prototype.set = function(key, value) {
+  var _key;
+
+  // If a string key is passed
+  // convert it to an object ready
+  // for the next step.
+  if ('string' === typeof key && value) {
+    _key = {};
+    _key[key] = value;
+    key = _key;
+  }
+
+  // Merge the object into the data store
+  if ('object' === typeof key) {
+    mixin(this._data, key);
+    this.trigger('change');
+    for (var prop in key) {
+      this.trigger('change:' + prop, key[prop]);
+    }
+  }
+
+  return this;
+};
+
+Model.prototype.clear = function() {
+  this._data = {};
+  return this;
+};
+
+Model.prototype.destroy = function() {
+  this._data = null;
+};
+
+Model.prototype.toJSON = function() {
+  return mixin({}, this._data);
+};
+
+// Mixin events functionality
+mixin(Model.prototype, Events);
+},{"./events":2,"./util":6}],3:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -1193,7 +1271,6 @@ View.extend = extend;
  * Module Dependencies
  */
 
-
 var View = require('./view');
 var store = require('./store');
 
@@ -1227,100 +1304,7 @@ module.exports = function(props) {
   // by just a string in layout definitions
   return store.modules[module] = view;
 };
-
-/**
- * Removes a module
- * from the module store.
- *
- * If no module key is passed
- * the entire store is cleared.
- *
- * @param  {String|undefined} module
- * @api public
- */
-module.exports.clear = function(module) {
-  if (module) delete store.modules[module];
-  else store.modules = {};
-};
-},{"./view":3,"./store":7}],4:[function(require,module,exports){
-
-/*jshint browser:true, node:true*/
-
-'use strict';
-
-var Events = require('./events');
-var util = require('./util');
-var mixin = util.mixin;
-
-/**
- * Exports
- */
-
-module.exports = Model;
-
-
-
-function Model(options) {
-  this.fmid = util.uniqueId('model');
-  this._data = mixin({}, options);
-}
-
-/**
- * Gets a value by key
- *
- * If no key is given, the
- * whole model is returned.
- *
- * @param  {String} key
- * @return {*}
- * @api public
- */
-Model.prototype.get = function(key) {
-  return key
-    ? this._data[key]
-    : this._data;
-};
-
-Model.prototype.set = function(key, value) {
-  var _key;
-
-  // If a string key is passed
-  // convert it to an object ready
-  // for the next step.
-  if ('string' === typeof key && value) {
-    _key = {};
-    _key[key] = value;
-    key = _key;
-  }
-
-  // Merge the object into the data store
-  if ('object' === typeof key) {
-    mixin(this._data, key);
-    this.trigger('change');
-    for (var prop in key) {
-      this.trigger('change:' + prop, key[prop]);
-    }
-  }
-
-  return this;
-};
-
-Model.prototype.clear = function() {
-  this._data = {};
-  return this;
-};
-
-Model.prototype.destroy = function() {
-  this._data = null;
-};
-
-Model.prototype.toJSON = function() {
-  return mixin({}, this._data);
-};
-
-// Mixin events functionality
-mixin(Model.prototype, Events);
-},{"./events":2,"./util":6}],8:[function(require,module,exports){
+},{"./store":7,"./view":3}],8:[function(require,module,exports){
 /*jshint browser:true, node:true*/
 
 'use strict';
