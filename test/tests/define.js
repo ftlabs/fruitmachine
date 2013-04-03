@@ -8,7 +8,7 @@ buster.testCase('FruitMachine.define()', {
 	},
 
 	"Should return an instantiable constructor": function() {
-		var View = FruitMachine.module({ module: 'new-module' });
+		var View = FruitMachine.define({ module: 'new-module' });
 		var view = new View();
 
 		assert.defined(view._fmid);
@@ -23,6 +23,6 @@ buster.testCase('FruitMachine.define()', {
 	},
 
 	tearDown: function() {
-		FruitMachine.module.clear('my-module');
+		delete FruitMachine.store['my-module'];
 	}
 });
