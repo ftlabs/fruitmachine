@@ -17,29 +17,16 @@ return (function(e,t,n){function i(n,s){if(!t[n]){if(!e[n]){var o=typeof require
 
 'use strict';
 
-/**
- * Module Dependencies
- */
-
-var util = require('./util');
-var events = require('./events');
-var View = require('./view');
-var Model =  require('./model');
-var define =  require('./define');
-
-/**
- * Exports
- */
-
-FruitMachine.Events = events;
-FruitMachine.View = View;
-FruitMachine.Model = Model;
-FruitMachine.define = FruitMachine.module = define;
-FruitMachine.util = util;
-
-
 // Version
 FruitMachine.VERSION = '0.2.5';
+
+// Public interface
+FruitMachine.Events = require('./events');
+FruitMachine.View = require('./view');
+FruitMachine.Model = require('./model');
+FruitMachine.define = FruitMachine.module = require('./define');
+FruitMachine.util = require('./util');
+FruitMachine.store = require('./store');
 
 /**
  * The main library namespace doubling
@@ -49,7 +36,7 @@ FruitMachine.VERSION = '0.2.5';
  * @param {Object} options
  */
 function FruitMachine(options) {
-  return new View(options);
+  return new FruitMachine.View(options);
 }
 
 /**
@@ -57,71 +44,7 @@ function FruitMachine(options) {
  */
 
 module.exports = FruitMachine;
-},{"./util":2,"./events":3,"./view":4,"./model":5,"./define":6}],2:[function(require,module,exports){
-
-/*jshint browser:true, node:true*/
-
-'use strict';
-
-exports.bind = function(method, context) {
-  return function() { return method.apply(context, arguments); };
-};
-
-exports.isArray = function(arg) {
-  return arg instanceof Array;
-},
-
-exports.mixin = function(original) {
-  // Loop over every argument after the first.
-  [].slice.call(arguments, 1).forEach(function(source) {
-    for (var prop in source) {
-      original[prop] = source[prop];
-    }
-  });
-  return original;
-},
-
-exports.querySelectorId = function(id, el) {
-  if (!el) return;
-  return el.querySelector('#' + id);
-},
-
-/**
- * Inserts an item into an array.
- * Has the option to state an index.
- *
- * @param  {*} item
- * @param  {Array} array
- * @param  {Number} index
- * @return void
- */
-exports.insert = function(item, array, index) {
-  if (typeof index !== 'undefined') {
-    array.splice(index, 0, item);
-  } else {
-    array.push(item);
-  }
-},
-
-exports.toNode = function(html) {
-  var el = document.createElement('div');
-  el.innerHTML = html;
-  return el.removeChild(el.firstElementChild);
-},
-
-// Determine if we have a DOM
-// in the current environment.
-exports.hasDom = function() {
-	return typeof document !== 'undefined';
-};
-
-var i = 0;
-exports.uniqueId = function(prefix, suffix) {
-  prefix = prefix || 'id';
-  suffix = suffix || 'a';
-  return [prefix, (++i) * Math.round(Math.random() * 100000), suffix].join('-');
-};
-},{}],3:[function(require,module,exports){
+},{"./events":2,"./view":3,"./model":4,"./define":5,"./util":6,"./store":7}],2:[function(require,module,exports){
 
 /**
  * Locals
@@ -226,7 +149,76 @@ exports.trigger = function(events) {
 
   return this;
 };
-},{}],4:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
+
+/*jshint browser:true, node:true*/
+
+'use strict';
+
+exports.bind = function(method, context) {
+  return function() { return method.apply(context, arguments); };
+};
+
+exports.isArray = function(arg) {
+  return arg instanceof Array;
+},
+
+exports.mixin = function(original) {
+  // Loop over every argument after the first.
+  [].slice.call(arguments, 1).forEach(function(source) {
+    for (var prop in source) {
+      original[prop] = source[prop];
+    }
+  });
+  return original;
+},
+
+exports.querySelectorId = function(id, el) {
+  if (!el) return;
+  return el.querySelector('#' + id);
+},
+
+/**
+ * Inserts an item into an array.
+ * Has the option to state an index.
+ *
+ * @param  {*} item
+ * @param  {Array} array
+ * @param  {Number} index
+ * @return void
+ */
+exports.insert = function(item, array, index) {
+  if (typeof index !== 'undefined') {
+    array.splice(index, 0, item);
+  } else {
+    array.push(item);
+  }
+},
+
+exports.toNode = function(html) {
+  var el = document.createElement('div');
+  el.innerHTML = html;
+  return el.removeChild(el.firstElementChild);
+},
+
+// Determine if we have a DOM
+// in the current environment.
+exports.hasDom = function() {
+	return typeof document !== 'undefined';
+};
+
+var i = 0;
+exports.uniqueId = function(prefix, suffix) {
+  prefix = prefix || 'id';
+  suffix = suffix || 'a';
+  return [prefix, (++i) * Math.round(Math.random() * 100000), suffix].join('-');
+};
+},{}],7:[function(require,module,exports){
+
+module.exports = {
+  modules: {}
+};
+},{}],3:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -297,7 +289,7 @@ View.prototype._configure = function(options) {
   this.tag = options.tag || this.tag || 'div';
   this.classes = this.classes || options.classes || [];
   this.helpers = this.helpers || options.helpers || [];
-  this.template = this.getTemplate();
+  this.template = this.setTemplate(options.template || this.template);
   this._children = [];
 
   // Create id and module
@@ -335,21 +327,19 @@ View.prototype.attachHelper = function(helper) {
  * Returns the template function
  * for the view.
  *
+ * For template object like Hogan
+ * templates with a `render` method
+ * we need to bind the context
+ * so they can be called without
+ * a reciever.
+ *
  * @return {Function}
  * @api private
  */
-View.prototype.getTemplate = function() {
-  var template = this.template;
-
-  // Warn if no template found
-  if (!template) return console.warn('FM - No template for %s', this._module);
-
-  // Accomodate for template.render() or template()
-  // this.template.render has to be bound to stop
-  // a hogan.js error if the context is wrong.
-  return template.render
-    ? util.bind(template.render, template)
-    : template;
+View.prototype.setTemplate = function(fn) {
+  return fn && fn.render
+    ? util.bind(fn.render, fn)
+    : fn;
 };
 
 /**
@@ -368,7 +358,7 @@ View.prototype.add = function(children, options) {
   var inject = options && options.inject;
   var child;
 
-  if (!children) return;
+  if (!children) return this;
 
   // Make sure it's an array
   children = [].concat(children);
@@ -664,7 +654,9 @@ View.prototype.toHTML = function() {
   // passing children data (for looping
   // or child views) mixed with the
   // view's model data.
-  html = this.template(mixin(data, this.model.get()));
+  html = this.template
+    ? this.template(mixin(data, this.model.get()))
+    : '';
 
   // Wrap the html in a FruitMachine
   // generated root element and return.
@@ -1191,7 +1183,66 @@ View.prototype.trigger = function(key, args, event) {
  */
 
 View.extend = extend;
-},{"./extend":7,"./events":3,"./model":5,"./util":2,"./store":8}],5:[function(require,module,exports){
+},{"./extend":8,"./events":2,"./model":4,"./util":6,"./store":7}],5:[function(require,module,exports){
+
+/*jslint browser:true, node:true*/
+
+'use strict';
+
+/**
+ * Module Dependencies
+ */
+
+
+var View = require('./view');
+var store = require('./store');
+
+/**
+ * Creates and registers a
+ * FruitMachine view constructor.
+ *
+ * @param  {Object|View}
+ * @return {View}
+ */
+module.exports = function(props) {
+  var module = props.module || 'undefined';
+  var view;
+
+  // Move the module key
+  delete props.module;
+  props._module = module;
+
+  // If an existing FruitMachine.View
+  // has been passed in, use that.
+  // If just an object literal has
+  // been passed in then we extend the
+  // default FruitMachine.View prototype
+  // with the properties passed in.
+  view = (props.__super__)
+    ? props
+    : View.extend(props);
+
+  // Store the module by module type
+  // so that module can be referred to
+  // by just a string in layout definitions
+  return store.modules[module] = view;
+};
+
+/**
+ * Removes a module
+ * from the module store.
+ *
+ * If no module key is passed
+ * the entire store is cleared.
+ *
+ * @param  {String|undefined} module
+ * @api public
+ */
+module.exports.clear = function(module) {
+  if (module) delete store.modules[module];
+  else store.modules = {};
+};
+},{"./view":3,"./store":7}],4:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -1269,73 +1320,7 @@ Model.prototype.toJSON = function() {
 
 // Mixin events functionality
 mixin(Model.prototype, Events);
-},{"./events":3,"./util":2}],6:[function(require,module,exports){
-
-/*jslint browser:true, node:true*/
-
-'use strict';
-
-/**
- * Module Dependencies
- */
-
-
-var View = require('./view');
-var store = require('./store');
-
-/**
- * Creates and registers a
- * FruitMachine view constructor.
- *
- * @param  {Object|View}
- * @return {View}
- */
-module.exports = function(props) {
-  var module = props.module || 'undefined';
-  var view;
-
-  // Remove the module key
-  delete props.module;
-  props._module = module;
-
-  // If an existing FruitMachine.View
-  // has been passed in, use that.
-  // If just an object literal has
-  // been passed in then we extend the
-  // default FruitMachine.View prototype
-  // with the properties passed in.
-  view = (props.__super__)
-    ? props
-    : View.extend(props);
-
-  // Store the module by module type
-  // so that module can be referred to
-  // by just a string in layout definitions
-  return store.modules[module] = view;
-};
-
-/**
- * Removes a module
- * from the module store.
- *
- * If no module key is passed
- * the entire store is cleared.
- *
- * @param  {String|undefined} module
- * @api public
- */
-module.exports.clear = function(module) {
-  if (module) delete store.modules[module];
-  else store.modules = {};
-};
-},{"./view":4,"./store":8}],8:[function(require,module,exports){
-
-module.exports = {
-  modules: {},
-  templates: {},
-  helpers: {}
-};
-},{}],7:[function(require,module,exports){
+},{"./events":2,"./util":6}],8:[function(require,module,exports){
 /*jshint browser:true, node:true*/
 
 'use strict';
@@ -1372,6 +1357,6 @@ module.exports = function(proto) {
 
   return child;
 };
-},{"./util":2}]},{},[1])(1)
+},{"./util":6}]},{},[1])(1)
 });
 ;
