@@ -1,8 +1,37 @@
-# fruitmachine
+# FruitMachine
 
 A modular view layout manager for client and server.
 
-The main advantages of FruitMachine over Backbone:
+---
+
+```js
+var layout = {
+  module: 'layout-a',
+  children: [
+    {
+      id: 'child_1',
+      module: 'apple',
+      data: {
+        title: 'Apple Title'
+      }
+    },
+    {
+      id: 'child_2',
+      module: 'orange'
+    }
+  ]
+};
+
+var view = new FruitMachine.View(layout);
+
+view
+  .render()
+  .inject(document.body)
+  .setup();
+```
+
+### Why not Backbone?
+
 - No deps
 - Can be retrofitted into a parts of a legacy system, it's not a religion
 - Serverside has been considered from the start
