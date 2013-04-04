@@ -4,6 +4,8 @@ A modular view layout manager for client and server.
 
 ---
 
+## Usage
+
 #### Define your modules
 
 Every module must have a module name, and a template function.
@@ -88,7 +90,6 @@ view
   .render();
 ```
 
-
 ## Why not use Backbone?
 
 - No deps
@@ -97,8 +98,6 @@ view
 - It doesn't care how you manage your data
 - Modules are designed to be reused in multiple contexts, you create layouts, not fixed views
 - A little more structured than Backbone
-
-## Usage
 
 ## API
 
@@ -116,18 +115,6 @@ Options:
 
  - `at` The child index at which to insert
  - `inject` Injects the child's view element into the parent's
-
-### View#injectElement();
-
-Injects an element into the
-View's root element.
-
-By default the element is appended
-but then
-
-Options:
-
- - `at` The index at which to insert.
 
 ### View#id();
 

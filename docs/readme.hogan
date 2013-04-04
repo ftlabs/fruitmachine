@@ -4,6 +4,8 @@
 
 ---
 
+## Usage
+
 #### Define your modules
 
 Every module must have a module name, and a template function.
@@ -88,7 +90,6 @@ view
   .render();
 ```
 
-
 ## Why not use Backbone?
 
 - No deps
@@ -97,8 +98,6 @@ view
 - It doesn't care how you manage your data
 - Modules are designed to be reused in multiple contexts, you create layouts, not fixed views
 - A little more structured than Backbone
-
-## Usage
 
 ## API
 
