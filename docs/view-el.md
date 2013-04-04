@@ -1,10 +1,8 @@
 # The View Element
 
-Each View module has a 'root' element. This is the single element that wraps the contents of a View module. It is your only handle on the View once it has been [injected](view-injection.md) into the DOM.
+Each View module has a 'root' element (`view.el`). This is the single element that wraps the contents of a View module. It is your handle on the View once it has been [injected](view-injection.md) into the DOM. You may be familiar with the `.el` concept from [Backbone](http://backbonejs.org/). In *FruitMachine* it is similar, but due to the 'DOM free' nested rendering techniques used, the `view.el` is not always accessible.
 
-You may be familiar with the `.el` concept from [Backbone](http://backbonejs.org/). In *FruitMachine* it is similar, but due to the 'DOM free' nested rendering techniques used, the `view.el` is not always accessible.
-
-The `.el` property of a view module is populated when `view.setup()` is called. We suggest you only call `.setup()` after your view is in the DOM, this way we can guarantee your `view.el` property will be set.
+In FruitMachine the `.el` property of a view module is populated when `view.setup()` is called. We suggest you only call `.setup()` after your view is in the DOM, this way we can guarantee your `view.el` property will be set.
 
 **NOTE:** As a safetly measure we do not setup views when a view element could not be found. This means that `view.el` related setup logic wont error when `view.el` is `undefined`.
 
