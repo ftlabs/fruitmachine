@@ -1,4 +1,3 @@
-
 # Templates
 
 Each module (or view) must have a template assigned with it. This is done when the module is defined (via `FruitMachine.define();`). Each module expects to be given a template function, that when called (and optionally passed a data object) will return html.
