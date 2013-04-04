@@ -2,11 +2,15 @@
 
 There are two ways to instantiate a FruitMachine View:
 
-```js
-// 'Explicitly'...
-var view = new Apple();
+##### Explicit
 
-// ...or 'Lazily'
+```js
+var view = new Apple();
+```
+
+##### Lazy
+
+```js
 var view = new FruitMachine.View({ module: 'apple' });
 ```
 
