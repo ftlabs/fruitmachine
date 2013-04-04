@@ -17,8 +17,8 @@ var Apple = FruitMachine.define({
 
 Define does two things:
 
-- It registers a View module internally for [Lazy](instantition.md#explicit) View instantiation
-- It returns a constructor that can be [Explicitly](instantition.md#lazy) instantiated.
+- It registers a View module internally for [Lazy](instantition.md#lazy) View instantiation
+- It returns a constructor that can be [Explicitly](instantition.md#explicit) instantiated.
 
 Internally `define` extends the default `FruitMachine.View.prototype` with the parameters you define. Many of these parameters can be overwritten in the options passed to the constructor on a per instance basis. It is important you don't declare any parameters that conflict with `FruitMachine.View.prototype` core API (check the [source]() if you are unsure).
 
