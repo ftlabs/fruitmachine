@@ -12,7 +12,7 @@ var view = new FruitMachine.View({ module: 'apple' });
 
 Use *Explicit* instantiation over *Lazy* instantiation whenever possible. The *Lazy* instantiation option exists so that you are able to predefine page layouts in JSON form and pass them into the `FruitMachine.View()` constructor.
 
-When instantiating 'lazily' *FruitMachine* looks at the `module` property and attempts to map it to a module you have defined using [FruitMachine.define()](docs/define). If a match is found, it will `Explictly` instantiate that module with the options you originally passed.
+When instantiating 'lazily' *FruitMachine* looks at the `module` property and attempts to map it to a module you have defined using [FruitMachine.define()](../defining-modules.md). If a match is found, it will `Explictly` instantiate that module with the options you originally passed.
 
 ### Options
 
