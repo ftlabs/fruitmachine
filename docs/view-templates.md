@@ -11,4 +11,4 @@ var MyModule = FruitMachine.define({
 });
 ```
 
-If the object passed has a render function (somewhat templating convention), then that will be used.
+**Note:** If the object passed has a render function (somewhat templating convention), then that will be used.
