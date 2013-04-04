@@ -1,4 +1,3 @@
-
 #Finding modules
 
 When working with a nested (DOM like) view structure, you need a way get to child view instances. FruitMachine has three APIs for this:
