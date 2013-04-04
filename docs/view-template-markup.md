@@ -9,11 +9,11 @@ It gives you the following data:
 
 This gives you the ability to print child html eactly where you want it, or to loop and print all children of the current View. If you don't print a module's child View's into the markup then they will not appear in your final view.
 
-## Place child modules by `id`
+### Place child modules by `id`
 
 The following example demonstrates how you can place child modules by `id`.
 
-#### Create the view
+##### Create the view
 
 ```js
 var apple = new Apple({ id: 'my_apple' });
@@ -23,7 +23,7 @@ var layout = new Layout();
 layout.add(apple)
 ```
 
-#### Template markup
+##### Template markup
 
 *layout.mustache*
 
@@ -39,7 +39,7 @@ I am Apple
 
 **Remember:** FruitMachine creates the View module's root element for you, so your templates need only contain the markup for the module's contents.
 
-#### Render
+##### Render
 
 ```js
 layout.render();
@@ -49,9 +49,11 @@ layout.el.outerHTML;
 //   </div>
 ```
 
-## Loop and place all child modules
+### Loop and place all child modules
 
 In some cases the amount of child View modules is not known, we just want to render them all. The list.mustache template uses the special `children` (Array) and `child` (HTML string) keys to interate and print each View module's html. In this example we are using dummy `List`  and `Item` View constructors  
+
+##### Create the view
 
 ```js
 var list = new List();
@@ -65,7 +67,7 @@ list
   .add(item3);
 ```
 
-#### Template markup
+##### Template markup
 
 *list.mustache*
 
@@ -83,7 +85,7 @@ list
 My name is {{name}}
 ```
 
-#### Render
+##### Render
 
 ```js
 layout.render();
