@@ -1,156 +1,6 @@
 (function(e){if("function"==typeof bootstrap)bootstrap("fruitmachine",e);else if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else if("undefined"!=typeof ses){if(!ses.ok())return;ses.makeFruitMachine=e}else"undefined"!=typeof window?window.FruitMachine=e():global.FruitMachine=e()})(function(){var define,ses,bootstrap,module,exports;
 return (function(e,t,n){function i(n,s){if(!t[n]){if(!e[n]){var o=typeof require=="function"&&require;if(!s&&o)return o(n,!0);if(r)return r(n,!0);throw new Error("Cannot find module '"+n+"'")}var u=t[n]={exports:{}};e[n][0](function(t){var r=e[n][1][t];return i(r?r:t)},u,u.exports)}return t[n].exports}var r=typeof require=="function"&&require;for(var s=0;s<n.length;s++)i(n[s]);return i})({1:[function(require,module,exports){
 
-/*jslint browser:true, node:true*/
-
-/**
- * FruitMachine
- *
- * Renders layouts/modules from a basic layout definition.
- * If views require custom interactions devs can extend
- * the basic functionality.
- *
- * @version 0.2.5
- * @copyright The Financial Times Limited [All Rights Reserved]
- * @author Wilson Page <wilson.page@ft.com>
- */
-
-'use strict';
-
-// Version
-FruitMachine.VERSION = '0.2.5';
-
-// Public interface
-FruitMachine.Events = require('./events');
-FruitMachine.View = require('./view');
-FruitMachine.Model = require('./model');
-FruitMachine.define = require('./define');
-FruitMachine.util = require('./util');
-FruitMachine.store = require('./store');
-
-/**
- * The main library namespace doubling
- * as a convenient alias for creating
- * new views.
- *
- * @param {Object} options
- */
-function FruitMachine(options) {
-  return new FruitMachine.View(options);
-}
-
-/**
- * Expose 'FruitMachine'
- */
-
-module.exports = FruitMachine;
-},{"./events":2,"./view":3,"./model":4,"./define":5,"./util":6,"./store":7}],2:[function(require,module,exports){
-
-/**
- * Locals
- */
-
-var splitter = /\s+/;
-var slice = [].slice;
-
-/**
- * Exports
- */
-
-// Bind one or more space separated events, `events`, to a `callback`
-// function. Passing `"all"` will bind the callback to all events fired.
-exports.on = function(events, callback, context) {
-
-  var calls, event, node, tail, list;
-  if (!callback) return this;
-  events = events.split(splitter);
-  calls = this._callbacks || (this._callbacks = {});
-
-  // Create an immutable callback list, allowing traversal during
-  // modification.  The tail is an empty object that will always be used
-  // as the next node.
-  event = events.shift();
-  while (event) {
-    list = calls[event];
-    node = list ? list.tail : {};
-    node.next = tail = {};
-    node.context = context;
-    node.callback = callback;
-    calls[event] = {tail: tail, next: list ? list.next : node};
-    event = events.shift();
-  }
-
-  return this;
-};
-
-// Remove one or many callbacks. If `context` is null, removes all callbacks
-// with that function. If `callback` is null, removes all callbacks for the
-// event. If `events` is null, removes all bound callbacks for all events.
-exports.off = function(events, callback, context) {
-  var event, calls, node, tail, cb, ctx;
-
-  // No events, or removing *all* events.
-  if (!(calls = this._callbacks)) return;
-  if (!(events || callback || context)) {
-    delete this._callbacks;
-    return this;
-  }
-
-  // Loop through the listed events and contexts, splicing them out of the
-  // linked list of callbacks if appropriate.
-  events = events ? events.split(splitter) : Object.keys(calls);
-  while (event = events.shift()) {
-    node = calls[event];
-    delete calls[event];
-    if (!node || !(callback || context)) continue;
-    // Create a new list, omitting the indicated callbacks.
-    tail = node.tail;
-    while ((node = node.next) !== tail) {
-      cb = node.callback;
-      ctx = node.context;
-      if ((callback && cb !== callback) || (context && ctx !== context)) {
-        this.on(event, cb, ctx);
-      }
-    }
-  }
-
-  return this;
-};
-
-// Trigger one or many events, firing all bound callbacks. Callbacks are
-// passed the same arguments as `trigger` is, apart from the event name
-// (unless you're listening on `"all"`, which will cause your callback to
-// receive the true name of the event as the first argument).
-exports.trigger = function(events) {
-  var event, node, calls, tail, args, all, rest;
-  if (!(calls = this._callbacks)) return this;
-  all = calls.all;
-  events = events.split(splitter);
-  rest = slice.call(arguments, 1);
-
-  // For each event, walk through the linked list of callbacks twice,
-  // first to trigger the event, then to trigger any `"all"` callbacks.
-  while (event = events.shift()) {
-    if (node = calls[event]) {
-      tail = node.tail;
-      while ((node = node.next) !== tail) {
-        node.callback.apply(node.context || this, rest);
-      }
-    }
-
-    if (node = all) {
-      tail = node.tail;
-      args = [event].concat(rest);
-      while ((node = node.next) !== tail) {
-        node.callback.apply(node.context || this, args);
-      }
-    }
-  }
-
-  return this;
-};
-},{}],6:[function(require,module,exports){
-
 /*jshint browser:true, node:true*/
 
 'use strict';
@@ -219,12 +69,210 @@ exports.keys = function(object) {
   for (var key in object) keys.push(key);
   return keys;
 };
-},{}],7:[function(require,module,exports){
+},{}],2:[function(require,module,exports){
 
 module.exports = {
   modules: {}
 };
 },{}],3:[function(require,module,exports){
+
+/*jslint browser:true, node:true*/
+
+/**
+ * FruitMachine
+ *
+ * Renders layouts/modules from a basic layout definition.
+ * If views require custom interactions devs can extend
+ * the basic functionality.
+ *
+ * @version 0.2.5
+ * @copyright The Financial Times Limited [All Rights Reserved]
+ * @author Wilson Page <wilson.page@ft.com>
+ */
+
+'use strict';
+
+// Version
+FruitMachine.VERSION = '0.2.5';
+
+// Public interface
+FruitMachine.Events = require('event');
+FruitMachine.View = require('./view');
+FruitMachine.Model = require('./model');
+FruitMachine.define = require('./define');
+FruitMachine.util = require('./util');
+FruitMachine.store = require('./store');
+
+/**
+ * The main library namespace doubling
+ * as a convenient alias for creating
+ * new views.
+ *
+ * @param {Object} options
+ */
+function FruitMachine(options) {
+  return new FruitMachine.View(options);
+}
+
+/**
+ * Expose 'FruitMachine'
+ */
+
+module.exports = FruitMachine;
+},{"./view":4,"./model":5,"./define":6,"./util":1,"./store":2,"event":7}],6:[function(require,module,exports){
+
+/*jslint browser:true, node:true*/
+
+'use strict';
+
+/**
+ * Module Dependencies
+ */
+
+var View = require('./view');
+var store = require('./store');
+var util = require('./util');
+
+/**
+ * Locals
+ */
+
+var keys = util.keys(View.prototype);
+
+/**
+ * Creates and registers a
+ * FruitMachine view constructor.
+ *
+ * @param  {Object|View}
+ * @return {View}
+ */
+module.exports = function(props) {
+  var view;
+
+  protect(keys, props);
+
+  // If an existing FruitMachine.View
+  // has been passed in, use that.
+  // If just an object literal has
+  // been passed in then we extend the
+  // default FruitMachine.View prototype
+  // with the properties passed in.
+  view = (props.__super__)
+    ? props
+    : View.extend(props);
+
+  // Store the module by module type
+  // so that module can be referred to
+  // by just a string in layout definitions
+  return store.modules[props._module] = view;
+};
+
+
+/**
+ * Makes sure no properties
+ * or methods can be overwritten
+ * on the core View.prototype.
+ *
+ * If conflicting keys are found,
+ * we create a new key prifixed with
+ * a '_' and delete the original key.
+ *
+ * @param  {Array} keys
+ * @param  {Object} ob
+ * @return {[type]}
+ */
+function protect(keys, ob) {
+  for (var key in ob) {
+    if (~keys.indexOf(key)) {
+      ob['_' + key] = ob[key];
+      delete ob[key];
+    }
+  }
+}
+},{"./view":4,"./store":2,"./util":1}],7:[function(require,module,exports){
+
+
+function Event(obj) {
+	if (!(this instanceof Event)) return new Event(obj);
+	if (obj) {
+		obj._cbs = {};
+		return mixin(obj, Event.prototype);
+	}
+
+	this._cbs = {};
+}
+
+
+Event.prototype.on = function(name, cb) {
+	(this._cbs[name] || (this._cbs[name] = [])).push(cb);
+};
+
+
+Event.prototype.off = function(name, cb) {
+	var i, cbs;
+
+	if (!name) return this._cbs = {};
+	if (!cb) return delete this._cbs[name];
+
+	cbs = this._cbs[name] || [];
+	while (cbs && ~(i = cbs.indexOf(cb))) cbs.splice(i, 1);
+};
+
+
+Event.prototype.trigger = function(name) {
+	var cbs = this._cbs[name] || [];
+	var args = [].slice.call(arguments, 1);
+	var l = cbs.length;
+
+	while (l--) cbs[l].apply(null, args);
+};
+
+/**
+ * Util
+ */
+
+function mixin(a, b) {
+  for (var key in b) a[key] = b[key];
+  return a;
+}
+},{}],8:[function(require,module,exports){
+/*jshint browser:true, node:true*/
+
+'use strict';
+
+/**
+ * Module Dependencies
+ */
+
+var mixin = require('./util').mixin;
+
+
+module.exports = function(proto) {
+  var parent = this;
+  var child;
+
+  child = function(){ return parent.apply(this, arguments); };
+
+  // Set the prototype chain to
+  // inherit from `parent`, without
+  // calling `parent`'s constructor function.
+  function C() { this.constructor = child; }
+  C.prototype = parent.prototype;
+  child.prototype = new C();
+
+  // Add prototype properties
+  // (instance properties) to
+  // the subclass, if supplied.
+  mixin(child.prototype, proto);
+
+  // Set a convenience property
+  // in case the parent's prototype
+  // is needed later.
+  child.__super__ = parent.prototype;
+
+  return child;
+};
+},{"./util":1}],4:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -235,7 +283,7 @@ module.exports = {
  */
 
 var extend = require('./extend');
-var Events = require('./events');
+var Event = require('event');
 var Model = require('./model');
 var util = require('./util');
 var store = require('./store');
@@ -1086,8 +1134,8 @@ View.prototype.toJSON = function() {
 };
 
 // Events
-View.prototype.on = Events.on;
-View.prototype.off = Events.off;
+View.prototype.on = Event.on;
+View.prototype.off = Event.off;
 
 /**
  * Proxies the standard Event.trigger
@@ -1122,7 +1170,7 @@ View.prototype.trigger = function(key, args, event) {
   };
 
   // Trigger event
-  Events.trigger.apply(this, [key, event].concat(args));
+  Event.trigger.apply(this, [key, event].concat(args));
 
   // Propagate by default
   propagate = (event.propagate !== false);
@@ -1140,13 +1188,13 @@ View.prototype.trigger = function(key, args, event) {
  */
 
 View.extend = extend;
-},{"./extend":8,"./events":2,"./model":4,"./util":6,"./store":7}],4:[function(require,module,exports){
+},{"./extend":8,"./model":5,"./util":1,"./store":2,"event":7}],5:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
 'use strict';
 
-var Events = require('./events');
+var events = require('event');
 var util = require('./util');
 var mixin = util.mixin;
 
@@ -1217,114 +1265,7 @@ Model.prototype.toJSON = function() {
 };
 
 // Mixin events functionality
-mixin(Model.prototype, Events);
-},{"./events":2,"./util":6}],5:[function(require,module,exports){
-
-/*jslint browser:true, node:true*/
-
-'use strict';
-
-/**
- * Module Dependencies
- */
-
-var View = require('./view');
-var store = require('./store');
-var util = require('./util');
-
-/**
- * Locals
- */
-
-var keys = util.keys(View.prototype);
-
-/**
- * Creates and registers a
- * FruitMachine view constructor.
- *
- * @param  {Object|View}
- * @return {View}
- */
-module.exports = function(props) {
-  var view;
-
-  protect(keys, props);
-
-  // If an existing FruitMachine.View
-  // has been passed in, use that.
-  // If just an object literal has
-  // been passed in then we extend the
-  // default FruitMachine.View prototype
-  // with the properties passed in.
-  view = (props.__super__)
-    ? props
-    : View.extend(props);
-
-  // Store the module by module type
-  // so that module can be referred to
-  // by just a string in layout definitions
-  return store.modules[props._module] = view;
-};
-
-
-/**
- * Makes sure no properties
- * or methods can be overwritten
- * on the core View.prototype.
- *
- * If conflicting keys are found,
- * we create a new key prifixed with
- * a '_' and delete the original key.
- *
- * @param  {Array} keys
- * @param  {Object} ob
- * @return {[type]}
- */
-function protect(keys, ob) {
-  for (var key in ob) {
-    if (~keys.indexOf(key)) {
-      ob['_' + key] = ob[key];
-      delete ob[key];
-    }
-  }
-}
-},{"./view":3,"./store":7,"./util":6}],8:[function(require,module,exports){
-/*jshint browser:true, node:true*/
-
-'use strict';
-
-/**
- * Module Dependencies
- */
-
-var mixin = require('./util').mixin;
-
-
-module.exports = function(proto) {
-  var parent = this;
-  var child;
-
-  child = function(){ return parent.apply(this, arguments); };
-
-  // Set the prototype chain to
-  // inherit from `parent`, without
-  // calling `parent`'s constructor function.
-  function C() { this.constructor = child; }
-  C.prototype = parent.prototype;
-  child.prototype = new C();
-
-  // Add prototype properties
-  // (instance properties) to
-  // the subclass, if supplied.
-  mixin(child.prototype, proto);
-
-  // Set a convenience property
-  // in case the parent's prototype
-  // is needed later.
-  child.__super__ = parent.prototype;
-
-  return child;
-};
-},{"./util":6}]},{},[1])(1)
+events(Model.prototype);
+},{"./util":1,"event":7}]},{},[3])(3)
 });
 ;
