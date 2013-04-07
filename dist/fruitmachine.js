@@ -331,12 +331,13 @@ function mixin(a, b) {
 
 var mixin = require('./util').mixin;
 
+/**
+ * Exports
+ */
 
 module.exports = function(proto) {
   var parent = this;
-  var child;
-
-  child = function(){ return parent.apply(this, arguments); };
+  var child = function(){ return parent.apply(this, arguments); };
 
   // Set the prototype chain to
   // inherit from `parent`, without
@@ -346,8 +347,6 @@ module.exports = function(proto) {
   child.prototype = new C();
 
   // Add prototype properties
-  // (instance properties) to
-  // the subclass, if supplied.
   mixin(child.prototype, proto);
 
   // Set a convenience property
