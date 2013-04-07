@@ -86,7 +86,7 @@ view.setup();
 ```js
 view
   .setup()
-  .inject()
+  .inject(document.body)
   .render();
 ```
 
