@@ -213,6 +213,12 @@ exports.uniqueId = function(prefix, suffix) {
   suffix = suffix || 'a';
   return [prefix, (++i) * Math.round(Math.random() * 100000), suffix].join('-');
 };
+
+exports.keys = function(object) {
+  var keys = [];
+  for (var key in object) keys.push(key);
+  return keys;
+};
 },{}],7:[function(require,module,exports){
 
 module.exports = {
@@ -270,7 +276,7 @@ function View(options) {
   this.add(options.children);
 
   // Run initialize hooks
-  this.onInitialize(options);
+  if (this.initialize) this.initialize(options);
   this.trigger('initialize', [options], { propagate: false });
 }
 
@@ -290,7 +296,7 @@ View.prototype._configure = function(options) {
   this.classes = this.classes || options.classes || [];
   this.helpers = this.helpers || options.helpers || [];
   this.template = this.setTemplate(options.template || this.template);
-  this._children = [];
+  this.children = [];
 
   // Create id and module
   // lookup objects
@@ -369,7 +375,7 @@ View.prototype.add = function(children, options) {
     // If it's not a View, make it one.
     if (!(child instanceof View)) child = new View(child);
 
-    util.insert(child, this._children, at);
+    util.insert(child, this.children, at);
     this._addLookup(child);
     child.parent = this;
 
@@ -533,56 +539,6 @@ View.prototype.modules = function(key) {
 };
 
 /**
- * Returns the first child
- * view that matches the query.
- *
- * Example:
- *
- *   var child = view.child(<id>);
- *   var child = view.child(<module>);
- *
- * @param  {String} name [id|module]
- * @return {View|undefined}
- * @deprecated
- */
-View.prototype.child = function(query) {
-  var child = this._modules[query] || this._ids[query];
-  if (child) return child[0] || child;
-};
-
-/**
- * Allows three ways to return
- * a view's children and direct
- * children, depending on arguments
- * passed.
- *
- * Example:
- *
- *   // Return all direct children
- *   view.children();
- *
- *   // Return all children that match query.
- *   view.children('orange');
- *
- * @param  {undefined|String|Function} query
- * @return {Array}
- * @depricated
- */
-View.prototype.children = function(query) {
-
-  // If no argument is passd,
-  // return all direct children.
-  if (!query) return this._children;
-
-  // Get the direct children
-  // that match this query
-  return this._modules[query]
-    || this._ids[query]
-    || [];
-};
-
-
-/**
  * Calls the passed function
  * for each of the view's
  * children.
@@ -597,12 +553,11 @@ View.prototype.children = function(query) {
  * @return {[type]}
  */
 View.prototype.each = function(fn) {
-  var children = this.children();
-  var l = children.length;
+  var l = this.children.length;
   var result;
 
   for (var i = 0; i < l; i++) {
-    result = fn(children[i]);
+    result = fn(this.children[i]);
     if (result) return result;
   }
 };
@@ -718,14 +673,6 @@ View.prototype.render = function() {
 View.prototype.setup = function(options) {
   var shallow = options && options.shallow;
 
-  // Call 'setup' on all subviews
-  // first (bottom up recursion).
-  if (!shallow) {
-    this.each(function(child) {
-      child.setup();
-    });
-  }
-
   // Attempt to fetch the view's
   // root element. Don't continue
   // if no route element is found.
@@ -737,13 +684,24 @@ View.prototype.setup = function(options) {
   if (this.isSetup) this.teardown({ shallow: true });
 
   // Fire the `setup` event hook
-  this.trigger('setup', { propagate: false });
+  this.trigger('before-setup', { propagate: false });
 
-  // Run onSetup custom function
-  this.onSetup();
+  // Run custom setup logic
+  if (this._setup) this._setup();
+
+  // Fire the `setup` event hook
+  this.trigger('setup', { propagate: false });
 
   // Flag view as 'setup'
   this.isSetup = true;
+
+  // Call 'setup' on all subviews
+  // first (top down recursion)
+  if (!shallow) {
+    this.each(function(child) {
+      child.setup();
+    });
+  }
 
   // For chaining
   return this;
@@ -770,17 +728,22 @@ View.prototype.teardown = function(options) {
     });
   }
 
-  // Don't teardown if this view
-  // hasn't been setup. Teardown
+  // Only teardown if this view
+  // has been setup. Teardown
   // is supposed to undo all the
   // work setup does, and therefore
   // will likely run into undefined
   // variables if setup hasn't run.
-  if (!this.isSetup) return this;
+  if (this.isSetup) {
 
-  this.trigger('teardown', { propagate: false });
-  this.onTeardown();
-  this.isSetup = false;
+    this.trigger('before-teardown', { propagate: false });
+
+    if (this._teardown) this._teardown();
+
+    this.trigger('teardown', { propagate: false });
+
+    this.isSetup = false;
+  }
 
   // For chaining
   return this;
@@ -798,8 +761,7 @@ View.prototype.teardown = function(options) {
  * @api public
  */
 View.prototype.destroy = function(options) {
-  var children = this._children;
-  var l = children.length;
+  var l = this.children.length;
 
   // Destroy each child view.
   // We don't waste time removing
@@ -812,7 +774,7 @@ View.prototype.destroy = function(options) {
   // with each iteration, hense the
   // reverse while loop.
   while (l--) {
-    children[l].destroy({ el: false });
+    this.children[l].destroy({ el: false });
   }
 
   // Don't continue if this view
@@ -826,12 +788,16 @@ View.prototype.destroy = function(options) {
 
   // Run teardown so custom
   // views can bind logic to it
-  this.teardown(options);
+  this.teardown(options, { shallow: true });
 
-  // Trigger a destroy event
+
+  this.trigger('before-destroy', { propagate: false });
+
+  if (this._destroy) this._destroy();
+
+  // Trigger a `destroy` event
   // for custom Views to bind to.
   this.trigger('destroy', { propagate: false });
-  this.onDestroy();
 
   // Remove the model 'change' event
   // listener just in case the same
@@ -851,13 +817,6 @@ View.prototype.destroy = function(options) {
   // Clear references
   this.el = this.model = this.parent = this._modules = this._module = this._ids = this._id = null;
 };
-
-// Empty methods you can overwrite
-// in your custom view logic.
-View.prototype.onInitialize = function() {};
-View.prototype.onSetup = function() {};
-View.prototype.onTeardown = function() {};
-View.prototype.onDestroy = function() {};
 
 /**
  * Removes the View's element
@@ -883,8 +842,8 @@ View.prototype.remove = function(options) {
   if (!this.parent) return this;
 
   // Remove reference from views array
-  index = this.parent._children.indexOf(this);
-  this.parent._children.splice(index, 1);
+  index = this.parent.children.indexOf(this);
+  this.parent.children.splice(index, 1);
 
   // Remove references from the lookup
   this.parent._removeLookup(this);
@@ -899,11 +858,8 @@ View.prototype.remove = function(options) {
  * @api public
  */
 View.prototype.empty = function() {
-  var children = this.children();
-  var l = children.length;
-
-  while (l--) children[l].destroy();
-
+  var l = this.children.length;
+  while (l--) this.children[l].destroy();
   return this;
 };
 
@@ -1184,50 +1140,7 @@ View.prototype.trigger = function(key, args, event) {
  */
 
 View.extend = extend;
-},{"./events":2,"./extend":8,"./model":4,"./store":7,"./util":6}],5:[function(require,module,exports){
-
-/*jslint browser:true, node:true*/
-
-'use strict';
-
-/**
- * Module Dependencies
- */
-
-var View = require('./view');
-var store = require('./store');
-
-/**
- * Creates and registers a
- * FruitMachine view constructor.
- *
- * @param  {Object|View}
- * @return {View}
- */
-module.exports = function(props) {
-  var module = props.module || 'undefined';
-  var view;
-
-  // Move the module key
-  delete props.module;
-  props._module = module;
-
-  // If an existing FruitMachine.View
-  // has been passed in, use that.
-  // If just an object literal has
-  // been passed in then we extend the
-  // default FruitMachine.View prototype
-  // with the properties passed in.
-  view = (props.__super__)
-    ? props
-    : View.extend(props);
-
-  // Store the module by module type
-  // so that module can be referred to
-  // by just a string in layout definitions
-  return store.modules[module] = view;
-};
-},{"./store":7,"./view":3}],4:[function(require,module,exports){
+},{"./extend":8,"./events":2,"./model":4,"./util":6,"./store":7}],4:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -1305,7 +1218,77 @@ Model.prototype.toJSON = function() {
 
 // Mixin events functionality
 mixin(Model.prototype, Events);
-},{"./events":2,"./util":6}],8:[function(require,module,exports){
+},{"./events":2,"./util":6}],5:[function(require,module,exports){
+
+/*jslint browser:true, node:true*/
+
+'use strict';
+
+/**
+ * Module Dependencies
+ */
+
+var View = require('./view');
+var store = require('./store');
+var util = require('./util');
+
+/**
+ * Locals
+ */
+
+var keys = util.keys(View.prototype);
+
+/**
+ * Creates and registers a
+ * FruitMachine view constructor.
+ *
+ * @param  {Object|View}
+ * @return {View}
+ */
+module.exports = function(props) {
+  var view;
+
+  protect(keys, props);
+
+  // If an existing FruitMachine.View
+  // has been passed in, use that.
+  // If just an object literal has
+  // been passed in then we extend the
+  // default FruitMachine.View prototype
+  // with the properties passed in.
+  view = (props.__super__)
+    ? props
+    : View.extend(props);
+
+  // Store the module by module type
+  // so that module can be referred to
+  // by just a string in layout definitions
+  return store.modules[props._module] = view;
+};
+
+
+/**
+ * Makes sure no properties
+ * or methods can be overwritten
+ * on the core View.prototype.
+ *
+ * If conflicting keys are found,
+ * we create a new key prifixed with
+ * a '_' and delete the original key.
+ *
+ * @param  {Array} keys
+ * @param  {Object} ob
+ * @return {[type]}
+ */
+function protect(keys, ob) {
+  for (var key in ob) {
+    if (~keys.indexOf(key)) {
+      ob['_' + key] = ob[key];
+      delete ob[key];
+    }
+  }
+}
+},{"./view":3,"./store":7,"./util":6}],8:[function(require,module,exports){
 /*jshint browser:true, node:true*/
 
 'use strict';

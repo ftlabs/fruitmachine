@@ -7,17 +7,17 @@ buster.testCase('View#add()', {
   "Should add a View instance as a child.": function() {
     var pear = new helpers.Views.Pear();
     this.view.add(pear);
-    assert.equals(this.view.children().length, 1);
+    assert.equals(this.view.children.length, 1);
   },
 
   "Should add a JSON config as a child.": function() {
     this.view.add({ module: 'pear' });
-    assert.equals(this.view.children().length, 1);
+    assert.equals(this.view.children.length, 1);
   },
 
   "Should accept an array": function() {
     this.view.add([{ module: 'pear' }, { module: 'pear' }]);
-    assert.equals(this.view.children().length, 2);
+    assert.equals(this.view.children.length, 2);
   },
 
   "tearDown": function() {

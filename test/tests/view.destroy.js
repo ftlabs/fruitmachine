@@ -2,13 +2,12 @@
 buster.testCase('View#destroy()', {
   setUp: function() {
     helpers.createView.call(this);
-    this.onTeardownSpy1 = this.spy(this.view, 'onTeardown');
-    this.onTeardownSpy2 = this.spy(this.view.child('orange'), 'onTeardown');
-    this.onDestroySpy1 = this.spy(this.view, 'onDestroy');
-    this.onDestroySpy2 = this.spy(this.view.child('orange'), 'onDestroy');
   },
 
   "Should recurse.": function() {
+    var destroy = this.spy(this.view, 'destroy');
+    var destroy2 = this.spy(this.view.module('orange'), 'destroy');
+
     this.view
       .render()
       .inject(sandbox)
@@ -16,34 +15,34 @@ buster.testCase('View#destroy()', {
 
     this.view.destroy();
 
-    assert.called(this.onDestroySpy1);
-    assert.called(this.onDestroySpy2);
+    assert.called(destroy2);
   },
 
-  "Should call teardown.": function() {
+  "Should call teardown once per view.": function() {
+    var teardown1 = this.spy(this.view, 'teardown');
+    var teardown2 = this.spy(this.view.module('orange'), 'teardown');
+
     this.view
       .render()
       .inject(sandbox)
-      .setup();
+      .setup()
+      .destroy();
 
-    this.view.destroy();
-
-    assert.called(this.onTeardownSpy1);
-    assert.called(this.onTeardownSpy2);
+    assert.isTrue(teardown1.calledOnce);
+    assert.isTrue(teardown2.calledOnce);
   },
 
   "Should remove only the first view element from the DOM.": function() {
     var apple = this.view;
-    var orange = this.view.child('orange');
-    var removeChildSpy1, removeChildSpy2;
+    var orange = this.view.module('orange');
 
     this.view
       .render()
       .inject(sandbox)
       .setup();
 
-    removeChildSpy1 = this.spy(apple.el.parentNode, 'removeChild');
-    removeChildSpy2 = this.spy(orange.el.parentNode, 'removeChild');
+    var removeChildSpy1 = this.spy(apple.el.parentNode, 'removeChild');
+    var removeChildSpy2 = this.spy(orange.el.parentNode, 'removeChild');
 
     this.view.destroy();
 

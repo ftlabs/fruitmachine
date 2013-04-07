@@ -8,7 +8,7 @@ buster.testCase('View#toHTML()', {
   },
 
   "Should use cache if available": function() {
-    var spy = this.spy(this.view.child('orange'), 'toHTML');
+    var spy = this.spy(this.view.module('orange'), 'toHTML');
 
     this.view.toHTML();
     this.view.toHTML();
@@ -17,7 +17,7 @@ buster.testCase('View#toHTML()', {
   },
 
   "Should purge cache if model is changed": function() {
-    var spy = this.spy(this.view.child('orange'), 'toHTML');
+    var spy = this.spy(this.view.module('orange'), 'toHTML');
 
     this.view.toHTML();
     this.view.data({ foo: 'bar' });

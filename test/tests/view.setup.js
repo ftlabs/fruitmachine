@@ -3,39 +3,39 @@ buster.testCase('View#setup()', {
   setUp: function() {
     helpers.createView.call(this);
 
-    this.spy1 = this.spy(this.view, 'onSetup');
-    this.spy2 = this.spy(this.view.child('orange'), 'onSetup');
+
   },
 
   "Setup should recurse.": function() {
+    var setup = this.spy(this.view.module('orange'), 'setup');
+
     this.view
       .render()
       .setup();
 
-    assert.called(this.spy1);
-    assert.called(this.spy2);
+    assert.called(setup);
   },
 
   "Should not recurse if used with the `shallow` option.": function() {
+    var setup = this.spy(this.view.module('orange'), 'setup');
+
     this.view
       .render()
       .setup({ shallow: true });
 
-    assert.called(this.spy1);
-    refute.called(this.spy2);
+    refute.called(setup);
   },
 
-  "Custom `onSetup` should be called over default": function() {
-    var spy = this.spy(helpers.Views.Apple.prototype, 'onSetup');
+  "Custom `setup` logic should be called": function() {
+    var setup = this.spy(helpers.Views.Apple.prototype, 'setup');
     var apple = new helpers.Views.Apple();
 
     apple
       .render()
       .setup();
 
-    assert.called(spy);
-    spy.restore();
-    refute.equals(FruitMachine.View.onSetup, apple.onSetup);
+    assert.called(setup);
+    setup.restore();
   },
 
   "Once setup, a View should be flagged as such.": function() {
@@ -44,25 +44,28 @@ buster.testCase('View#setup()', {
       .setup();
 
     assert.isTrue(this.view.isSetup);
-    assert.isTrue(this.view.child('orange').isSetup);
+    assert.isTrue(this.view.module('orange').isSetup);
   },
 
-  "View should not be setup if no root element is found.": function() {
+  "Custom `setup` logic should not be run if no root element is found.": function() {
+    var setup = this.spy(this.view, '_setup');
+    var setup2 = this.spy(this.view.module('orange'), '_setup');
+
     this.view
       .setup();
 
     // Check `onSetup` was not called
-    refute.called(this.spy1);
-    refute.called(this.spy2);
+    refute.called(setup);
+    refute.called(setup2);
 
     // Check the view hasn't been flagged as setup
     refute.isTrue(this.view.isSetup);
-    refute.isTrue(this.view.child('orange').isSetup);
+    refute.isTrue(this.view.module('orange').isSetup);
   },
 
   "onTeardown should be called if `setup()` is called twice.": function() {
-    var teardownSpy1 = this.spy(this.view, 'onTeardown');
-    var teardownSpy2 = this.spy(this.view.child('orange'), 'onTeardown');
+    var teardown = this.spy(this.view, 'teardown');
+    var teardown2 = this.spy(this.view.module('orange'), 'teardown');
 
     //debugger;
     this.view
@@ -71,8 +74,8 @@ buster.testCase('View#setup()', {
       .setup()
       .setup();
 
-    assert.called(teardownSpy1);
-    assert.called(teardownSpy2);
+    assert.called(teardown);
+    assert.called(teardown2);
   },
 
   tearDown: function() {

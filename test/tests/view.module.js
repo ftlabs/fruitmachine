@@ -30,8 +30,8 @@ buster.testCase('View#module()', {
       .add({ module: 'apple' });
 
     var child = this.view.module('apple');
-    var firstChild = this.view.children()[0];
-    var lastChild = this.view.children()[this.view.children().length-1];
+    var firstChild = this.view.children[0];
+    var lastChild = this.view.children[this.view.children.length-1];
 
     assert.equals(child, firstChild);
     refute.equals(child, lastChild);

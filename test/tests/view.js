@@ -15,7 +15,7 @@ buster.testCase('View', {
       children: children
     });
 
-    assert.equals(view.children().length, 2);
+    assert.equals(view.children.length, 2);
   },
 
   "Should create a model": function() {

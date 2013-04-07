@@ -12,7 +12,7 @@ buster.testCase('View#trigger()', {
 
 	"Events should not bubble up to parent views if passed `{ propagate: false }`": function() {
 		var spy = this.spy();
-		var child = this.view.child('orange');
+		var child = this.view.module('orange');
 
 		this.view.on('childtestevent', spy);
 		child.trigger('childtestevent', { propagate: false });
@@ -21,7 +21,7 @@ buster.testCase('View#trigger()', {
 
 	"Events should bubble by default": function() {
 		var spy = this.spy();
-		var child = this.view.child('orange');
+		var child = this.view.module('orange');
 
 		this.view.on('childtestevent', spy);
 		child.trigger('childtestevent');
@@ -30,7 +30,7 @@ buster.testCase('View#trigger()', {
 
 	"Calling event.stopPropagation() should stop bubbling": function() {
 		var spy = this.spy();
-		var child = this.view.child('orange');
+		var child = this.view.module('orange');
 
 		this.view.on('childtestevent', spy);
 		child.on('childtestevent', function(event) {

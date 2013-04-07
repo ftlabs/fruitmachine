@@ -22,50 +22,50 @@ var Layout = helpers.Views.Layout = FruitMachine.define({
   module: 'layout',
   template: templates.layout,
 
-  onInitialize: function() {},
-  onSetup: function() {},
-  onTeardown: function() {},
-  onDestroy: function() {}
+  initialize: function() {},
+  setup: function() {},
+  teardown: function() {},
+  destroy: function() {}
 });
 
 var Apple = helpers.Views.Apple = FruitMachine.define({
   module: 'apple',
   template: templates.apple,
 
-  onInitialize: function() {},
-  onSetup: function() {},
-  onTeardown: function() {},
-  onDestroy: function() {}
+  initialize: function() {},
+  setup: function() {},
+  teardown: function() {},
+  destroy: function() {}
 });
 
 var List = helpers.Views.List = FruitMachine.define({
   module: 'list',
   template: templates.list,
 
-  onInitialize: function() {},
-  onSetup: function() {},
-  onTeardown: function() {},
-  onDestroy: function() {}
+  initialize: function() {},
+  setup: function() {},
+  teardown: function() {},
+  destroy: function() {}
 });
 
 var Orange = helpers.Views.Orange = FruitMachine.define({
   module: 'orange',
   template: templates.orange,
 
-  onInitialize: function() {},
-  onSetup: function() {},
-  onTeardown: function() {},
-  onDestroy: function() {}
+  initialize: function() {},
+  setup: function() {},
+  teardown: function() {},
+  destroy: function() {}
 });
 
 var Pear = helpers.Views.Pear = FruitMachine.define({
   module: 'pear',
   template: templates.pear,
 
-  onInitialize: function() {},
-  onSetup: function() {},
-  onTeardown: function() {},
-  onDestroy: function() {}
+  initialize: function() {},
+  setup: function() {},
+  teardown: function() {},
+  destroy: function() {}
 });
 
 /**

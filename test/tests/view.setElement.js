@@ -10,13 +10,13 @@ buster.testCase('View#setElement()', {
       .inject(sandbox);
 
     el1 = this.view.el;
-    el2 = this.view.child('orange').getElement();
+    el2 = this.view.module('orange').getElement();
 
     // Re-render
     this.view.render();
 
     // Expect child views to no longer have an element
-    assert.isFalse(!!this.view.child('orange').el);
+    assert.isFalse(!!this.view.module('orange').el);
   },
 
   "tearDown": helpers.destroyView

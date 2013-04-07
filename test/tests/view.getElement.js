@@ -31,7 +31,7 @@ buster.testCase('View#getElement()', {
     var el;
 
     this.view.render();
-    el = this.view.child('orange').getElement();
+    el = this.view.module('orange').getElement();
 
     assert.defined(el);
     assert.called(spy);
@@ -49,7 +49,7 @@ buster.testCase('View#getElement()', {
       .inject(sandbox);
 
     el1 = this.view.el;
-    el2 = this.view.child('orange').getElement();
+    el2 = this.view.module('orange').getElement();
 
     // Check both elements are defined
     assert.defined(el1);
@@ -74,9 +74,9 @@ buster.testCase('View#getElement()', {
       .render()
       .inject(sandbox);
 
-    el1 = this.view.child('orange').getElement();
+    el1 = this.view.module('orange').getElement();
     this.view.render();
-    el2 = this.view.child('orange').getElement();
+    el2 = this.view.module('orange').getElement();
 
     refute.equals(el1, el2);
   },
@@ -86,9 +86,9 @@ buster.testCase('View#getElement()', {
 
     this.view.render();
 
-    el1 = this.view.child('orange').getElement();
+    el1 = this.view.module('orange').getElement();
     this.view.render();
-    el2 = this.view.child('orange').getElement();
+    el2 = this.view.module('orange').getElement();
 
     refute.equals(el1, el2);
   },
