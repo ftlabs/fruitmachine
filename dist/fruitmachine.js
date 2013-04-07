@@ -154,9 +154,6 @@ var keys = util.keys(View.prototype);
  * @return {View}
  */
 module.exports = function(props) {
-  var view;
-
-  protect(keys, props);
 
   // If an existing FruitMachine.View
   // has been passed in, use that.
@@ -164,14 +161,19 @@ module.exports = function(props) {
   // been passed in then we extend the
   // default FruitMachine.View prototype
   // with the properties passed in.
-  view = (props.__super__)
+  var view = (props.__super__)
     ? props
     : View.extend(props);
+
+  // Make sure there are no
+  // keys conflicting with
+  // the core View prototype.
+  protect(keys, view.prototype);
 
   // Store the module by module type
   // so that module can be referred to
   // by just a string in layout definitions
-  return store.modules[props._module] = view;
+  return store.modules[view.prototype._module] = view;
 };
 
 
@@ -339,6 +341,10 @@ module.exports = function(proto) {
   var parent = this;
   var child = function(){ return parent.apply(this, arguments); };
 
+  // Mixin static properties
+  // eg. View.extend.
+  mixin(child, parent);
+
   // Set the prototype chain to
   // inherit from `parent`, without
   // calling `parent`'s constructor function.
@@ -457,7 +463,6 @@ View.prototype._configure = function(options) {
  * @api private
  */
 View.prototype.attachHelper = function(helper) {
-  if ('function' !== typeof helper) return;
   if (helper) helper(this);
 },
 
