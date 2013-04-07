@@ -248,24 +248,6 @@ Destroys all children.
 
 
 
-### View#data();
-
-A single method for getting
-and setting view data.
-
-*Example:*
-
-    // Getters
-    var all = view.data();
-    var one = view.data('myKey');
-
-    // Setters
-    view.data('myKey', 'my value');
-    view.data({
-        myKey: 'my value',
-        anotherKey: 10
-    });
-
 ### View#inject();
 
 Empties the destination element
@@ -303,12 +285,44 @@ Options:
 
 
 
+### Model();
+
+Model constructor.
+
+
+
 ### Model#get();
 
 Gets a value by key
 
 If no key is given, the
 whole model is returned.
+
+### Model#set();
+
+Sets data on the model.
+
+Accepts either a key and
+value, or an object literal.
+
+### Model#clear();
+
+CLears the data store.
+
+
+
+### Model#destroy();
+
+Deletes the data store.
+
+
+
+### Model#toJSON();
+
+Returns a shallow
+clone of the data store.
+
+
 
 
 ## License

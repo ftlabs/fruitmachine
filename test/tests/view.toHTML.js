@@ -16,15 +16,5 @@ buster.testCase('View#toHTML()', {
     assert.isTrue(spy.calledOnce);
   },
 
-  "Should purge cache if model is changed": function() {
-    var spy = this.spy(this.view.module('orange'), 'toHTML');
-
-    this.view.toHTML();
-    this.view.data({ foo: 'bar' });
-    this.view.toHTML();
-
-    assert.isTrue(spy.calledTwice);
-  },
-
   "tearDown": helpers.destroyView
 });

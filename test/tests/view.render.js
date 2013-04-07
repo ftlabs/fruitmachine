@@ -10,7 +10,7 @@ buster.testCase('View#render()', {
   "Data should be present in the generated markup.": function() {
     var text = 'some orange text';
     var orange = new helpers.Views.Orange({
-      data: {
+      model: {
         text: text
       }
     });
