@@ -86,7 +86,7 @@ view.setup();
 ```js
 view
   .setup()
-  .inject()
+  .inject(document.body)
   .render();
 ```
 
@@ -159,31 +159,6 @@ Element.querySelectorAll();).
 
     myView.modules('apple');
     //=> [ View, View, View ]
-
-### View#child();
-
-Returns the first child
-view that matches the query.
-
-*Example:*
-
-    var child = view.child(<id>);
-    var child = view.child(<module>);
-
-### View#children();
-
-Allows three ways to return
-a view's children and direct
-children, depending on arguments
-passed.
-
-*Example:*
-
-    // Return all direct children
-    view.children();
-
-    // Return all children that match query.
-    view.children('orange');
 
 ### View#each();
 

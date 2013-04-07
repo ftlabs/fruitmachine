@@ -27,6 +27,9 @@
   "scripts": {
     "test": "grunt test"
   },
+  "dependencies": {
+    "event": "git://github.com/wilsonpage/event.git"
+  },
   "devDependencies": {
     "grunt-contrib-jshint": "~0.2.0",
     "grunt-contrib-watch": "~0.3.1",
