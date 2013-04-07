@@ -54,7 +54,7 @@ buster.testCase('View#destroy()', {
   },
 
   "Should fire `destroy` event.": function() {
-    var eventSpy = this.spy(this.view, 'trigger');
+    var eventSpy = this.spy(this.view, 'fire');
 
     this.view
       .render()

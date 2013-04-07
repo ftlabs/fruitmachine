@@ -291,9 +291,9 @@ views.
 
 
 
-### View#trigger();
+### View#fire();
 
-Proxies the standard Event.trigger
+Proxies the standard Event.fire
 method so that we can add bubble
 functionality.
 

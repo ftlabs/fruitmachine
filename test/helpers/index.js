@@ -73,6 +73,7 @@ var Pear = helpers.Views.Pear = FruitMachine.define({
  */
 
 helpers.createView = function() {
+  debugger;
   var layout = new Layout({});
   var apple = new Apple({ id: 'slot_1' });
   var orange = new Orange({ id: 'slot_2' });
