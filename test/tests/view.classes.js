@@ -1,7 +1,7 @@
 
 buster.testCase('View#classes()', {
 
-	"Should be able to define classes at on the base class": function() {
+	"Should be able to define classes on the base class": function() {
 		var View = FruitMachine.define({
 			classes: ['foo', 'bar']
 		});
