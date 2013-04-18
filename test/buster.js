@@ -4,7 +4,7 @@ config["FruitMachineTests"] = {
 	rootPath: '../',
 	environment: "browser",
 	sources: [
-		'dist/fruitmachine.js',
+		'build/fruitmachine.js',
 		'examples/libs/hogan.js',
 		'test/helpers/*.js'
 	],
