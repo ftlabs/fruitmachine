@@ -1,4 +1,4 @@
-# FruitMachine
+# fruitmachine
 
 A modular view layout manager for client and server.
 

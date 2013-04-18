@@ -69,6 +69,12 @@ exports.keys = function(object) {
   for (var key in object) keys.push(key);
   return keys;
 };
+
+exports.isPlainObject = function(ob) {
+  if (!ob) return false;
+  var c = (ob.constructor || '').toString();
+  return !!~c.indexOf('Object');
+};
 },{}],2:[function(require,module,exports){
 
 module.exports = {
@@ -96,12 +102,13 @@ module.exports = {
 FruitMachine.VERSION = '0.2.5';
 
 // Public interface
-FruitMachine.Events = require('event');
 FruitMachine.View = require('./view');
 FruitMachine.Model = require('./model');
+FruitMachine.Events = require('event');
 FruitMachine.define = require('./define');
 FruitMachine.util = require('./util');
 FruitMachine.store = require('./store');
+FruitMachine.config = require('./config').set;
 
 /**
  * The main library namespace doubling
@@ -119,7 +126,7 @@ function FruitMachine(options) {
  */
 
 module.exports = FruitMachine;
-},{"./view":4,"./model":5,"./define":6,"./util":1,"./store":2,"event":7}],6:[function(require,module,exports){
+},{"./view":4,"./model":5,"./define":6,"./util":1,"./store":2,"./config":7,"event":8}],6:[function(require,module,exports){
 
 /*jslint browser:true, node:true*/
 
@@ -147,9 +154,6 @@ var keys = util.keys(View.prototype);
  * @return {View}
  */
 module.exports = function(props) {
-  var view;
-
-  protect(keys, props);
 
   // If an existing FruitMachine.View
   // has been passed in, use that.
@@ -157,14 +161,19 @@ module.exports = function(props) {
   // been passed in then we extend the
   // default FruitMachine.View prototype
   // with the properties passed in.
-  view = (props.__super__)
+  var view = (props.__super__)
     ? props
     : View.extend(props);
+
+  // Make sure there are no
+  // keys conflicting with
+  // the core View prototype.
+  protect(keys, view.prototype);
 
   // Store the module by module type
   // so that module can be referred to
   // by just a string in layout definitions
-  return store.modules[props._module] = view;
+  return store.modules[view.prototype._module] = view;
 };
 
 
@@ -183,7 +192,7 @@ module.exports = function(props) {
  */
 function protect(keys, ob) {
   for (var key in ob) {
-    if (~keys.indexOf(key)) {
+    if (ob.hasOwnProperty(key) && ~keys.indexOf(key)) {
       ob['_' + key] = ob[key];
       delete ob[key];
     }
@@ -191,51 +200,129 @@ function protect(keys, ob) {
 }
 },{"./view":4,"./store":2,"./util":1}],7:[function(require,module,exports){
 
+/**
+ * Module Dependencies
+ */
 
-function Event(obj) {
-	if (!(this instanceof Event)) return new Event(obj);
-	if (obj) {
-		obj._cbs = {};
-		return mixin(obj, Event.prototype);
+var store = require('./store');
+var mixin = require('./util').mixin;
+
+/**
+ * Exports
+ */
+
+var defaults = store.config = module.exports = {
+	templateIterator: 'children',
+	templateInstance: 'child',
+	model: {
+		toJSON: function(model) {
+			return model.toJSON();
+		}
 	}
-
-	this._cbs = {};
-}
-
-
-Event.prototype.on = function(name, cb) {
-	(this._cbs[name] || (this._cbs[name] = [])).push(cb);
 };
 
+defaults.set = function(options) {
+	mixin(defaults, options);
+};
+},{"./store":2,"./util":1}],8:[function(require,module,exports){
 
+/**
+ * Event
+ *
+ * A super lightweight
+ * event emitter library.
+ *
+ * @version 0.1.4
+ * @author Wilson Page <wilson.page@me.com>
+ */
+
+/**
+ * Creates a new event emitter
+ * instance, or if passed an
+ * object, mixes the event logic
+ * into it.
+ *
+ * @param  {Object} obj
+ * @return {Object}
+ */
+var Event = module.exports = function(obj) {
+	if (!(this instanceof Event)) return new Event(obj);
+	if (obj) return mixin(obj, Event.prototype);
+};
+
+/**
+ * Registers a callback
+ * with an event name.
+ *
+ * @param  {String}   name
+ * @param  {Function} cb
+ * @return {Event}
+ */
+Event.prototype.on = function(name, cb) {
+	this._cbs = this._cbs || {};
+	(this._cbs[name] || (this._cbs[name] = [])).push(cb);
+	return this;
+};
+
+/**
+ * Removes a single callback,
+ * or all callbacks associated
+ * with the passed event name.
+ *
+ * @param  {String}   name
+ * @param  {Function} cb
+ * @return {Event}
+ */
 Event.prototype.off = function(name, cb) {
-	var i, cbs;
+	this._cbs = this._cbs || {};
 
 	if (!name) return this._cbs = {};
 	if (!cb) return delete this._cbs[name];
 
-	cbs = this._cbs[name] || [];
+	var cbs = this._cbs[name] || [];
+	var i;
+
 	while (cbs && ~(i = cbs.indexOf(cb))) cbs.splice(i, 1);
+	return this;
 };
 
+/**
+ * Fires an event. Which triggers
+ * all callbacks registered on this
+ * event name.
+ *
+ * @param  {String} name
+ * @return {Event}
+ */
+Event.prototype.fire = function(name) {
+	this._cbs = this._cbs || {};
 
-Event.prototype.trigger = function(name) {
-	var cbs = this._cbs[name] || [];
+	var cbs = (this._cbs[name] || (this._cbs[name] = []));
 	var args = [].slice.call(arguments, 1);
 	var l = cbs.length;
 
 	while (l--) cbs[l].apply(null, args);
+	return this;
 };
 
 /**
  * Util
  */
 
+/**
+ * Mixes in the properties
+ * of the second object into
+ * the first.
+ *
+ * @param  {Object} a
+ * @param  {Object} b
+ * @return {Object}
+ */
 function mixin(a, b) {
   for (var key in b) a[key] = b[key];
   return a;
 }
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 /*jshint browser:true, node:true*/
 
 'use strict';
@@ -246,12 +333,17 @@ function mixin(a, b) {
 
 var mixin = require('./util').mixin;
 
+/**
+ * Exports
+ */
 
 module.exports = function(proto) {
   var parent = this;
-  var child;
+  var child = function(){ return parent.apply(this, arguments); };
 
-  child = function(){ return parent.apply(this, arguments); };
+  // Mixin static properties
+  // eg. View.extend.
+  mixin(child, parent);
 
   // Set the prototype chain to
   // inherit from `parent`, without
@@ -261,8 +353,6 @@ module.exports = function(proto) {
   child.prototype = new C();
 
   // Add prototype properties
-  // (instance properties) to
-  // the subclass, if supplied.
   mixin(child.prototype, proto);
 
   // Set a convenience property
@@ -282,8 +372,9 @@ module.exports = function(proto) {
  * Module Dependencies
  */
 
+var config = require('./config');
 var extend = require('./extend');
-var Event = require('event');
+var events = require('event');
 var Model = require('./model');
 var util = require('./util');
 var store = require('./store');
@@ -325,7 +416,7 @@ function View(options) {
 
   // Run initialize hooks
   if (this.initialize) this.initialize(options);
-  this.trigger('initialize', [options], { propagate: false });
+  this.fire('initialize', [options], { propagate: false });
 }
 
 /**
@@ -354,14 +445,13 @@ View.prototype._configure = function(options) {
   // Use the model passed in,
   // or create a model from
   // the data passed in.
-  this.model = options.model || new Model(options.data || {});
+  var model = options.model || options.data || {};
+  this.model = util.isPlainObject(model)
+    ? new Model(model)
+    : model;
 
   // Attach helpers
   this.helpers.forEach(this.attachHelper, this);
-
-  // Purge html caches when the model is changed
-  this.purgeHtmlCache = util.bind(this.purgeHtmlCache, this);
-  this.model.on('change', this.purgeHtmlCache);
 };
 
 /**
@@ -373,7 +463,6 @@ View.prototype._configure = function(options) {
  * @api private
  */
 View.prototype.attachHelper = function(helper) {
-  if ('function' !== typeof helper) return;
   if (helper) helper(this);
 },
 
@@ -432,8 +521,7 @@ View.prototype.add = function(children, options) {
     if (inject) this.injectElement(child.el, options);
   }
 
-  this.purgeHtmlCache();
-
+  // Allow chaining
   return this;
 };
 
@@ -637,21 +725,25 @@ View.prototype.each = function(fn) {
  * @api public
  */
 View.prototype.toHTML = function() {
+  var toJSON = config.model.toJSON;
   var data = {};
   var html;
+  var tmp;
 
   // Use cache if populated
   if (this.html) return this.html;
 
   // Create an array for view
   // children data needed in template.
-  data.children = [];
+  data[config.templateIterator] = [];
 
   // Loop each child
   this.each(function(child) {
     html = child.toHTML();
     data[child.id()] = html;
-    data.children.push(mixin({ child: html }, child.model.get()));
+    tmp = {};
+    tmp[config.templateInstance] = html;
+    data.children.push(mixin(tmp, toJSON(child.model)));
   });
 
   // Run the template render method
@@ -659,7 +751,7 @@ View.prototype.toHTML = function() {
   // or child views) mixed with the
   // view's model data.
   html = this.template
-    ? this.template(mixin(data, this.model.get()))
+    ? this.template(mixin(data, toJSON(this.model)))
     : '';
 
   // Wrap the html in a FruitMachine
@@ -698,7 +790,7 @@ View.prototype.render = function() {
   this.setElement(el);
 
   // Handy hook
-  this.trigger('render', { propagate: false });
+  this.fire('render', { propagate: false });
 
   return this;
 };
@@ -732,13 +824,9 @@ View.prototype.setup = function(options) {
   if (this.isSetup) this.teardown({ shallow: true });
 
   // Fire the `setup` event hook
-  this.trigger('before-setup', { propagate: false });
-
-  // Run custom setup logic
+  this.fire('before setup', { propagate: false });
   if (this._setup) this._setup();
-
-  // Fire the `setup` event hook
-  this.trigger('setup', { propagate: false });
+  this.fire('setup', { propagate: false });
 
   // Flag view as 'setup'
   this.isSetup = true;
@@ -784,11 +872,11 @@ View.prototype.teardown = function(options) {
   // variables if setup hasn't run.
   if (this.isSetup) {
 
-    this.trigger('before-teardown', { propagate: false });
+    this.fire('before teardown', { propagate: false });
 
     if (this._teardown) this._teardown();
 
-    this.trigger('teardown', { propagate: false });
+    this.fire('teardown', { propagate: false });
 
     this.isSetup = false;
   }
@@ -839,18 +927,13 @@ View.prototype.destroy = function(options) {
   this.teardown(options, { shallow: true });
 
 
-  this.trigger('before-destroy', { propagate: false });
+  this.fire('before destroy', { propagate: false });
 
   if (this._destroy) this._destroy();
 
   // Trigger a `destroy` event
   // for custom Views to bind to.
-  this.trigger('destroy', { propagate: false });
-
-  // Remove the model 'change' event
-  // listener just in case the same
-  // model is being shared with other views.
-  this.model.off('change', this.purgeHtmlCache);
+  this.fire('destroy', { propagate: false });
 
   // Unbind any old event listeners
   this.off();
@@ -982,83 +1065,10 @@ View.prototype.setElement = function(el) {
  * @api private
  */
 View.prototype.purgeElementCaches = function() {
+  this.el = null;
   this.each(function(child) {
     child.purgeElementCaches();
   });
-
-  this.el = null;
-};
-
-/**
- * Clears the html cache
- * propagating up the
- * anchestor chain
- *
- * @return {View}
- * @api private
- */
-View.prototype.purgeHtmlCache = function() {
-
-  // Clear html
-  this.html = null;
-
-  // Recurse
-  if (this.parent) this.parent.purgeHtmlCache();
-
-  return this;
-};
-
-/**
- * A single method for getting
- * and setting view data.
- *
- * Example:
- *
- *   // Getters
- *   var all = view.data();
- *   var one = view.data('myKey');
- *
- *   // Setters
- *   view.data('myKey', 'my value');
- *   view.data({
- *     myKey: 'my value',
- *     anotherKey: 10
- *   });
- *
- * @param  {String|Object|null} key
- * @param  {*} value
- * @return {*}
- * @api public
- */
-View.prototype.data = function(key, value) {
-
-  // If no key and no value have
-  // been passed then return the
-  // entire data store.
-  if (!key && !value) {
-    return this.model.get();
-  }
-
-  // If a string key has been
-  // passed, but no value
-  if (typeof key === 'string' && !value) {
-    return this.model.get(key);
-  }
-
-  // If the user has stated a key
-  // and a value. Set the value on
-  // the key.
-  if (key && value) {
-    this.model.set(key, value);
-    return this;
-  }
-
-  // If the key is an object literal
-  // then we extend the data store with it.
-  if ('object' === typeof key) {
-    this.model.set(key);
-    return this;
-  }
 };
 
 /**
@@ -1129,16 +1139,17 @@ View.prototype.toJSON = function() {
   json.id = this.id();
   json.fmid = this._fmid;
   json.module = this._module;
-  json.data = this.model.get();
+  json.model = this.model.get();
+
   return json;
 };
 
 // Events
-View.prototype.on = Event.on;
-View.prototype.off = Event.off;
+View.prototype.on = events.prototype.on;
+View.prototype.off = events.prototype.off;
 
 /**
- * Proxies the standard Event.trigger
+ * Proxies the standard Event.fire
  * method so that we can add bubble
  * functionality.
  *
@@ -1152,7 +1163,7 @@ View.prototype.off = Event.off;
  * @return {View}
  * @api public
  */
-View.prototype.trigger = function(key, args, event) {
+View.prototype.fire = function(key, args, event) {
   var propagate;
 
   // event can be passed as
@@ -1170,14 +1181,14 @@ View.prototype.trigger = function(key, args, event) {
   };
 
   // Trigger event
-  Event.trigger.apply(this, [key, event].concat(args));
+  events.prototype.fire.apply(this, [key, event].concat(args));
 
   // Propagate by default
   propagate = (event.propagate !== false);
 
   // Trigger the same
   // event on the parent view
-  if (propagate && this.parent) this.parent.trigger(key, args, event);
+  if (propagate && this.parent) this.parent.fire(key, args, event);
 
   // Allow chaining
   return this;
@@ -1188,15 +1199,18 @@ View.prototype.trigger = function(key, args, event) {
  */
 
 View.extend = extend;
-},{"./extend":8,"./model":5,"./util":1,"./store":2,"event":7}],5:[function(require,module,exports){
+},{"./config":7,"./extend":9,"./model":5,"./util":1,"./store":2,"event":8}],5:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
 'use strict';
 
+/**
+ * Module Dependencies
+ */
+
 var events = require('event');
-var util = require('./util');
-var mixin = util.mixin;
+var mixin = require('./util').mixin;
 
 /**
  * Exports
@@ -1204,11 +1218,15 @@ var mixin = util.mixin;
 
 module.exports = Model;
 
-
-
-function Model(options) {
-  this.fmid = util.uniqueId('model');
-  this._data = mixin({}, options);
+/**
+ * Model constructor.
+ *
+ * @constructor
+ * @param {Object} data
+ * @api public
+ */
+function Model(data) {
+  this._data = mixin({}, data);
 }
 
 /**
@@ -1222,50 +1240,78 @@ function Model(options) {
  * @api public
  */
 Model.prototype.get = function(key) {
-  return key
-    ? this._data[key]
-    : this._data;
+  return this._data[key];
 };
 
-Model.prototype.set = function(key, value) {
-  var _key;
+/**
+ * Sets data on the model.
+ *
+ * Accepts either a key and
+ * value, or an object literal.
+ *
+ * @param {String|Object} key
+ * @param {*|undefined} value
+ */
+Model.prototype.set = function(data, value) {
 
   // If a string key is passed
-  // convert it to an object ready
-  // for the next step.
-  if ('string' === typeof key && value) {
-    _key = {};
-    _key[key] = value;
-    key = _key;
+  // with a value. Set the value
+  // on the key in the data store.
+  if ('string' === typeof data && value) {
+    this._data[data] = value;
+    this.fire('change:' + data, value);
   }
 
   // Merge the object into the data store
-  if ('object' === typeof key) {
-    mixin(this._data, key);
-    this.trigger('change');
-    for (var prop in key) {
-      this.trigger('change:' + prop, key[prop]);
-    }
+  if ('object' === typeof data) {
+    mixin(this._data, data);
+    for (var prop in data) this.fire('change:' + prop, data[prop]);
   }
 
+  // Always fire a
+  // generic change event
+  this.fire('change');
+
+  // Allow chaining
   return this;
 };
 
+/**
+ * CLears the data store.
+ *
+ * @return {Model}
+ */
 Model.prototype.clear = function() {
   this._data = {};
+  this.fire('change');
+
+  // Allow chaining
   return this;
 };
 
+/**
+ * Deletes the data store.
+ *
+ * @return {undefined}
+ */
 Model.prototype.destroy = function() {
-  this._data = null;
+  for (var key in this._data) this._data[key] = null;
+  delete this._data;
+  this.fire('destroy');
 };
 
+/**
+ * Returns a shallow
+ * clone of the data store.
+ *
+ * @return {Object}
+ */
 Model.prototype.toJSON = function() {
   return mixin({}, this._data);
 };
 
-// Mixin events functionality
+// Mixin events
 events(Model.prototype);
-},{"./util":1,"event":7}]},{},[3])(3)
+},{"./util":1,"event":8}]},{},[3])(3)
 });
 ;
