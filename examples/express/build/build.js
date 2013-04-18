@@ -1,397 +1,14 @@
-(function(){var require = function (file, cwd) {
-    var resolved = require.resolve(file, cwd || '/');
-    var mod = require.modules[resolved];
-    if (!mod) throw new Error(
-        'Failed to resolve module ' + file + ', tried ' + resolved
-    );
-    var cached = require.cache[resolved];
-    var res = cached? cached.exports : mod();
-    return res;
-};
+;(function(e,t,n){function i(n,s){if(!t[n]){if(!e[n]){var o=typeof require=="function"&&require;if(!s&&o)return o(n,!0);if(r)return r(n,!0);throw new Error("Cannot find module '"+n+"'")}var u=t[n]={exports:{}};e[n][0](function(t){var r=e[n][1][t];return i(r?r:t)},u,u.exports)}return t[n].exports}var r=typeof require=="function"&&require;for(var s=0;s<n.length;s++)i(n[s]);return i})({1:[function(require,module,exports){
+(function(global){global.Hogan = require('hogan.js/lib/template').Template;
+global.app = {};
 
-require.paths = [];
-require.modules = {};
-require.cache = {};
-require.extensions = [".js",".coffee",".json"];
+var FruitMachine = require('../../../../lib/');
+var routes = require('../routes');
 
-require._core = {
-    'assert': true,
-    'events': true,
-    'fs': true,
-    'path': true,
-    'vm': true
-};
-
-require.resolve = (function () {
-    return function (x, cwd) {
-        if (!cwd) cwd = '/';
-        
-        if (require._core[x]) return x;
-        var path = require.modules.path();
-        cwd = path.resolve('/', cwd);
-        var y = cwd || '/';
-        
-        if (x.match(/^(?:\.\.?\/|\/)/)) {
-            var m = loadAsFileSync(path.resolve(y, x))
-                || loadAsDirectorySync(path.resolve(y, x));
-            if (m) return m;
-        }
-        
-        var n = loadNodeModulesSync(x, y);
-        if (n) return n;
-        
-        throw new Error("Cannot find module '" + x + "'");
-        
-        function loadAsFileSync (x) {
-            x = path.normalize(x);
-            if (require.modules[x]) {
-                return x;
-            }
-            
-            for (var i = 0; i < require.extensions.length; i++) {
-                var ext = require.extensions[i];
-                if (require.modules[x + ext]) return x + ext;
-            }
-        }
-        
-        function loadAsDirectorySync (x) {
-            x = x.replace(/\/+$/, '');
-            var pkgfile = path.normalize(x + '/package.json');
-            if (require.modules[pkgfile]) {
-                var pkg = require.modules[pkgfile]();
-                var b = pkg.browserify;
-                if (typeof b === 'object' && b.main) {
-                    var m = loadAsFileSync(path.resolve(x, b.main));
-                    if (m) return m;
-                }
-                else if (typeof b === 'string') {
-                    var m = loadAsFileSync(path.resolve(x, b));
-                    if (m) return m;
-                }
-                else if (pkg.main) {
-                    var m = loadAsFileSync(path.resolve(x, pkg.main));
-                    if (m) return m;
-                }
-            }
-            
-            return loadAsFileSync(x + '/index');
-        }
-        
-        function loadNodeModulesSync (x, start) {
-            var dirs = nodeModulesPathsSync(start);
-            for (var i = 0; i < dirs.length; i++) {
-                var dir = dirs[i];
-                var m = loadAsFileSync(dir + '/' + x);
-                if (m) return m;
-                var n = loadAsDirectorySync(dir + '/' + x);
-                if (n) return n;
-            }
-            
-            var m = loadAsFileSync(x);
-            if (m) return m;
-        }
-        
-        function nodeModulesPathsSync (start) {
-            var parts;
-            if (start === '/') parts = [ '' ];
-            else parts = path.normalize(start).split('/');
-            
-            var dirs = [];
-            for (var i = parts.length - 1; i >= 0; i--) {
-                if (parts[i] === 'node_modules') continue;
-                var dir = parts.slice(0, i + 1).join('/') + '/node_modules';
-                dirs.push(dir);
-            }
-            
-            return dirs;
-        }
-    };
-})();
-
-require.alias = function (from, to) {
-    var path = require.modules.path();
-    var res = null;
-    try {
-        res = require.resolve(from + '/package.json', '/');
-    }
-    catch (err) {
-        res = require.resolve(from, '/');
-    }
-    var basedir = path.dirname(res);
-    
-    var keys = (Object.keys || function (obj) {
-        var res = [];
-        for (var key in obj) res.push(key);
-        return res;
-    })(require.modules);
-    
-    for (var i = 0; i < keys.length; i++) {
-        var key = keys[i];
-        if (key.slice(0, basedir.length + 1) === basedir + '/') {
-            var f = key.slice(basedir.length);
-            require.modules[to + f] = require.modules[basedir + f];
-        }
-        else if (key === basedir) {
-            require.modules[to] = require.modules[basedir];
-        }
-    }
-};
-
-(function () {
-    var process = {};
-    var global = typeof window !== 'undefined' ? window : {};
-    var definedProcess = false;
-    
-    require.define = function (filename, fn) {
-        if (!definedProcess && require.modules.__browserify_process) {
-            process = require.modules.__browserify_process();
-            definedProcess = true;
-        }
-        
-        var dirname = require._core[filename]
-            ? ''
-            : require.modules.path().dirname(filename)
-        ;
-        
-        var require_ = function (file) {
-            var requiredModule = require(file, dirname);
-            var cached = require.cache[require.resolve(file, dirname)];
-
-            if (cached && cached.parent === null) {
-                cached.parent = module_;
-            }
-
-            return requiredModule;
-        };
-        require_.resolve = function (name) {
-            return require.resolve(name, dirname);
-        };
-        require_.modules = require.modules;
-        require_.define = require.define;
-        require_.cache = require.cache;
-        var module_ = {
-            id : filename,
-            filename: filename,
-            exports : {},
-            loaded : false,
-            parent: null
-        };
-        
-        require.modules[filename] = function () {
-            require.cache[filename] = module_;
-            fn.call(
-                module_.exports,
-                require_,
-                module_,
-                module_.exports,
-                dirname,
-                filename,
-                process,
-                global
-            );
-            module_.loaded = true;
-            return module_.exports;
-        };
-    };
-})();
-
-
-require.define("path",function(require,module,exports,__dirname,__filename,process,global){function filter (xs, fn) {
-    var res = [];
-    for (var i = 0; i < xs.length; i++) {
-        if (fn(xs[i], i, xs)) res.push(xs[i]);
-    }
-    return res;
-}
-
-// resolves . and .. elements in a path array with directory names there
-// must be no slashes, empty elements, or device names (c:\) in the array
-// (so also no leading and trailing slashes - it does not distinguish
-// relative and absolute paths)
-function normalizeArray(parts, allowAboveRoot) {
-  // if the path tries to go above the root, `up` ends up > 0
-  var up = 0;
-  for (var i = parts.length; i >= 0; i--) {
-    var last = parts[i];
-    if (last == '.') {
-      parts.splice(i, 1);
-    } else if (last === '..') {
-      parts.splice(i, 1);
-      up++;
-    } else if (up) {
-      parts.splice(i, 1);
-      up--;
-    }
-  }
-
-  // if the path is allowed to go above the root, restore leading ..s
-  if (allowAboveRoot) {
-    for (; up--; up) {
-      parts.unshift('..');
-    }
-  }
-
-  return parts;
-}
-
-// Regex to split a filename into [*, dir, basename, ext]
-// posix version
-var splitPathRe = /^(.+\/(?!$)|\/)?((?:.+?)?(\.[^.]*)?)$/;
-
-// path.resolve([from ...], to)
-// posix version
-exports.resolve = function() {
-var resolvedPath = '',
-    resolvedAbsolute = false;
-
-for (var i = arguments.length; i >= -1 && !resolvedAbsolute; i--) {
-  var path = (i >= 0)
-      ? arguments[i]
-      : process.cwd();
-
-  // Skip empty and invalid entries
-  if (typeof path !== 'string' || !path) {
-    continue;
-  }
-
-  resolvedPath = path + '/' + resolvedPath;
-  resolvedAbsolute = path.charAt(0) === '/';
-}
-
-// At this point the path should be resolved to a full absolute path, but
-// handle relative paths to be safe (might happen when process.cwd() fails)
-
-// Normalize the path
-resolvedPath = normalizeArray(filter(resolvedPath.split('/'), function(p) {
-    return !!p;
-  }), !resolvedAbsolute).join('/');
-
-  return ((resolvedAbsolute ? '/' : '') + resolvedPath) || '.';
-};
-
-// path.normalize(path)
-// posix version
-exports.normalize = function(path) {
-var isAbsolute = path.charAt(0) === '/',
-    trailingSlash = path.slice(-1) === '/';
-
-// Normalize the path
-path = normalizeArray(filter(path.split('/'), function(p) {
-    return !!p;
-  }), !isAbsolute).join('/');
-
-  if (!path && !isAbsolute) {
-    path = '.';
-  }
-  if (path && trailingSlash) {
-    path += '/';
-  }
-  
-  return (isAbsolute ? '/' : '') + path;
-};
-
-
-// posix version
-exports.join = function() {
-  var paths = Array.prototype.slice.call(arguments, 0);
-  return exports.normalize(filter(paths, function(p, index) {
-    return p && typeof p === 'string';
-  }).join('/'));
-};
-
-
-exports.dirname = function(path) {
-  var dir = splitPathRe.exec(path)[1] || '';
-  var isWindows = false;
-  if (!dir) {
-    // No dirname
-    return '.';
-  } else if (dir.length === 1 ||
-      (isWindows && dir.length <= 3 && dir.charAt(1) === ':')) {
-    // It is just a slash or a drive letter with a slash
-    return dir;
-  } else {
-    // It is a full dirname, strip trailing slash
-    return dir.substring(0, dir.length - 1);
-  }
-};
-
-
-exports.basename = function(path, ext) {
-  var f = splitPathRe.exec(path)[2] || '';
-  // TODO: make this comparison case-insensitive on windows?
-  if (ext && f.substr(-1 * ext.length) === ext) {
-    f = f.substr(0, f.length - ext.length);
-  }
-  return f;
-};
-
-
-exports.extname = function(path) {
-  return splitPathRe.exec(path)[3] || '';
-};
-
-});
-
-require.define("__browserify_process",function(require,module,exports,__dirname,__filename,process,global){var process = module.exports = {};
-
-process.nextTick = (function () {
-    var canSetImmediate = typeof window !== 'undefined'
-        && window.setImmediate;
-    var canPost = typeof window !== 'undefined'
-        && window.postMessage && window.addEventListener
-    ;
-
-    if (canSetImmediate) {
-        return function (f) { return window.setImmediate(f) };
-    }
-
-    if (canPost) {
-        var queue = [];
-        window.addEventListener('message', function (ev) {
-            if (ev.source === window && ev.data === 'browserify-tick') {
-                ev.stopPropagation();
-                if (queue.length > 0) {
-                    var fn = queue.shift();
-                    fn();
-                }
-            }
-        }, true);
-
-        return function nextTick(fn) {
-            queue.push(fn);
-            window.postMessage('browserify-tick', '*');
-        };
-    }
-
-    return function nextTick(fn) {
-        setTimeout(fn, 0);
-    };
-})();
-
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-
-process.binding = function (name) {
-    if (name === 'evals') return (require)('vm')
-    else throw new Error('No such module. (Possibly not yet loaded)')
-};
-
-(function () {
-    var cwd = '/';
-    var path;
-    process.cwd = function () { return cwd };
-    process.chdir = function (dir) {
-        if (!path) path = require('path');
-        cwd = path.resolve(dir, cwd);
-    };
-})();
-
-});
-
-require.define("/examples/express/node_modules/hogan.js/lib/template.js",function(require,module,exports,__dirname,__filename,process,global){/*
+app.view = new FruitMachine(window.layout).setup();
+})(window)
+},{"../../../../lib/":2,"../routes":3,"hogan.js/lib/template":4}],4:[function(require,module,exports){
+/*
  *  Copyright 2011 Twitter, Inc.
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -633,700 +250,376 @@ var Hogan = {};
 })(typeof exports !== 'undefined' ? exports : Hogan);
 
 
-});
+},{}],5:[function(require,module,exports){
 
-require.define("/lib/fruitmachine.js",function(require,module,exports,__dirname,__filename,process,global){/**
+/*jshint browser:true, node:true*/
+
+'use strict';
+
+exports.bind = function(method, context) {
+  return function() { return method.apply(context, arguments); };
+};
+
+exports.isArray = function(arg) {
+  return arg instanceof Array;
+},
+
+exports.mixin = function(original) {
+  // Loop over every argument after the first.
+  [].slice.call(arguments, 1).forEach(function(source) {
+    for (var prop in source) {
+      original[prop] = source[prop];
+    }
+  });
+  return original;
+},
+
+exports.querySelectorId = function(id, el) {
+  if (!el) return;
+  return el.querySelector('#' + id);
+},
+
+/**
+ * Inserts an item into an array.
+ * Has the option to state an index.
+ *
+ * @param  {*} item
+ * @param  {Array} array
+ * @param  {Number} index
+ * @return void
+ */
+exports.insert = function(item, array, index) {
+  if (typeof index !== 'undefined') {
+    array.splice(index, 0, item);
+  } else {
+    array.push(item);
+  }
+},
+
+exports.toNode = function(html) {
+  var el = document.createElement('div');
+  el.innerHTML = html;
+  return el.removeChild(el.firstElementChild);
+},
+
+// Determine if we have a DOM
+// in the current environment.
+exports.hasDom = function() {
+	return typeof document !== 'undefined';
+};
+
+var i = 0;
+exports.uniqueId = function(prefix, suffix) {
+  prefix = prefix || 'id';
+  suffix = suffix || 'a';
+  return [prefix, (++i) * Math.round(Math.random() * 100000), suffix].join('-');
+};
+
+exports.keys = function(object) {
+  var keys = [];
+  for (var key in object) keys.push(key);
+  return keys;
+};
+
+exports.isPlainObject = function(ob) {
+  if (!ob) return false;
+  var c = (ob.constructor || '').toString();
+  return !!~c.indexOf('Object');
+};
+},{}],6:[function(require,module,exports){
+
+module.exports = {
+  modules: {}
+};
+},{}],2:[function(require,module,exports){
+
+/*jslint browser:true, node:true*/
+
+/**
  * FruitMachine
  *
  * Renders layouts/modules from a basic layout definition.
  * If views require custom interactions devs can extend
  * the basic functionality.
  *
- * Example:
- *
- *   var definition = {
- *     module: 'orange',
- *     data: {
- *       title: 'A title',
- *       body: 'Some body copy'
- *     }
- *   };
- *
- *   var view = new FruitMachine.View(definition);
- *
- *   view
- *     .render()
- *     .inject(document.body)
- *     .setup();
- *
- * @version 0.1.0
+ * @version 0.2.5
  * @copyright The Financial Times Limited [All Rights Reserved]
  * @author Wilson Page <wilson.page@ft.com>
  */
 
+'use strict';
+
+// Version
+FruitMachine.VERSION = '0.2.5';
+
+// Public interface
+FruitMachine.View = require('./view');
+FruitMachine.Model = require('./model');
+FruitMachine.Events = require('event');
+FruitMachine.define = require('./define');
+FruitMachine.util = require('./util');
+FruitMachine.store = require('./store');
+FruitMachine.config = require('./config').set;
+
+/**
+ * The main library namespace doubling
+ * as a convenient alias for creating
+ * new views.
+ *
+ * @param {Object} options
+ */
+function FruitMachine(options) {
+  return new FruitMachine.View(options);
+}
+
+/**
+ * Expose 'FruitMachine'
+ */
+
+module.exports = FruitMachine;
+},{"./view":7,"./model":8,"./define":9,"./util":5,"./store":6,"./config":10,"event":11}],9:[function(require,module,exports){
+
 /*jslint browser:true, node:true*/
-(function() {
-  'use strict';
 
-  /**
-   * VIEW
-   */
+'use strict';
 
-  var FruitMachine = function(options) {
-    options = options || {};
-    if (options.module) return create(options);
-    this._configure(options);
-    this.add(options.views || this.views);
-    this.onInitialize(options);
-  };
+/**
+ * Module Dependencies
+ */
 
-  // Current Version
-  FruitMachine.VERSION = '0.0.1';
+var View = require('./view');
+var store = require('./store');
+var util = require('./util');
 
-  // Global data store
-  var store = {
-    modules: {},
-    templates: {},
-    helpers: {}
-  };
+/**
+ * Locals
+ */
 
-  // Utilities
-  var util = FruitMachine.util = {
+var keys = util.keys(View.prototype);
 
-    bind: function(method, context) {
-      return function() { return method.apply(context, arguments); };
-    },
+/**
+ * Creates and registers a
+ * FruitMachine view constructor.
+ *
+ * @param  {Object|View}
+ * @return {View}
+ */
+module.exports = function(props) {
 
-    bindAll: function(ob, context) {
-      for (var key in ob) {
-        if ('function' === typeof ob[key]) {
-          ob[key] = util.bind(ob[key], context);
-        }
-      }
-    },
+  // If an existing FruitMachine.View
+  // has been passed in, use that.
+  // If just an object literal has
+  // been passed in then we extend the
+  // default FruitMachine.View prototype
+  // with the properties passed in.
+  var view = (props.__super__)
+    ? props
+    : View.extend(props);
 
-    mixin: function(original) {
-      // Loop over every argument after the first.
-      slice.call(arguments, 1).forEach(function(source) {
-        for (var prop in source) {
-          original[prop] = source[prop];
-        }
-      });
-      return original;
-    },
+  // Make sure there are no
+  // keys conflicting with
+  // the core View prototype.
+  protect(keys, view.prototype);
 
-    /**
-     * Inserts a child element into the
-     * stated parent element. The child is
-     * appended unless an index is stated.
-     *
-     * @param  {Element} child
-     * @param  {Element} parent
-     * @param  {Number} index
-     * @return void
-     */
+  // Store the module by module type
+  // so that module can be referred to
+  // by just a string in layout definitions
+  return store.modules[view.prototype._module] = view;
+};
 
-    insertChild: function(child, parent, index) {
-      if (!parent) return;
-      if (typeof index !== 'undefined') {
-        parent.insertBefore(child, parent.children[index]);
-      } else {
-        parent.appendChild(child);
-      }
-    },
 
-    /**
-     * Inserts an item into an array.
-     * Has the option to state an index.
-     *
-     * @param  {*} item
-     * @param  {Array} array
-     * @param  {Number} index
-     * @return void
-     */
-
-    insert: function(item, array, index) {
-      if (typeof index !== 'undefined') {
-        array.splice(index, 0, item);
-      } else {
-        array.push(item);
-      }
-    },
-
-    uniqueId: (function() {
-      var i = 0;
-      return function(prefix, suffix) {
-        prefix = prefix || 'id';
-        suffix = suffix || 'a';
-        return [prefix, (++i) * Math.round(Math.random() * 100000), suffix].join('-');
-      };
-    }())
-  };
-
-  // Create local references to some methods
-  var slice = Array.prototype.slice;
-  var concat = Array.prototype.concat;
-  var has = Object.prototype.hasOwnProperty;
-  var mixin = util.mixin;
-
-  var splitter = /\s+/;
-  var Events = FruitMachine.Events = {
-
-    // Bind one or more space separated events, `events`, to a `callback`
-    // function. Passing `"all"` will bind the callback to all events fired.
-    on: function(events, callback, context) {
-
-      var calls, event, node, tail, list;
-      if (!callback) return this;
-      events = events.split(splitter);
-      calls = this._callbacks || (this._callbacks = {});
-
-      // Create an immutable callback list, allowing traversal during
-      // modification.  The tail is an empty object that will always be used
-      // as the next node.
-      event = events.shift();
-      while (event) {
-        list = calls[event];
-        node = list ? list.tail : {};
-        node.next = tail = {};
-        node.context = context;
-        node.callback = callback;
-        calls[event] = {tail: tail, next: list ? list.next : node};
-        event = events.shift();
-      }
-
-      return this;
-    },
-
-    // Remove one or many callbacks. If `context` is null, removes all callbacks
-    // with that function. If `callback` is null, removes all callbacks for the
-    // event. If `events` is null, removes all bound callbacks for all events.
-    off: function(events, callback, context) {
-      var event, calls, node, tail, cb, ctx;
-
-      // No events, or removing *all* events.
-      if (!(calls = this._callbacks)) return;
-      if (!(events || callback || context)) {
-        delete this._callbacks;
-        return this;
-      }
-
-      // Loop through the listed events and contexts, splicing them out of the
-      // linked list of callbacks if appropriate.
-      events = events ? events.split(splitter) : Object.keys(calls);
-      while (event = events.shift()) {
-        node = calls[event];
-        delete calls[event];
-        if (!node || !(callback || context)) continue;
-        // Create a new list, omitting the indicated callbacks.
-        tail = node.tail;
-        while ((node = node.next) !== tail) {
-          cb = node.callback;
-          ctx = node.context;
-          if ((callback && cb !== callback) || (context && ctx !== context)) {
-            this.on(event, cb, ctx);
-          }
-        }
-      }
-
-      return this;
-    },
-
-    // Trigger one or many events, firing all bound callbacks. Callbacks are
-    // passed the same arguments as `trigger` is, apart from the event name
-    // (unless you're listening on `"all"`, which will cause your callback to
-    // receive the true name of the event as the first argument).
-    trigger: function(events) {
-      var event, node, calls, tail, args, all, rest;
-      if (!(calls = this._callbacks)) return this;
-      all = calls.all;
-      events = events.split(splitter);
-      rest = slice.call(arguments, 1);
-
-      // For each event, walk through the linked list of callbacks twice,
-      // first to trigger the event, then to trigger any `"all"` callbacks.
-      while (event = events.shift()) {
-        if (node = calls[event]) {
-          tail = node.tail;
-          while ((node = node.next) !== tail) {
-            node.callback.apply(node.context || this, rest);
-          }
-        }
-
-        if (node = all) {
-          tail = node.tail;
-          args = [event].concat(rest);
-          while ((node = node.next) !== tail) {
-            node.callback.apply(node.context || this, args);
-          }
-        }
-      }
-
-      return this;
+/**
+ * Makes sure no properties
+ * or methods can be overwritten
+ * on the core View.prototype.
+ *
+ * If conflicting keys are found,
+ * we create a new key prifixed with
+ * a '_' and delete the original key.
+ *
+ * @param  {Array} keys
+ * @param  {Object} ob
+ * @return {[type]}
+ */
+function protect(keys, ob) {
+  for (var key in ob) {
+    if (ob.hasOwnProperty(key) && ~keys.indexOf(key)) {
+      ob['_' + key] = ob[key];
+      delete ob[key];
     }
-  };
-
-
-  FruitMachine.helper = function(name, helper) {
-    store.helpers[name] = helper(FruitMachine);
-  };
-
-
-  var getTemplate = function(module) {
-    return store.templates[module];
-  };
-
-  /**
-   * Registers templates, or overwrites
-   * the `getTemplate` method with a
-   * custom template getter function.
-   *
-   * @param  {Object|Function} templates
-   * @return void
-   */
-  FruitMachine.templates = function(templates) {
-    var type = typeof templates;
-    if ('object' === type) mixin(store.templates, templates);
-    else if ('function' === type) getTemplate = templates;
-  };
-
-  // Manages helpers
-  var helper = {
-    attach: function(helper) {
-      var Helper = store.helpers[helper];
-      if (!Helper) return;
-      if ('function' === typeof Helper) {
-        return this[helper] = new Helper(this);
-      } else {
-        return mixin(this, Helper);
-      }
-    },
-
-    setup: function(helper) {
-      if (!helper.onSetup) return;
-      helper.onSetup();
-    },
-
-    teardown: function(helper) {
-      if (!helper.onTeardown) return;
-      helper.onTeardown();
-    }
-  };
-
-  // Factory method
-  function create(options) {
-    var Module = store.modules[options.module] || FruitMachine;
-    options._module = options.module;
-    delete options.module;
-    return new Module(options);
   }
-
-  // Extend the prototype
-  mixin(FruitMachine.prototype, Events, {
-
-    _configure: function(options) {
-      this._id = options.id || util.uniqueId('auto_');
-      this._fmid = options.fmid || util.uniqueId('fmid');
-      this.module = this.module || options._module;
-      this._lookup = {};
-      this._children = [];
-      this._data = options.data || {};
-
-      // Use the template defined on
-      // the custom view, or use the
-      // template getter.
-      this.template = this.template || getTemplate(this.module);
-
-      // Upgrade helpers
-      this.helpers = (this.helpers || []).map(helper.attach, this);
-    },
-
-    onInitialize: function() {},
-    onSetup: function() {},
-    onTeardown: function() {},
-    onDestroy: function() {},
-
-    add: function(views, options) {
-      var at = options && options.at;
-      var insert = options && options.insert;
-      var view;
-
-      if (!views) return;
-
-      // Make sure it's an array
-      views = [].concat(views);
-
-      for (var i = 0, l = views.length; i < l; i++) {
-        view = views[i];
-        if (!(view instanceof FruitMachine)) view = new FruitMachine(view);
-
-        util.insert(view, this._children, at);
-        this.addLookup(view);
-        view.parent = this;
-
-        // We append the child to the parent view if there is a view
-        // element and the users hasn't flagged `append` false.
-        if (insert) this.insertChildEl(view.el(), options);
-      }
-
-      return this;
-    },
-
-    insertChildEl: function(el, options) {
-      var at = options && options.at;
-      var parent = this.el();
-
-      if (!el || !parent) return;
-
-      if (typeof at !== 'undefined') {
-        parent.insertBefore(el, parent.children[at]);
-      } else {
-        parent.appendChild(el);
-      }
-    },
-
-    addLookup: function(child) {
-      this._lookup[child.id()] = child;
-      this._lookup[child.module] = this._lookup[child.module] || [];
-      this._lookup[child.module].push(child);
-    },
-
-    id: function(id) {
-      return id ? this._lookup[id] : this._id;
-    },
-
-    child: function(name) {
-      return this._lookup[name][0];
-    },
-
-    children: function(name) {
-      return name ? this._lookup[name] : this._children;
-    },
-
-    fmid: function() {
-      return this._fmid;
-    },
-
-    toHTML: function() {
-      var data = {};
-      var children = this.children();
-      var child, html;
-      data.children = [];
-
-      if (!this.template) return console.log('FM - No template for %s', this.module);
-
-      for (var i = 0, l = children.length; i < l; i++) {
-        child = children[i];
-        html = child.toHTML();
-        data[child.id()] = html;
-        data.children.push({ child: html });
-      }
-
-      data.fm_attrs = 'id="' + this.fmid() + '"';
-      return this._html = this.template.render(mixin(data, this.data()));
-    },
-
-    render: function() {
-      return this.update();
-    },
-
-    setup: function(options) {
-      var shallow = options && options.shallow;
-      var children = this.children();
-
-      // Call 'setup' on all subviews
-      // first (bottom up recursion).
-      if (!shallow) {
-        for (var i = 0, l = children.length; i < l; i++) {
-          children[i].setup();
-        }
-      }
-
-      // If this is already setup, call
-      // `teardown` first so that we don't
-      // duplicate event bindings and shizzle.
-      if (this.isSetup) this.teardown({ shallow: true });
-
-      // Setup any helpers
-      this.helpers.forEach(helper.setup, this);
-
-      this.onSetup();
-      this.trigger('setup');
-      this.isSetup = true;
-
-      // For chaining
-      return this;
-    },
-
-    teardown: function(options) {
-      var shallow = options && options.shallow;
-      var children = this.children();
-
-      // Call 'setup' on all subviews
-      // first (bottom up recursion).
-      if (!shallow) {
-        for (var i = 0, l = children.length; i < l; i++) {
-          children[i].teardown();
-        }
-      }
-
-      // Teardown any helpers
-      this.helpers.forEach(helper.teardown, this);
-
-      this.trigger('teardown');
-      this.onTeardown();
-      this.isSetup = false;
-
-      // For chaining
-      return this;
-    },
-
-    destroy: function(options) {
-
-      // Recursively run on children
-      // first (bottom up).
-      //
-      // We don't waste time removing
-      // the child elements as they will
-      // get removed when the parent
-      // element is removed.
-      while (this._children.length) {
-        this._children[0].destroy({ remove: false });
-      }
-
-      // Run teardown so custom
-      // views can bind logic to it
-      this.teardown(options);
-
-      // Detach this view from its
-      // parent and unless otherwise
-      // stated, from the DOM.
-      this._detach(options);
-
-      // Trigger a destroy event
-      // for custom Views to bind to.
-      this.trigger('destroy');
-      this.onDestroy();
-
-      // Set a flag to say this view
-      // has been destroyed. This is
-      // useful to check for after a
-      // slow ajax call that might come
-      // back after a view has been detroyed.
-      this.destroyed = true;
-
-      // Clear references
-      this._el = this.module = this._id = this._lookup = null;
-    },
-
-    remove: function() {
-      var el = this.el();
-      if (el && el.parentNode) el.parentNode.removeChild(el);
-    },
-
-    _detach: function(options) {
-      var remove = options && options.skipEl;
-      var i;
-
-      // Remove the view el from the DOM
-      if (remove !== false) this.remove();
-
-      // If there is no parent view reference, return here.
-      if (!this.parent) return this;
-
-      // Remove reference from children array
-      i = this.parent._children.indexOf(this);
-      this.parent._children.splice(i, 1);
-
-      // Remove references from the lookup
-      i = this.parent._lookup[this.module].indexOf(this);
-      this.parent._lookup[this.module].splice(i, 1);
-      delete this.parent._lookup[this._id];
-
-      // Return the detached view instance.
-      return this;
-    },
-
-    parentEl: function() {
-      var view = this.parent;
-      while (view && !view._el && view.parent) view = view.parent;
-      return view._el;
-    },
-
-    el: function() {
-      if (typeof document === 'undefined') return;
-      //var parentEl = this.parentEl();
-      //if (parentEl) parentEl.querySelector(this.fmid());
-      return this._el = (this._el || document.getElementById(this.fmid()));
-    },
-
-    /**
-     * A single method for getting
-     * and setting view data.
-     *
-     * Example:
-     *
-     *   // Getters
-     *   var all = view.data();
-     *   var one = view.data('myKey');
-     *
-     *   // Setters
-     *   view.data('myKey', 'my value');
-     *   view.data({
-     *     myKey: 'my value',
-     *     anotherKey: 10
-     *   });
-     *
-     * @param  {String|Object|null} key
-     * @param  {*} value
-     * @return {*}
-     */
-
-    data: function(key, value) {
-
-      // If no key and no value have
-      // been passed then return the
-      // entire data store.
-      if (!key && !value) {
-        return this._data;
-      }
-
-      // If a string key has been
-      // passed, but no value
-      if (typeof key === 'string' && !value) {
-        return this._data[key];
-      }
-
-      // If the user has stated a key
-      // and a value. Set the value on
-      // the key.
-      if (key && value) {
-        this._data[key] = value;
-        this.trigger('datachange', key, value);
-        this.trigger('datachange:' + key, value);
-        return this;
-      }
-
-      // If the key is an object literal
-      // then we extend the data store with it.
-      if ('object' === typeof key) {
-        mixin(this._data, key);
-        this.trigger('datachange');
-        for (var prop in key) this.trigger('datachange:' + prop, key[prop]);
-        return this;
-      }
-    },
-
-    update: function() {
-      var current = this.el();
-      var replacement = this.toNode();
-
-      if (!current) {
-        this._el = replacement;
-        return this;
-      }
-
-      current.parentNode.replaceChild(replacement, current);
-      this._el = replacement;
-      return this;
-    },
-
-    toNode: function() {
-      var el = document.createElement('div');
-      el.innerHTML = this.toHTML();
-      return el.firstElementChild;
-    },
-
-    inject: function(dest) {
-      var el = this.el();
-      if (!el) return;
-      dest.innerHTML = '';
-      dest.appendChild(el);
-      return this;
-    },
-
-    toJSON: function() {
-      var json = {};
-      var views = this.children();
-      json.views = [];
-
-      // Recurse
-      for (var i = 0, l = views.length; i < l; i++) {
-        json.views.push(views[i].toJSON());
-      }
-
-      json.id = this.id();
-      json.fmid = this.fmid();
-      json.module = this.module;
-      json.data = this.data();
-      return json;
-    }
-  });
-
-  // Helpers
-  // -------
-
-  // Helper function to correctly set up the prototype chain, for subclasses.
-  // Similar to `goog.inherits`, but uses a hash of prototype properties and
-  // class properties to be extended.
-  FruitMachine.inherit = function(protoProps, staticProps) {
-    var parent = this;
-    var child;
-
-    // The constructor function for the new subclass is either defined by you
-    // (the "constructor" property in your `extend` definition), or defaulted
-    // by us to simply call the parent's constructor.
-    if (protoProps && has.call(protoProps, 'constructor')) {
-      child = protoProps.constructor;
-    } else {
-      child = function(){ return parent.apply(this, arguments); };
-    }
-
-    // Add static properties to the constructor function, if supplied.
-    mixin(child, parent, staticProps);
-
-    // Set the prototype chain to inherit from `parent`, without calling
-    // `parent`'s constructor function.
-    var Surrogate = function(){ this.constructor = child; };
-    Surrogate.prototype = parent.prototype;
-    child.prototype = new Surrogate();
-
-    // Add prototype properties (instance properties) to the subclass,
-    // if supplied.
-    if (protoProps) mixin(child.prototype, protoProps);
-
-    // Set a convenience property in case the parent's prototype is needed
-    // later.
-    child.__super__ = parent.prototype;
-
-    return child;
-  };
-
-  // We add the 'extend' static method to the FruitMachine base
-  // class. This allows you to extend the default View class
-  // to add custom insteractions and logic to more complex modules.
-  // Redefining any of the View.prototype methods will overwrite them.
-  FruitMachine.module = function(type, props) {
-    if ('string' === typeof type) {
-      props.module = type;
-      return store.modules[type] = FruitMachine.inherit(props);
-    } else if ('object' === typeof type) {
-      return FruitMachine.inherit(type);
-    }
-  };
-
-  // Expose the library
-  if (typeof exports === "object") {
-    module.exports = FruitMachine;
-  } else if (typeof define === "function" && define.amd) {
-    define(FruitMachine);
-  } else {
-    window['FruitMachine'] = FruitMachine;
-  }
-}());
-});
-
-require.define("/examples/express/lib/routes/index.js",function(require,module,exports,__dirname,__filename,process,global){var page = require('../pagejs');
+}
+},{"./view":7,"./store":6,"./util":5}],10:[function(require,module,exports){
+
+/**
+ * Module Dependencies
+ */
+
+var store = require('./store');
+var mixin = require('./util').mixin;
+
+/**
+ * Exports
+ */
+
+var defaults = store.config = module.exports = {
+	templateIterator: 'children',
+	templateInstance: 'child',
+	model: {
+		toJSON: function(model) {
+			return model.toJSON();
+		}
+	}
+};
+
+defaults.set = function(options) {
+	mixin(defaults, options);
+};
+},{"./store":6,"./util":5}],12:[function(require,module,exports){
+var content = document.querySelector('.js-app_content');
+var View = require('./view');
+
+var database = {
+	title: 'This is the Home page'
+};
+
+module.exports = function() {
+	app.view = View(database);
+
+	app.view
+		.render()
+		.inject(content);
+};
+},{"./view":13}],14:[function(require,module,exports){
+var content = document.querySelector('.js-app_content');
+var View = require('./view');
+
+var database = {
+	title: 'This is the About page'
+};
+
+module.exports = function() {
+	app.view = View(database);
+
+	app.view
+		.render()
+		.inject(content);
+};
+},{"./view":15}],16:[function(require,module,exports){
+var content = document.querySelector('.js-app_content');
+var View = require('./view');
+
+var database = {
+	title: 'This is the Links page'
+};
+
+module.exports = function() {
+	app.view = View(database);
+
+	app.view
+		.render()
+		.inject(content);
+};
+},{"./view":17}],11:[function(require,module,exports){
+
+/**
+ * Event
+ *
+ * A super lightweight
+ * event emitter library.
+ *
+ * @version 0.1.4
+ * @author Wilson Page <wilson.page@me.com>
+ */
+
+/**
+ * Creates a new event emitter
+ * instance, or if passed an
+ * object, mixes the event logic
+ * into it.
+ *
+ * @param  {Object} obj
+ * @return {Object}
+ */
+var Event = module.exports = function(obj) {
+	if (!(this instanceof Event)) return new Event(obj);
+	if (obj) return mixin(obj, Event.prototype);
+};
+
+/**
+ * Registers a callback
+ * with an event name.
+ *
+ * @param  {String}   name
+ * @param  {Function} cb
+ * @return {Event}
+ */
+Event.prototype.on = function(name, cb) {
+	this._cbs = this._cbs || {};
+	(this._cbs[name] || (this._cbs[name] = [])).push(cb);
+	return this;
+};
+
+/**
+ * Removes a single callback,
+ * or all callbacks associated
+ * with the passed event name.
+ *
+ * @param  {String}   name
+ * @param  {Function} cb
+ * @return {Event}
+ */
+Event.prototype.off = function(name, cb) {
+	this._cbs = this._cbs || {};
+
+	if (!name) return this._cbs = {};
+	if (!cb) return delete this._cbs[name];
+
+	var cbs = this._cbs[name] || [];
+	var i;
+
+	while (cbs && ~(i = cbs.indexOf(cb))) cbs.splice(i, 1);
+	return this;
+};
+
+/**
+ * Fires an event. Which triggers
+ * all callbacks registered on this
+ * event name.
+ *
+ * @param  {String} name
+ * @return {Event}
+ */
+Event.prototype.fire = function(name) {
+	this._cbs = this._cbs || {};
+
+	var cbs = (this._cbs[name] || (this._cbs[name] = []));
+	var args = [].slice.call(arguments, 1);
+	var l = cbs.length;
+
+	while (l--) cbs[l].apply(null, args);
+	return this;
+};
+
+/**
+ * Util
+ */
+
+/**
+ * Mixes in the properties
+ * of the second object into
+ * the first.
+ *
+ * @param  {Object} a
+ * @param  {Object} b
+ * @return {Object}
+ */
+function mixin(a, b) {
+  for (var key in b) a[key] = b[key];
+  return a;
+}
+},{}],3:[function(require,module,exports){
+var page = require('page');
 var home = require('../page-home/client');
 var about = require('../page-about/client');
 var links = require('../page-links/client');
@@ -1336,9 +629,999 @@ page('/about', about);
 page('/links', links);
 
 page({ dispatch: false });
-});
+},{"../page-home/client":12,"../page-about/client":14,"../page-links/client":16,"page":18}],19:[function(require,module,exports){
+/*jshint browser:true, node:true*/
 
-require.define("/examples/express/lib/pagejs/index.js",function(require,module,exports,__dirname,__filename,process,global){;(function(){
+'use strict';
+
+/**
+ * Module Dependencies
+ */
+
+var mixin = require('./util').mixin;
+
+/**
+ * Exports
+ */
+
+module.exports = function(proto) {
+  var parent = this;
+  var child = function(){ return parent.apply(this, arguments); };
+
+  // Mixin static properties
+  // eg. View.extend.
+  mixin(child, parent);
+
+  // Set the prototype chain to
+  // inherit from `parent`, without
+  // calling `parent`'s constructor function.
+  function C() { this.constructor = child; }
+  C.prototype = parent.prototype;
+  child.prototype = new C();
+
+  // Add prototype properties
+  mixin(child.prototype, proto);
+
+  // Set a convenience property
+  // in case the parent's prototype
+  // is needed later.
+  child.__super__ = parent.prototype;
+
+  return child;
+};
+},{"./util":5}],7:[function(require,module,exports){
+
+/*jshint browser:true, node:true*/
+
+'use strict';
+
+/**
+ * Module Dependencies
+ */
+
+var config = require('./config');
+var extend = require('./extend');
+var events = require('event');
+var Model = require('./model');
+var util = require('./util');
+var store = require('./store');
+var mixin = util.mixin;
+
+/**
+ * Exports
+ */
+
+module.exports = View;
+
+/**
+ * View constructor
+ *
+ * @constructor
+ * @param {Object} options
+ * @api public
+ */
+function View(options) {
+
+  // Shallow clone the options
+  options = mixin({}, options);
+
+  // If a `module` property is passed
+  // we create a view of that module type.
+  if (options.module) {
+    var LazyView = store.modules[options.module] || View;
+    options._module = options.module;
+    delete options.module;
+    return new LazyView(options);
+  }
+
+  // Various config steps
+  this._configure(options);
+
+  // Add any children passed
+  // in the options object
+  this.add(options.children);
+
+  // Run initialize hooks
+  if (this.initialize) this.initialize(options);
+  this.fire('initialize', [options], { propagate: false });
+}
+
+/**
+ * Configures the new View
+ * with the options passed
+ * to the constructor.
+ *
+ * @param  {Object} options
+ * @api private
+ */
+View.prototype._configure = function(options) {
+  this._module = this._module || options._module;
+  this._id = options.id || util.uniqueId('auto_');
+  this._fmid = options.fmid || util.uniqueId('fmid');
+  this.tag = options.tag || this.tag || 'div';
+  this.classes = this.classes || options.classes || [];
+  this.helpers = this.helpers || options.helpers || [];
+  this.template = this.setTemplate(options.template || this.template);
+  this.children = [];
+
+  // Create id and module
+  // lookup objects
+  this._ids = {};
+  this._modules = {};
+
+  // Use the model passed in,
+  // or create a model from
+  // the data passed in.
+  var model = options.model || options.data || {};
+  this.model = util.isPlainObject(model)
+    ? new Model(model)
+    : model;
+
+  // Attach helpers
+  this.helpers.forEach(this.attachHelper, this);
+};
+
+/**
+ * Instantiates the given
+ * helper on the View.
+ *
+ * @param  {Function} helper
+ * @return {View}
+ * @api private
+ */
+View.prototype.attachHelper = function(helper) {
+  if (helper) helper(this);
+},
+
+/**
+ * Returns the template function
+ * for the view.
+ *
+ * For template object like Hogan
+ * templates with a `render` method
+ * we need to bind the context
+ * so they can be called without
+ * a reciever.
+ *
+ * @return {Function}
+ * @api private
+ */
+View.prototype.setTemplate = function(fn) {
+  return fn && fn.render
+    ? util.bind(fn.render, fn)
+    : fn;
+};
+
+/**
+ * Adds a child view(s) to another View.
+ *
+ * Options:
+ *
+ *  - `at` The child index at which to insert
+ *  - `inject` Injects the child's view element into the parent's
+ *
+ * @param {View|Object|Array} children
+ * @param {Object} options
+ */
+View.prototype.add = function(children, options) {
+  var at = options && options.at;
+  var inject = options && options.inject;
+  var child;
+
+  if (!children) return this;
+
+  // Make sure it's an array
+  children = [].concat(children);
+
+  for (var i = 0, l = children.length; i < l; i++) {
+    child = children[i];
+
+    // If it's not a View, make it one.
+    if (!(child instanceof View)) child = new View(child);
+
+    util.insert(child, this.children, at);
+    this._addLookup(child);
+    child.parent = this;
+
+    // We append the child to the parent view if there is a view
+    // element and the users hasn't flagged `append` false.
+    if (inject) this.injectElement(child.el, options);
+  }
+
+  // Allow chaining
+  return this;
+};
+
+/**
+ * Creates a lookup reference for
+ * the child view passed.
+ *
+ * @param {View} child
+ * @api private
+ */
+View.prototype._addLookup = function(child) {
+
+  // Add a lookup for module
+  this._modules[child._module] = this._modules[child._module] || [];
+  this._modules[child._module].push(child);
+
+  // Add a lookup for id
+  this._ids[child.id()] = child;
+};
+
+/**
+ * Removes the lookup for the
+ * the child view passed.
+ *
+ * @param {View} child
+ * @api private
+ */
+View.prototype._removeLookup = function(child) {
+
+  // Remove the module lookup
+  var index = this._modules[child._module].indexOf(child);
+  this._modules[child._module].splice(index, 1);
+
+  // Remove the id lookup
+  delete this._ids[child._id];
+};
+
+/**
+ * Injects an element into the
+ * View's root element.
+ *
+ * By default the element is appended
+ * but then
+ *
+ * Options:
+ *
+ *  - `at` The index at which to insert.
+ *
+ * @param  {[type]} el
+ * @param  {[type]} options
+ * @return {[type]}
+ * @api private
+ */
+View.prototype.injectElement = function(el, options) {
+  var at = options && options.at;
+  var parent = this.el;
+  if (!el || !parent) return;
+
+  if (typeof at !== 'undefined') {
+    parent.insertBefore(el, parent.children[at]);
+  } else {
+    parent.appendChild(el);
+  }
+};
+
+/**
+ * Returns a decendent module
+ * by id, or if called with no
+ * arguments, returns this view's id.
+ *
+ * Example:
+ *
+ *   myView.id();
+ *   //=> 'my_view_id'
+ *
+ *   myView.id('my_other_views_id');
+ *   //=> View
+ *
+ * @param  {String|undefined} id
+ * @return {View|String}
+ * @api public
+ */
+View.prototype.id = function(id) {
+  if (!id) return this._id;
+
+  var child = this._ids[id];
+  if (child) return child;
+
+  return this.each(function(view) {
+    return view.id(id);
+  });
+};
+
+/**
+ * Returns the first descendent
+ * View with the passed module type.
+ * If called with no arguments the
+ * View's own module type is returned.
+ *
+ * Example:
+ *
+ *   // Assuming 'myView' has 3 descendent
+ *   // views with the module type 'apple'
+ *
+ *   myView.modules('apple');
+ *   //=> View
+ *
+ * @param  {String} key
+ * @return {View}
+ */
+View.prototype.module = function(key) {
+  if (!key) return this._module;
+
+  var view = this._modules[key];
+  if (view) return view[0];
+
+  return this.each(function(view) {
+    return view.module(key);
+  });
+};
+
+/**
+ * Returns a list of descendent
+ * Views that match the module
+ * type given (Similar to
+ * Element.querySelectorAll();).
+ *
+ * Example:
+ *
+ *   // Assuming 'myView' has 3 descendent
+ *   // views with the module type 'apple'
+ *
+ *   myView.modules('apple');
+ *   //=> [ View, View, View ]
+ *
+ * @param  {String} key
+ * @return {Array}
+ * @api public
+ */
+View.prototype.modules = function(key) {
+  var list = this._modules[key] || [];
+
+  // Then loop each child and run the
+  // same opperation, appending the result
+  // onto the list.
+  this.each(function(view) {
+    list = list.concat(view.modules(key));
+  });
+
+  return list;
+};
+
+/**
+ * Calls the passed function
+ * for each of the view's
+ * children.
+ *
+ * Example:
+ *
+ *   myView.each(function(child) {
+ *     // Do stuff with each child view...
+ *   });
+ *
+ * @param  {Function} fn
+ * @return {[type]}
+ */
+View.prototype.each = function(fn) {
+  var l = this.children.length;
+  var result;
+
+  for (var i = 0; i < l; i++) {
+    result = fn(this.children[i]);
+    if (result) return result;
+  }
+};
+
+/**
+ * Templates the view, including
+ * any descendent views returning
+ * an html string. All data in the
+ * views model is made accessible
+ * to the template.
+ *
+ * Child views are printed into the
+ * parent template by `id`. Alternatively
+ * children can be iterated over a a list
+ * and printed with `{{{child}}}}`.
+ *
+ * Example:
+ *
+ *   <div class="slot-1">{{{id_of_child_1}}}</div>
+ *   <div class="slot-2">{{{id_of_child_2}}}</div>
+ *
+ *   // or
+ *
+ *   {{#children}}
+ *     {{{child}}}
+ *   {{/children}}
+ *
+ * @return {String}
+ * @api public
+ */
+View.prototype.toHTML = function() {
+  var toJSON = config.model.toJSON;
+  var data = {};
+  var html;
+  var tmp;
+
+  // Use cache if populated
+  if (this.html) return this.html;
+
+  // Create an array for view
+  // children data needed in template.
+  data[config.templateIterator] = [];
+
+  // Loop each child
+  this.each(function(child) {
+    html = child.toHTML();
+    data[child.id()] = html;
+    tmp = {};
+    tmp[config.templateInstance] = html;
+    data.children.push(mixin(tmp, toJSON(child.model)));
+  });
+
+  // Run the template render method
+  // passing children data (for looping
+  // or child views) mixed with the
+  // view's model data.
+  html = this.template
+    ? this.template(mixin(data, toJSON(this.model)))
+    : '';
+
+  // Wrap the html in a FruitMachine
+  // generated root element and return.
+  return this.html = this._wrapHTML(html);
+};
+
+/**
+ * Wraps the module html in
+ * a root element.
+ *
+ * @param  {String} html
+ * @return {String}
+ * @api private
+ */
+View.prototype._wrapHTML = function(html) {
+  return '<' + this.tag + ' class="' + this._module + ' ' + this.classes.join(' ') + '" id="' + this._fmid + '">' + html + '</' + this.tag + '>';
+};
+
+/**
+ * Renders the view and replaces
+ * the `view.el` with a freshly
+ * rendered node.
+ *
+ * Fires a `render` event on the view.
+ *
+ * @return {View}
+ */
+View.prototype.render = function() {
+  var html = this.toHTML();
+  var el = util.toNode(html);
+
+  // Sets a new element as a view's
+  // root element (purging descendent
+  // element caches).
+  this.setElement(el);
+
+  // Handy hook
+  this.fire('render', { propagate: false });
+
+  return this;
+};
+
+/**
+ * Sets up a view and all descendent
+ * views.
+ *
+ * Setup will be aborted if no `view.el`
+ * is found. If a view is already setup,
+ * teardown is run first to prevent a
+ * view being setup twice.
+ *
+ * Your custom `onSetup()` method is called
+ * and a `setup` event is fired on the view.
+ *
+ * @param  {Object} options
+ * @return {View}
+ */
+View.prototype.setup = function(options) {
+  var shallow = options && options.shallow;
+
+  // Attempt to fetch the view's
+  // root element. Don't continue
+  // if no route element is found.
+  if (!this.getElement()) return this;
+
+  // If this is already setup, call
+  // `teardown` first so that we don't
+  // duplicate event bindings and shizzle.
+  if (this.isSetup) this.teardown({ shallow: true });
+
+  // Fire the `setup` event hook
+  this.fire('before setup', { propagate: false });
+  if (this._setup) this._setup();
+  this.fire('setup', { propagate: false });
+
+  // Flag view as 'setup'
+  this.isSetup = true;
+
+  // Call 'setup' on all subviews
+  // first (top down recursion)
+  if (!shallow) {
+    this.each(function(child) {
+      child.setup();
+    });
+  }
+
+  // For chaining
+  return this;
+};
+
+/**
+ * Tearsdown a view and all descendent
+ * views that have been setup.
+ *
+ * Your custom `onTeardown` method is
+ * called and a `teardown` event is fired.
+ *
+ * @param  {Object} options
+ * @return {View}
+ */
+View.prototype.teardown = function(options) {
+  var shallow = options && options.shallow;
+
+  // Call 'setup' on all subviews
+  // first (bottom up recursion).
+  if (!shallow) {
+    this.each(function(child) {
+      child.teardown();
+    });
+  }
+
+  // Only teardown if this view
+  // has been setup. Teardown
+  // is supposed to undo all the
+  // work setup does, and therefore
+  // will likely run into undefined
+  // variables if setup hasn't run.
+  if (this.isSetup) {
+
+    this.fire('before teardown', { propagate: false });
+
+    if (this._teardown) this._teardown();
+
+    this.fire('teardown', { propagate: false });
+
+    this.isSetup = false;
+  }
+
+  // For chaining
+  return this;
+};
+
+/**
+ * Completely destroys a view. This means
+ * a view is torn down, removed from it's
+ * current layout context and removed
+ * from the DOM.
+ *
+ * Your custom `onDestroy` method is
+ * called and a `destroy` event is fired.
+ *
+ * @api public
+ */
+View.prototype.destroy = function(options) {
+  var l = this.children.length;
+
+  // Destroy each child view.
+  // We don't waste time removing
+  // the child elements as they will
+  // get removed when the parent
+  // element is removed.
+  //
+  // We can't use the standard View#each()
+  // as the array length gets altered
+  // with each iteration, hense the
+  // reverse while loop.
+  while (l--) {
+    this.children[l].destroy({ el: false });
+  }
+
+  // Don't continue if this view
+  // has already been destroyed.
+  if (this.destroyed) return this;
+
+  // Detach this view from its
+  // parent and unless otherwise
+  // stated, from the DOM.
+  this.remove(options);
+
+  // Run teardown so custom
+  // views can bind logic to it
+  this.teardown(options, { shallow: true });
+
+
+  this.fire('before destroy', { propagate: false });
+
+  if (this._destroy) this._destroy();
+
+  // Trigger a `destroy` event
+  // for custom Views to bind to.
+  this.fire('destroy', { propagate: false });
+
+  // Unbind any old event listeners
+  this.off();
+
+  // Set a flag to say this view
+  // has been destroyed. This is
+  // useful to check for after a
+  // slow ajax call that might come
+  // back after a view has been detroyed.
+  this.destroyed = true;
+
+  // Clear references
+  this.el = this.model = this.parent = this._modules = this._module = this._ids = this._id = null;
+};
+
+/**
+ * Removes the View's element
+ * from the DOM.
+ *
+ * @return {FruitMachine}
+ * @api public
+ */
+View.prototype.remove = function(options) {
+  options = options || {};
+  var el = this.el;
+  var index;
+
+  // Unless stated otherwise,
+  // remove the view element
+  // from the its parent node.
+  if (options.el !== false) {
+    if (el && el.parentNode) el.parentNode.removeChild(el);
+  }
+
+  // If there is no parent view
+  // reference, return here.
+  if (!this.parent) return this;
+
+  // Remove reference from views array
+  index = this.parent.children.indexOf(this);
+  this.parent.children.splice(index, 1);
+
+  // Remove references from the lookup
+  this.parent._removeLookup(this);
+
+  return this;
+};
+
+/**
+ * Destroys all children.
+ *
+ * @return {View}
+ * @api public
+ */
+View.prototype.empty = function() {
+  var l = this.children.length;
+  while (l--) this.children[l].destroy();
+  return this;
+};
+
+/**
+ * Returns the closest root view
+ * element, walking up the chain
+ * until it finds one.
+ *
+ * @return {Element}
+ * @api private
+ */
+View.prototype.closestElement = function() {
+  var view = this.parent;
+  while (view && !view.el && view.parent) view = view.parent;
+  return view && view.el;
+};
+
+/**
+ * Returns the View's root element.
+ *
+ * If a cache is present it is used,
+ * else we search the DOM, else we
+ * find the closest element and
+ * perform a querySelector using
+ * the view._fmid.
+ *
+ * @return {Element|undefined}
+ * @api private
+ */
+View.prototype.getElement = function() {
+  if (!util.hasDom()) return;
+  return this.el = this.el
+    || document.getElementById(this._fmid)
+    || this.parent && util.querySelectorId(this._fmid, this.closestElement());
+};
+
+/**
+ * Sets a root element on a view.
+ * If the view already has a root
+ * element, it is replaced.
+ *
+ * IMPORTANT: All descendent root
+ * element caches are purged so that
+ * the new correct elements are retrieved
+ * next time View#getElement is called.
+ *
+ * @param {Element} el
+ * @return {View}
+ * @api private
+ */
+View.prototype.setElement = function(el) {
+  var existing = this.el;
+
+  if (existing && existing.parentNode) {
+    existing.parentNode.replaceChild(el, existing);
+  }
+
+  // Purge all element caches
+  this.purgeElementCaches();
+
+  // Update cache
+  this.el = el;
+
+  return this;
+};
+
+/**
+ * Recursively purges the
+ * element cache.
+ *
+ * @return void
+ * @api private
+ */
+View.prototype.purgeElementCaches = function() {
+  this.el = null;
+  this.each(function(child) {
+    child.purgeElementCaches();
+  });
+};
+
+/**
+ * Detects whether a view is in
+ * the DOM (useful for debugging).
+ *
+ * @return {Boolean}
+ * @api private
+ */
+View.prototype.inDOM = function() {
+  if (this.parent) return this.parent.inDOM();
+  return !!(this.el && this.el.parentNode);
+};
+
+/**
+ * Empties the destination element
+ * and appends the view into it.
+ *
+ * @param  {Element} dest
+ * @return {View}
+ * @api public
+ */
+View.prototype.inject = function(dest) {
+  if (dest) {
+    dest.innerHTML = '';
+    this.appendTo(dest);
+  }
+
+  return this;
+};
+
+/**
+ * Appends the view element into
+ * the destination element.
+ *
+ * @param  {Element} dest
+ * @return {View}
+ * @api public
+ */
+View.prototype.appendTo = function(dest) {
+  if (this.el && dest && dest.appendChild) {
+    dest.appendChild(this.el);
+  }
+
+  return this;
+};
+
+/**
+ * Returns a JSON represention of
+ * a FruitMachine View. This can
+ * be generated serverside and
+ * passed into new FruitMachine(json)
+ * to inflate serverside rendered
+ * views.
+ *
+ * @return {Object}
+ * @api public
+ */
+View.prototype.toJSON = function() {
+  var json = {};
+  json.children = [];
+
+  // Recurse
+  this.each(function(child) {
+    json.children.push(child.toJSON());
+  });
+
+  json.id = this.id();
+  json.fmid = this._fmid;
+  json.module = this._module;
+  json.model = this.model.get();
+
+  return json;
+};
+
+// Events
+View.prototype.on = events.prototype.on;
+View.prototype.off = events.prototype.off;
+
+/**
+ * Proxies the standard Event.fire
+ * method so that we can add bubble
+ * functionality.
+ *
+ * Options:
+ *
+ *  - `propagate` States whether the event should bubble through parent views.
+ *
+ * @param  {String} key
+ * @param  {Array} args
+ * @param  {Object} options
+ * @return {View}
+ * @api public
+ */
+View.prototype.fire = function(key, args, event) {
+  var propagate;
+
+  // event can be passed as
+  // the second or third argument
+  if (!util.isArray(args)) {
+    event = args;
+    args = [];
+  }
+
+  // Use the event object passed
+  // in, or make a fresh one
+  event = event || {
+    target: this,
+    stopPropagation: function() { this.propagate = false; }
+  };
+
+  // Trigger event
+  events.prototype.fire.apply(this, [key, event].concat(args));
+
+  // Propagate by default
+  propagate = (event.propagate !== false);
+
+  // Trigger the same
+  // event on the parent view
+  if (propagate && this.parent) this.parent.fire(key, args, event);
+
+  // Allow chaining
+  return this;
+};
+
+/**
+ * Allow Views to be extended
+ */
+
+View.extend = extend;
+},{"./config":10,"./extend":19,"./model":8,"./util":5,"./store":6,"event":11}],8:[function(require,module,exports){
+
+/*jshint browser:true, node:true*/
+
+'use strict';
+
+/**
+ * Module Dependencies
+ */
+
+var events = require('event');
+var mixin = require('./util').mixin;
+
+/**
+ * Exports
+ */
+
+module.exports = Model;
+
+/**
+ * Model constructor.
+ *
+ * @constructor
+ * @param {Object} data
+ * @api public
+ */
+function Model(data) {
+  this._data = mixin({}, data);
+}
+
+/**
+ * Gets a value by key
+ *
+ * If no key is given, the
+ * whole model is returned.
+ *
+ * @param  {String} key
+ * @return {*}
+ * @api public
+ */
+Model.prototype.get = function(key) {
+  return this._data[key];
+};
+
+/**
+ * Sets data on the model.
+ *
+ * Accepts either a key and
+ * value, or an object literal.
+ *
+ * @param {String|Object} key
+ * @param {*|undefined} value
+ */
+Model.prototype.set = function(data, value) {
+
+  // If a string key is passed
+  // with a value. Set the value
+  // on the key in the data store.
+  if ('string' === typeof data && value) {
+    this._data[data] = value;
+    this.fire('change:' + data, value);
+  }
+
+  // Merge the object into the data store
+  if ('object' === typeof data) {
+    mixin(this._data, data);
+    for (var prop in data) this.fire('change:' + prop, data[prop]);
+  }
+
+  // Always fire a
+  // generic change event
+  this.fire('change');
+
+  // Allow chaining
+  return this;
+};
+
+/**
+ * CLears the data store.
+ *
+ * @return {Model}
+ */
+Model.prototype.clear = function() {
+  this._data = {};
+  this.fire('change');
+
+  // Allow chaining
+  return this;
+};
+
+/**
+ * Deletes the data store.
+ *
+ * @return {undefined}
+ */
+Model.prototype.destroy = function() {
+  for (var key in this._data) this._data[key] = null;
+  delete this._data;
+  this.fire('destroy');
+};
+
+/**
+ * Returns a shallow
+ * clone of the data store.
+ *
+ * @return {Object}
+ */
+Model.prototype.toJSON = function() {
+  return mixin({}, this._data);
+};
+
+// Mixin events
+events(Model.prototype);
+},{"./util":5,"event":11}],18:[function(require,module,exports){
+
+;(function(){
 
   /**
    * Perform initial dispatch.
@@ -1454,13 +1737,14 @@ require.define("/examples/express/lib/pagejs/index.js",function(require,module,e
    *
    * @param {String} path
    * @param {Object} state
+   * @param {Boolean} dispatch
    * @return {Context}
    * @api public
    */
 
-  page.show = function(path, state){
+  page.show = function(path, state, dispatch){
     var ctx = new Context(path, state);
-    page.dispatch(ctx);
+    if (false !== dispatch) page.dispatch(ctx);
     if (!ctx.unhandled) ctx.pushState();
     return ctx;
   };
@@ -1705,17 +1989,30 @@ require.define("/examples/express/lib/pagejs/index.js",function(require,module,e
 
   function onclick(e) {
     if (1 != which(e)) return;
+    if (e.metaKey || e.ctrlKey || e.shiftKey) return;
     if (e.defaultPrevented) return;
+
+    // ensure link
     var el = e.target;
     while (el && 'A' != el.nodeName) el = el.parentNode;
     if (!el || 'A' != el.nodeName) return;
+
+    // ensure non-hash
     var href = el.href;
     var path = el.pathname + el.search;
     if (el.hash || '#' == el.getAttribute('href')) return;
+
+    // check target
+    if (el.target) return;
+
+    // x-origin
     if (!sameOrigin(href)) return;
+
+    // same page
     var orig = path;
     path = path.replace(base, '');
     if (base && orig == path) return;
+
     e.preventDefault();
     page.show(orig);
   }
@@ -1752,23 +2049,9 @@ require.define("/examples/express/lib/pagejs/index.js",function(require,module,e
   }
 
 })();
-});
 
-require.define("/examples/express/lib/page-home/client.js",function(require,module,exports,__dirname,__filename,process,global){var content = document.querySelector('.js-app_content');
-var View = require('./view');
-
-var database = {
-	title: 'This is the Home page'
-};
-
-module.exports = function() {
-	var view = View(database);
-	view.render();
-	view.inject(content);
-};
-});
-
-require.define("/examples/express/lib/page-home/view.js",function(require,module,exports,__dirname,__filename,process,global){var FruitMachine = require('../../../../lib/fruitmachine');
+},{}],13:[function(require,module,exports){
+var FruitMachine = require('../../../../lib/');
 
 // Require these views so that
 // FruitMachine registers them
@@ -1780,7 +2063,7 @@ var ModuleBanana = require('../module-banana');
 module.exports = function(data) {
 	var layout = {
 		module: 'layout-a',
-		views: [
+		children: [
 			{
 				id: 'slot_1',
 				module: 'apple',
@@ -1801,152 +2084,149 @@ module.exports = function(data) {
 
 	return new FruitMachine(layout);
 };
-});
+},{"../../../../lib/":2,"../layout-a":20,"../module-apple":21,"../module-orange":22,"../module-banana":23}],15:[function(require,module,exports){
+var FruitMachine = require('../../../../lib/');
 
-require.define("/examples/express/lib/layout-a/index.js",function(require,module,exports,__dirname,__filename,process,global){var FruitMachine = require('../../../../lib/fruitmachine');
-var apple = require('../module-apple');
+// Require these views so that
+// FruitMachine registers them
+var LayoutA = require('../layout-a');
+var ModuleApple = require('../module-apple');
+var ModuleOrange = require('../module-orange');
+var ModuleBanana = require('../module-banana');
+
+module.exports = function(data) {
+	var layout = {
+		module: 'layout-a',
+		children: [
+			{
+				id: 'slot_1',
+				module: 'apple',
+				data: {
+					title: data.title
+				}
+			},
+			{
+				id: 'slot_2',
+				module: 'banana'
+			},
+			{
+				id: 'slot_3',
+				module: 'orange'
+			}
+		]
+	};
+
+	return new FruitMachine(layout);
+};
+},{"../../../../lib/":2,"../layout-a":20,"../module-apple":21,"../module-orange":22,"../module-banana":23}],17:[function(require,module,exports){
+var FruitMachine = require('../../../../lib/');
+
+// Require these views so that
+// FruitMachine registers them
+var LayoutA = require('../layout-a');
+var ModuleApple = require('../module-apple');
+var ModuleOrange = require('../module-orange');
+var ModuleBanana = require('../module-banana');
+
+module.exports = function(data) {
+	var layout = {
+		module: 'layout-a',
+		children: [
+			{
+				id: 'slot_1',
+				module: 'orange'
+			},
+			{
+				id: 'slot_2',
+				module: 'apple',
+				data: {
+					title: data.title
+				}
+			},
+			{
+				id: 'slot_3',
+				module: 'banana'
+			}
+		]
+	};
+
+	return new FruitMachine(layout);
+};
+},{"../../../../lib/":2,"../layout-a":20,"../module-apple":21,"../module-orange":22,"../module-banana":23}],20:[function(require,module,exports){
+
+/**
+ * Module Dependencies
+ */
+
+var fm = require('../../../../lib/');
 var template = require('./template');
 
+/**
+ * Exports
+ */
 
-module.exports = FruitMachine.module('layout-a', {
+module.exports = fm.define({
+	module: 'layout-a',
 	template: template
 });
-});
+},{"./template":24,"../../../../lib/":2}],21:[function(require,module,exports){
 
-require.define("/examples/express/lib/module-apple/index.js",function(require,module,exports,__dirname,__filename,process,global){var FruitMachine = require('../../../../lib/fruitmachine.js');
-var template = require('./template');
-FruitMachine.templates({ apple: template });
-});
+/**
+ * Module Dependencies
+ */
 
-require.define("/examples/express/lib/module-apple/template.js",function(require,module,exports,__dirname,__filename,process,global){module.exports = new Hogan(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div class=\"module-apple\" ");_.b(_.t(_.f("fm_attrs",c,p,0)));_.b(">");_.b("\n" + i);_.b("	<div class=\"module-apple_title\">");_.b(_.v(_.f("title",c,p,0)));_.b("</div>");_.b("\n" + i);_.b("</div>");return _.fl();;});
-});
-
-require.define("/examples/express/lib/layout-a/template.js",function(require,module,exports,__dirname,__filename,process,global){module.exports = new Hogan(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div class='layout-a' ");_.b(_.t(_.f("fm_attrs",c,p,0)));_.b(">");_.b("\n" + i);_.b("	<div class='layout-a_slot-1'>");_.b(_.t(_.f("slot_1",c,p,0)));_.b("</div>");_.b("\n" + i);_.b("	<div class='layout-a_region-1'>");_.b("\n" + i);_.b("		<div class='layout-a_slot-2'>");_.b(_.t(_.f("slot_2",c,p,0)));_.b("</div>");_.b("\n" + i);_.b("		<div class='layout-a_slot-3'>");_.b(_.t(_.f("slot_3",c,p,0)));_.b("</div>");_.b("\n" + i);_.b("	</div>");_.b("\n" + i);_.b("</div>");return _.fl();;});
-});
-
-require.define("/examples/express/lib/module-orange/index.js",function(require,module,exports,__dirname,__filename,process,global){var FruitMachine = require('../../../../lib/fruitmachine.js');
+var fm = require('../../../../lib/');
 var template = require('./template');
 
-FruitMachine.templates({ orange: template });
-});
+/**
+ * Exports
+ */
 
-require.define("/examples/express/lib/module-orange/template.js",function(require,module,exports,__dirname,__filename,process,global){module.exports = new Hogan(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div class='module-orange' ");_.b(_.t(_.f("fm_attrs",c,p,0)));_.b(">Module Orange</div>");return _.fl();;});
+module.exports = fm.define({
+	module: 'apple',
+	template: template
 });
+},{"./template":25,"../../../../lib/":2}],22:[function(require,module,exports){
 
-require.define("/examples/express/lib/module-banana/index.js",function(require,module,exports,__dirname,__filename,process,global){var FruitMachine = require('../../../../lib/fruitmachine.js');
+/**
+ * Module Dependencies
+ */
+
+var fm = require('../../../../lib/');
 var template = require('./template');
 
-FruitMachine.templates({ banana: template });
+/**
+ * Exports
+ */
+
+module.exports = fm.define({
+	module: 'orange',
+	template: template
 });
+},{"./template":26,"../../../../lib/":2}],23:[function(require,module,exports){
 
-require.define("/examples/express/lib/module-banana/template.js",function(require,module,exports,__dirname,__filename,process,global){module.exports = new Hogan(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div class='module-banana' ");_.b(_.t(_.f("fm_attrs",c,p,0)));_.b(">Module Banana</div>");return _.fl();;});
+/**
+ * Module Dependencies
+ */
+
+var fm = require('../../../../lib/');
+var template = require('./template');
+
+/**
+ * Exports
+ */
+
+module.exports = fm.define({
+	module: 'banana',
+	template: template
 });
-
-require.define("/examples/express/lib/page-about/client.js",function(require,module,exports,__dirname,__filename,process,global){var content = document.querySelector('.js-app_content');
-var View = require('./view');
-
-var database = {
-	title: 'This is the About page'
-};
-
-module.exports = function() {
-	var view = View(database);
-	view.render();
-	view.inject(content);
-};
-});
-
-require.define("/examples/express/lib/page-about/view.js",function(require,module,exports,__dirname,__filename,process,global){var FruitMachine = require('../../../../lib/fruitmachine');
-
-// Require these views so that
-// FruitMachine registers them
-var LayoutA = require('../layout-a');
-var ModuleApple = require('../module-apple');
-var ModuleOrange = require('../module-orange');
-var ModuleBanana = require('../module-banana');
-
-module.exports = function(data) {
-	var layout = {
-		module: 'layout-a',
-		views: [
-			{
-				id: 'slot_1',
-				module: 'apple',
-				data: {
-					title: data.title
-				}
-			},
-			{
-				id: 'slot_2',
-				module: 'banana'
-			},
-			{
-				id: 'slot_3',
-				module: 'orange'
-			}
-		]
-	};
-
-	return new FruitMachine(layout);
-};
-});
-
-require.define("/examples/express/lib/page-links/client.js",function(require,module,exports,__dirname,__filename,process,global){var content = document.querySelector('.js-app_content');
-var View = require('./view');
-
-var database = {
-	title: 'This is the Links page'
-};
-
-module.exports = function() {
-	var view = View(database);
-	view.render();
-	view.inject(content);
-};
-});
-
-require.define("/examples/express/lib/page-links/view.js",function(require,module,exports,__dirname,__filename,process,global){var FruitMachine = require('../../../../lib/fruitmachine');
-
-// Require these views so that
-// FruitMachine registers them
-var LayoutA = require('../layout-a');
-var ModuleApple = require('../module-apple');
-var ModuleOrange = require('../module-orange');
-var ModuleBanana = require('../module-banana');
-
-module.exports = function(data) {
-	var layout = {
-		module: 'layout-a',
-		views: [
-			{
-				id: 'slot_1',
-				module: 'orange'
-			},
-			{
-				id: 'slot_2',
-				module: 'apple',
-				data: {
-					title: data.title
-				}
-			},
-			{
-				id: 'slot_3',
-				module: 'banana'
-			}
-		]
-	};
-
-	return new FruitMachine(layout);
-};
-});
-
-require.define("/examples/express/lib/boot/index.js",function(require,module,exports,__dirname,__filename,process,global){global.Hogan = require('hogan.js/lib/template').Template;
-global.app = {};
-
-var FruitMachine = require('../../../lib/fruitmachine');
-var routes = require('../routes');
-
-app.view = new FruitMachine(window.layout);
-});
-require("/examples/express/lib/boot/index.js");
-})();
+},{"./template":27,"../../../../lib/":2}],24:[function(require,module,exports){
+module.exports = new Hogan(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div class='layout-a' ");_.b(_.t(_.f("fm_attrs",c,p,0)));_.b(">");_.b("\n" + i);_.b("	<div class='layout-a_slot-1'>");_.b(_.t(_.f("slot_1",c,p,0)));_.b("</div>");_.b("\n" + i);_.b("	<div class='layout-a_region-1'>");_.b("\n" + i);_.b("		<div class='layout-a_slot-2'>");_.b(_.t(_.f("slot_2",c,p,0)));_.b("</div>");_.b("\n" + i);_.b("		<div class='layout-a_slot-3'>");_.b(_.t(_.f("slot_3",c,p,0)));_.b("</div>");_.b("\n" + i);_.b("	</div>");_.b("\n" + i);_.b("</div>");return _.fl();;});
+},{}],25:[function(require,module,exports){
+module.exports = new Hogan(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div class=\"module-apple\" ");_.b(_.t(_.f("fm_attrs",c,p,0)));_.b(">");_.b("\n" + i);_.b("	<div class=\"module-apple_title\">");_.b(_.v(_.f("title",c,p,0)));_.b("</div>");_.b("\n" + i);_.b("</div>");return _.fl();;});
+},{}],26:[function(require,module,exports){
+module.exports = new Hogan(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div class='module-orange' ");_.b(_.t(_.f("fm_attrs",c,p,0)));_.b(">Module Orange</div>");return _.fl();;});
+},{}],27:[function(require,module,exports){
+module.exports = new Hogan(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div class='module-banana' ");_.b(_.t(_.f("fm_attrs",c,p,0)));_.b(">Module Banana</div>");return _.fl();;});
+},{}]},{},[1])
+;

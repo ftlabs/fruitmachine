@@ -1,4 +1,4 @@
-var FruitMachine = require('../../../../lib/fruitmachine');
+var FruitMachine = require('../../../../lib/');
 
 // Require these views so that
 // FruitMachine registers them
@@ -10,7 +10,7 @@ var ModuleBanana = require('../module-banana');
 module.exports = function(data) {
 	var layout = {
 		module: 'layout-a',
-		views: [
+		children: [
 			{
 				id: 'slot_1',
 				module: 'orange'

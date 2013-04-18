@@ -1,8 +1,16 @@
-var FruitMachine = require('../../../../lib/fruitmachine');
-var apple = require('../module-apple');
+
+/**
+ * Module Dependencies
+ */
+
+var fm = require('../../../../lib/');
 var template = require('./template');
 
+/**
+ * Exports
+ */
 
-module.exports = FruitMachine.module('layout-a', {
+module.exports = fm.define({
+	module: 'layout-a',
 	template: template
 });

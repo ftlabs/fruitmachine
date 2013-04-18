@@ -1,3 +1,16 @@
-var FruitMachine = require('../../../../lib/fruitmachine.js');
+
+/**
+ * Module Dependencies
+ */
+
+var fm = require('../../../../lib/');
 var template = require('./template');
-FruitMachine.templates({ apple: template });
+
+/**
+ * Exports
+ */
+
+module.exports = fm.define({
+	module: 'apple',
+	template: template
+});

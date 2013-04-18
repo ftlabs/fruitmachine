@@ -6,7 +6,9 @@ var database = {
 };
 
 module.exports = function() {
-	var view = View(database);
-	view.render();
-	view.inject(content);
+	app.view = View(database);
+
+	app.view
+		.render()
+		.inject(content);
 };
