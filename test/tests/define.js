@@ -37,6 +37,15 @@ buster.testCase('FruitMachine.define()', {
 		assert.called(setup);
 	},
 
+	"Not defining reserved methods should not rewrite keys with prefixed with '_'": function() {
+		var setup = this.spy();
+		var View = FruitMachine.define({
+			module: 'foobar'
+		});
+
+		refute.defined(View.prototype._setup);
+	},
+
 	"Should be able to accept a View class, so that a View can be defined from extended views": function() {
 		var initialize1 = this.spy();
 		var initialize2 = this.spy();
