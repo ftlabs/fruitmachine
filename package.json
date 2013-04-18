@@ -20,7 +20,7 @@
       "url": "https://github.com/wilsonpage/fruitmachine/blob/master/LICENSE-MIT"
     }
   ],
-  "main": "lib/fruitmachine",
+  "main": "lib/index",
   "engines": {
     "node": "*"
   },
