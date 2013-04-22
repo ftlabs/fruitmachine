@@ -16,7 +16,6 @@ FruitMachine events are interesting as they propagate (or bubble) up the view ch
 var Apple = FruitMachine.define({
   module: 'apple',
   template: template,
-  
   setup: function() {
     self.trigger('appleshouting');
   }
