@@ -1,4 +1,4 @@
-# fruitmachine
+![fm logo](artwork/logo.jpg)
 
 A modular view layout manager for client and server.
 
