@@ -1,6 +1,6 @@
 # Events
 
-Events are at the core of FruitMachine. They allows us to decouple View interactions from one another. By default *FruitMachine* fire the following events on View moudle instances:
+Events are at the core of FruitMachine. They allows us to decouple View interactions from one another. By default *FruitMachine* fire the following events on View module instances:
 
 - `initialize` On instantiation
 - `setup` When `.setup()` is called (remember 'setup' is recursive)
