@@ -17,7 +17,7 @@ var Apple = FruitMachine.define({
   module: 'apple',
   template: template,
   
-  onSetup: function() {
+  setup: function() {
     self.trigger('appleshouting');
   }
 }):
