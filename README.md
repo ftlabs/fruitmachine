@@ -116,6 +116,30 @@ Options:
  - `at` The child index at which to insert
  - `inject` Injects the child's view element into the parent's
 
+### View#remove();
+
+Removes a child view from
+its current View contexts
+and also from the DOM unless
+otherwise stated.
+
+Options:
+
+ - `fromDOM` Whether the element should be removed from the DOM (default `true`)
+
+*Example:*
+
+    // The following are equal
+    // apple is removed from the
+    // the view structure and DOM
+    layout.remove(apple);
+    apple.remove();
+
+    // Apple is removed from the
+    // view structure, but not the DOM
+    layout.remove(apple, { el: false });
+    apple.remove({ el: false });
+
 ### View#id();
 
 Returns a decendent module
@@ -214,16 +238,23 @@ is found. If a view is already setup,
 teardown is run first to prevent a
 view being setup twice.
 
-Your custom `onSetup()` method is called
-and a `setup` event is fired on the view.
+Your custom `setup()` method is called
+
+Options:
+
+ - `shallow` Does not recurse when `true` (default `false`)
 
 ### View#teardown();
 
 Tearsdown a view and all descendent
 views that have been setup.
 
-Your custom `onTeardown` method is
+Your custom `teardown` method is
 called and a `teardown` event is fired.
+
+Options:
+
+ - `shallow` Does not recurse when `true` (default `false`)
 
 ### View#destroy();
 
@@ -232,15 +263,12 @@ a view is torn down, removed from it's
 current layout context and removed
 from the DOM.
 
-Your custom `onDestroy` method is
+Your custom `destroy` method is
 called and a `destroy` event is fired.
 
-### View#remove();
+Options:
 
-Removes the View's element
-from the DOM.
-
-
+ - `fromDOM` Whether the view should be removed from DOM (default `true`)
 
 ### View#empty();
 
