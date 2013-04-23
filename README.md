@@ -266,6 +266,9 @@ from the DOM.
 Your custom `destroy` method is
 called and a `destroy` event is fired.
 
+NOTE: `.remove()` is only run on the view
+that `.destroy()` is directly called on.
+
 Options:
 
  - `fromDOM` Whether the view should be removed from DOM (default `true`)

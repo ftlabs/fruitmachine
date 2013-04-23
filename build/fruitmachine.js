@@ -962,6 +962,9 @@ View.prototype.teardown = function(options) {
  * Your custom `destroy` method is
  * called and a `destroy` event is fired.
  *
+ * NOTE: `.remove()` is only run on the view
+ * that `.destroy()` is directly called on.
+ *
  * Options:
  *
  *  - `fromDOM` Whether the view should be removed from DOM (default `true`)
@@ -969,6 +972,9 @@ View.prototype.teardown = function(options) {
  * @api public
  */
 View.prototype.destroy = function(options) {
+  options = options || {};
+
+  var remove = options.remove !== false;
   var l = this.children.length;
 
   // Destroy each child view.
@@ -982,20 +988,25 @@ View.prototype.destroy = function(options) {
   // with each iteration, hense the
   // reverse while loop.
   while (l--) {
-    this.children[l].destroy({ fromDOM: false });
+    this.children[l].destroy({ remove: false });
   }
 
   // Don't continue if this view
   // has already been destroyed.
   if (this.destroyed) return this;
 
-  // Detach this view from its
-  // parent and unless otherwise
-  // stated, from the DOM.
-  this.remove(options);
+  // .remove() is only run on the view that
+  // destroy() was called on.
+  //
+  // It is a waste of time to remove the
+  // descendent views as well, as any
+  // references to them will get wiped
+  // within destroy and they will get
+  // removed from the DOM with the main view.
+  if (remove) this.remove(options);
 
   // Run teardown
-  this.teardown(options, { shallow: true });
+  this.teardown({ shallow: true });
 
   // Fire an event hook before the
   // custom destroy logic is run
