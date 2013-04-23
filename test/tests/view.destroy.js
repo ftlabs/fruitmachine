@@ -21,15 +21,15 @@ buster.testCase('View#destroy()', {
   "Should call teardown once per view.": function() {
     var teardown1 = this.spy(this.view, 'teardown');
     var teardown2 = this.spy(this.view.module('orange'), 'teardown');
-
+debugger;
     this.view
       .render()
       .inject(sandbox)
       .setup()
       .destroy();
 
-    assert.isTrue(teardown1.calledOnce);
-    assert.isTrue(teardown2.calledOnce);
+    assert(teardown1.calledOnce);
+    assert(teardown2.calledOnce);
   },
 
   "Should remove only the first view element from the DOM.": function() {
