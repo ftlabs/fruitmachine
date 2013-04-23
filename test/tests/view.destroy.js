@@ -33,24 +33,24 @@ buster.testCase('View#destroy()', {
   },
 
   "Should remove only the first view element from the DOM.": function() {
-    var apple = this.view;
+    var layout = this.view;
     var orange = this.view.module('orange');
 
-    this.view
+    layout
       .render()
       .inject(sandbox)
       .setup();
 
-    var removeChildSpy1 = this.spy(apple.el.parentNode, 'removeChild');
-    var removeChildSpy2 = this.spy(orange.el.parentNode, 'removeChild');
+    var layoutRemoveChild = this.spy(layout.el.parentNode, 'removeChild');
+    var orangeRemoveChild = this.spy(orange.el.parentNode, 'removeChild');
 
     this.view.destroy();
 
-    assert.isTrue(removeChildSpy1.called);
-    assert.isFalse(removeChildSpy2.called);
+    assert(layoutRemoveChild.called);
+    refute(orangeRemoveChild.called);
 
-    removeChildSpy1.restore();
-    removeChildSpy2.restore();
+    layoutRemoveChild.restore();
+    orangeRemoveChild.restore();
   },
 
   "Should fire `destroy` event.": function() {
