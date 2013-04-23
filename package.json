@@ -1,7 +1,7 @@
 {
   "name": "fruitmachine",
   "description": "A modular view layout manager for client and server.",
-  "version": "0.2.5",
+  "version": "0.3.0",
   "homepage": "https://github.com/wilsonpage/fruitmachine",
   "author": {
     "name": "Wilson Page",
