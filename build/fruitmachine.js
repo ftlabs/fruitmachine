@@ -164,37 +164,23 @@ defaults.set = function(options) {
 
 var View = require('./view');
 var store = require('./store');
-var util = require('./util');
-
-/**
- * Locals
- */
-
-var keys = util.keys(View.prototype);
 
 /**
  * Creates and registers a
- * FruitMachine view constructor.
+ * FruitMachine view constructor
+ * and stores an internal reference.
+ *
+ * The user is able to pass in an already
+ * defined View constructor, or an object
+ * representing the View's prototype.
  *
  * @param  {Object|View}
  * @return {View}
  */
 module.exports = function(props) {
-
-  // If an existing FruitMachine.View
-  // has been passed in, use that.
-  // If just an object literal has
-  // been passed in then we extend the
-  // default FruitMachine.View prototype
-  // with the properties passed in.
-  var view = (props.__super__)
-    ? props
-    : View.extend(props);
-
-  // Make sure there are no
-  // keys conflicting with
-  // the core View prototype.
-  protect(keys, view.prototype);
+  var view = ('function' !== typeof props)
+    ? View.extend(props)
+    : props;
 
   // Store the module by module type
   // so that module can be referred to
@@ -202,29 +188,105 @@ module.exports = function(props) {
   return store.modules[view.prototype._module] = view;
 };
 
+},{"./store":2,"./view":7}],8:[function(require,module,exports){
 
 /**
- * Makes sure no properties
- * or methods can be overwritten
- * on the core View.prototype.
+ * Event
  *
- * If conflicting keys are found,
- * we create a new key prifixed with
- * a '_' and delete the original key.
+ * A super lightweight
+ * event emitter library.
  *
- * @param  {Array} keys
- * @param  {Object} ob
- * @return {[type]}
+ * @version 0.1.4
+ * @author Wilson Page <wilson.page@me.com>
  */
-function protect(keys, ob) {
-  for (var key in ob) {
-    if (ob.hasOwnProperty(key) && ~keys.indexOf(key)) {
-      ob['_' + key] = ob[key];
-      delete ob[key];
-    }
-  }
+
+/**
+ * Creates a new event emitter
+ * instance, or if passed an
+ * object, mixes the event logic
+ * into it.
+ *
+ * @param  {Object} obj
+ * @return {Object}
+ */
+var Event = module.exports = function(obj) {
+	if (!(this instanceof Event)) return new Event(obj);
+	if (obj) return mixin(obj, Event.prototype);
+};
+
+/**
+ * Registers a callback
+ * with an event name.
+ *
+ * @param  {String}   name
+ * @param  {Function} cb
+ * @return {Event}
+ */
+Event.prototype.on = function(name, cb) {
+	this._cbs = this._cbs || {};
+	(this._cbs[name] || (this._cbs[name] = [])).push(cb);
+	return this;
+};
+
+/**
+ * Removes a single callback,
+ * or all callbacks associated
+ * with the passed event name.
+ *
+ * @param  {String}   name
+ * @param  {Function} cb
+ * @return {Event}
+ */
+Event.prototype.off = function(name, cb) {
+	this._cbs = this._cbs || {};
+
+	if (!name) return this._cbs = {};
+	if (!cb) return delete this._cbs[name];
+
+	var cbs = this._cbs[name] || [];
+	var i;
+
+	while (cbs && ~(i = cbs.indexOf(cb))) cbs.splice(i, 1);
+	return this;
+};
+
+/**
+ * Fires an event. Which triggers
+ * all callbacks registered on this
+ * event name.
+ *
+ * @param  {String} name
+ * @return {Event}
+ */
+Event.prototype.fire = function(name) {
+	this._cbs = this._cbs || {};
+
+	var cbs = (this._cbs[name] || (this._cbs[name] = []));
+	var args = [].slice.call(arguments, 1);
+	var l = cbs.length;
+
+	while (l--) cbs[l].apply(this, args);
+	return this;
+};
+
+/**
+ * Util
+ */
+
+/**
+ * Mixes in the properties
+ * of the second object into
+ * the first.
+ *
+ * @param  {Object} a
+ * @param  {Object} b
+ * @return {Object}
+ */
+function mixin(a, b) {
+  for (var key in b) a[key] = b[key];
+  return a;
 }
-},{"./store":2,"./util":1,"./view":7}],7:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -1069,106 +1131,8 @@ View.prototype.fireStatic = events.fireStatic;
  * Allow Views to be extended
  */
 
-View.extend = extend;
-},{"../config":6,"./events":9,"../extend":10,"../model":4,"../util":1,"../store":2}],8:[function(require,module,exports){
-
-/**
- * Event
- *
- * A super lightweight
- * event emitter library.
- *
- * @version 0.1.4
- * @author Wilson Page <wilson.page@me.com>
- */
-
-/**
- * Creates a new event emitter
- * instance, or if passed an
- * object, mixes the event logic
- * into it.
- *
- * @param  {Object} obj
- * @return {Object}
- */
-var Event = module.exports = function(obj) {
-	if (!(this instanceof Event)) return new Event(obj);
-	if (obj) return mixin(obj, Event.prototype);
-};
-
-/**
- * Registers a callback
- * with an event name.
- *
- * @param  {String}   name
- * @param  {Function} cb
- * @return {Event}
- */
-Event.prototype.on = function(name, cb) {
-	this._cbs = this._cbs || {};
-	(this._cbs[name] || (this._cbs[name] = [])).push(cb);
-	return this;
-};
-
-/**
- * Removes a single callback,
- * or all callbacks associated
- * with the passed event name.
- *
- * @param  {String}   name
- * @param  {Function} cb
- * @return {Event}
- */
-Event.prototype.off = function(name, cb) {
-	this._cbs = this._cbs || {};
-
-	if (!name) return this._cbs = {};
-	if (!cb) return delete this._cbs[name];
-
-	var cbs = this._cbs[name] || [];
-	var i;
-
-	while (cbs && ~(i = cbs.indexOf(cb))) cbs.splice(i, 1);
-	return this;
-};
-
-/**
- * Fires an event. Which triggers
- * all callbacks registered on this
- * event name.
- *
- * @param  {String} name
- * @return {Event}
- */
-Event.prototype.fire = function(name) {
-	this._cbs = this._cbs || {};
-
-	var cbs = (this._cbs[name] || (this._cbs[name] = []));
-	var args = [].slice.call(arguments, 1);
-	var l = cbs.length;
-
-	while (l--) cbs[l].apply(this, args);
-	return this;
-};
-
-/**
- * Util
- */
-
-/**
- * Mixes in the properties
- * of the second object into
- * the first.
- *
- * @param  {Object} a
- * @param  {Object} b
- * @return {Object}
- */
-function mixin(a, b) {
-  for (var key in b) a[key] = b[key];
-  return a;
-}
-},{}],4:[function(require,module,exports){
+View.extend = extend(util.keys(View.prototype));
+},{"../config":6,"./events":9,"../extend":10,"../model":4,"../util":1,"../store":2}],4:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -1296,31 +1260,61 @@ var mixin = require('./util').mixin;
  * Exports
  */
 
-module.exports = function(proto) {
-  var parent = this;
-  var child = function(){ return parent.apply(this, arguments); };
+module.exports = function(keys) {
 
-  // Mixin static properties
-  // eg. View.extend.
-  mixin(child, parent);
+  return function(proto) {
+    var parent = this;
+    var child = function(){ return parent.apply(this, arguments); };
 
-  // Set the prototype chain to
-  // inherit from `parent`, without
-  // calling `parent`'s constructor function.
-  function C() { this.constructor = child; }
-  C.prototype = parent.prototype;
-  child.prototype = new C();
+    // Mixin static properties
+    // eg. View.extend.
+    mixin(child, parent);
 
-  // Add prototype properties
-  mixin(child.prototype, proto);
+    // Make sure there are no
+    // keys conflicting with
+    // the prototype.
+    if (keys) protect(keys, proto);
 
-  // Set a convenience property
-  // in case the parent's prototype
-  // is needed later.
-  child.__super__ = parent.prototype;
+    // Set the prototype chain to
+    // inherit from `parent`, without
+    // calling `parent`'s constructor function.
+    function C() { this.constructor = child; }
+    C.prototype = parent.prototype;
+    child.prototype = new C();
 
-  return child;
+    // Add prototype properties
+    mixin(child.prototype, proto);
+
+    // Set a convenience property
+    // in case the parent's prototype
+    // is needed later.
+    child.__super__ = parent.prototype;
+
+    return child;
+  };
 };
+
+/**
+ * Makes sure no properties
+ * or methods can be overwritten
+ * on the core View.prototype.
+ *
+ * If conflicting keys are found,
+ * we create a new key prifixed with
+ * a '_' and delete the original key.
+ *
+ * @param  {Array} keys
+ * @param  {Object} ob
+ * @return {[type]}
+ */
+function protect(keys, ob) {
+  for (var key in ob) {
+    if (ob.hasOwnProperty(key) && ~keys.indexOf(key)) {
+      ob['_' + key] = ob[key];
+      delete ob[key];
+    }
+  }
+}
 },{"./util":1}],9:[function(require,module,exports){
 
 /**
