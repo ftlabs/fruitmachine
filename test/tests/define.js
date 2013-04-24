@@ -22,21 +22,6 @@ buster.testCase('FruitMachine.define()', {
 		assert.defined(apple.template);
 	},
 
-
-	"Defining reserved methods should rewrite keys with prefixed with '_'": function() {
-		var setup = this.spy();
-		var View = FruitMachine.define({
-			module: 'foobar',
-			setup: setup
-		});
-
-		var view = new View()
-			.render()
-			.setup();
-
-		assert.called(setup);
-	},
-
 	"Not defining reserved methods should not rewrite keys with prefixed with '_'": function() {
 		var setup = this.spy();
 		var View = FruitMachine.define({
