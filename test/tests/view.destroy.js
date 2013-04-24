@@ -21,7 +21,7 @@ buster.testCase('View#destroy()', {
   "Should call teardown once per view.": function() {
     var teardown1 = this.spy(this.view, 'teardown');
     var teardown2 = this.spy(this.view.module('orange'), 'teardown');
-debugger;
+
     this.view
       .render()
       .inject(sandbox)
@@ -54,7 +54,9 @@ debugger;
   },
 
   "Should fire `destroy` event.": function() {
-    var eventSpy = this.spy(this.view, 'fire');
+    var spy = this.spy();
+
+    this.view.on('destroy', spy);
 
     this.view
       .render()
@@ -62,7 +64,7 @@ debugger;
       .setup()
       .destroy();
 
-    assert.isTrue(eventSpy.calledWith('destroy'));
+    assert(spy.called);
   },
 
   "Should unbind all event listeners.": function() {

@@ -33,6 +33,7 @@ buster.testCase('View#remove()', {
   },
 
   "Should remove the child from the DOM by default": function() {
+    var sandbox = document.createElement('div');
     var list = new helpers.Views.Layout();
     var Apple = helpers.Views.Apple;
     var apple = new Apple({ id: 'slot_1' });
@@ -42,16 +43,17 @@ buster.testCase('View#remove()', {
       .add(apple)
       .render()
       .setup()
-      .inject(helpers.sandbox);
+      .inject(sandbox);
 
-    assert(!!document.getElementById(apple._fmid));
+    assert(!!sandbox.querySelector('#' + apple._fmid));
 
     list.remove(apple);
 
-    refute(!!document.getElementById(apple._fmid));
+    refute(!!sandbox.querySelector('#' + apple._fmid));
   },
 
   "Should *not* remove the child from the DOM if `fromDOM` option is false": function() {
+    var sandbox = document.createElement('div');
     var list = new helpers.Views.Layout();
     var Apple = helpers.Views.Apple;
     var apple = new Apple({ id: 'slot_1' });
@@ -61,13 +63,13 @@ buster.testCase('View#remove()', {
       .add(apple)
       .render()
       .setup()
-      .inject(helpers.sandbox);
+      .inject(sandbox);
 
-    assert(document.getElementById(apple._fmid));
+    assert(sandbox.querySelector('#' + apple._fmid));
 
     list.remove(apple, { fromDOM: false });
 
-    assert(document.getElementById(apple._fmid));
+    assert(sandbox.querySelector('#' + apple._fmid));
   },
 
   "Should remove itself if called with no arguments": function() {

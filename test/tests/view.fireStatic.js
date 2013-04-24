@@ -1,34 +1,21 @@
 
-buster.testCase('View#fire()', {
+buster.testCase('View#fireStatic()', {
 	setUp: helpers.createView,
 
 	"Should run on callbacks registered on the view": function() {
 		var spy = this.spy();
 
 		this.view.on('testevent', spy);
-		this.view.fire('testevent');
+		this.view.fireStatic('testevent');
 	  assert.called(spy);
 	},
 
-	"Events should bubble by default": function() {
+	"Events should not bubble up to parent views": function() {
 		var spy = this.spy();
 		var child = this.view.module('orange');
 
 		this.view.on('childtestevent', spy);
-		child.fire('childtestevent');
-	  assert.called(spy);
-	},
-
-	"Calling event.stopPropagation() should stop bubbling": function() {
-		var spy = this.spy();
-		var child = this.view.module('orange');
-
-		this.view.on('childtestevent', spy);
-		child.on('childtestevent', function(){
-			this.event.stopPropagation();
-		});
-
-		child.fire('childtestevent');
+		child.fireStatic('childtestevent');
 	  refute.called(spy);
 	},
 
@@ -39,7 +26,7 @@ buster.testCase('View#fire()', {
 		var arg3 = 'arg3';
 
 		this.view.on('childtestevent', spy);
-		this.view.fire('childtestevent', arg1, arg2, arg3);
+		this.view.fireStatic('childtestevent', arg1, arg2, arg3);
 
 	  assert.equals(spy.args[0][0], arg1);
 	  assert.equals(spy.args[0][1], arg2);
