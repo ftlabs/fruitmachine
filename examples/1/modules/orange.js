@@ -1,31 +1,18 @@
-
-
 var template = Hogan.compile(document.getElementById('template-orange').innerHTML);
 
-var Orange = FruitMachine.module({
+var Orange = FruitMachine.define({
 	module: 'orange',
 	template: template,
 
-	onInitialize: function() {
-		var self = this;
-
-		// Bind the view context to this function.
-		this.onItemClickBound = function() {
-			self.onItemClick.apply(self, arguments);
-		};
-	},
-
-	onSetup: function() {
+	setup: function() {
 		this.delegate = new Delegate(this.el);
-		this.delegate.on('click', '.module-orange_body', this.onItemClickBound);
+		this.delegate.on('click', '.module-orange_body', function() {
+			alert('article body click');
+		});
 	},
 
-	onTeardown: function() {
+	teardown: function() {
 		this.delegate = new Delegate(this.el);
 		this.delegate.off(this.onItemClickBound);
-	},
-
-	onItemClick: function(event, target) {
-		alert('article body click');
 	}
 });

@@ -1,11 +1,11 @@
 
 var template = Hogan.compile(document.getElementById('template-apple').innerHTML);
 
-var Apple = FruitMachine.module({
+var Apple = FruitMachine.define({
 	module: 'apple',
 	template: template,
 
-	onInitialize: function() {
+	initialize: function() {
 		var self = this;
 
 		// Bind the view context to this function.
@@ -14,17 +14,17 @@ var Apple = FruitMachine.module({
 		};
 	},
 
-	onSetup: function() {
+	setup: function() {
+		var self = this;
+
 		this.delegate = new Delegate(this.el);
-		this.delegate.on('click', '.module-apple-item', this.onItemClickBound);
+		this.delegate.on('click', '.apple-item', function(event, target) {
+			self.fire('itemclick', target.getAttribute('data-id'));
+		});
 	},
 
-	onTeardown: function() {
+	teardown: function() {
 		this.delegate = new Delegate(this.el);
 		this.delegate.off(this.onItemClickBound);
-	},
-
-	onItemClick: function(event, target) {
-		this.trigger('itemclick', target.getAttribute('data-id'));
 	}
 });

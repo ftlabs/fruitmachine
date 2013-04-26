@@ -1,0 +1,15 @@
+
+* {
+	margin: 0;
+	padding: 0;
+	-moz-box-sizing: border-box;
+	     box-sizing: border-box;
+}
+
+html,
+body,
+.app {
+	height: 100%;
+	font-family: helvetica, sans-serif;
+	color: #444;
+}
