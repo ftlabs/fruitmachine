@@ -1,0 +1,14 @@
+
+.strawberry {
+	padding: 20px;
+}
+
+.strawberry_input {
+	width: 100%;
+	padding: 6px;
+	font-size: 1.4em;
+}
+
+.strawberry_input:focus {
+	outline: none;
+}

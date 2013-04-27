@@ -1,9 +1,7 @@
 
-var template = Hogan.compile(document.getElementById('template-apple').innerHTML);
-
 var Apple = FruitMachine.define({
 	module: 'apple',
-	template: template,
+	template: templates.apple,
 
 	initialize: function() {
 		var self = this;

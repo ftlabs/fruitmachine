@@ -1,0 +1,28 @@
+
+.list-item {
+	padding: 20px;
+	border-bottom: solid 1px #DDD;
+}
+
+.list-item_checkbox {
+	margin-right: 10px;
+}
+
+.list-item_close-button {
+	float: right;
+	width: 1.25em;
+	height: 1.25em;
+	margin-top: -3px;
+	padding: 0px;
+	border-radius: 50%;
+	background: #DDD;
+	color: #FFF;
+	text-align: center;
+	font-size: 1.3em;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+.list-item_close-button:hover {
+	background: #444;
+}

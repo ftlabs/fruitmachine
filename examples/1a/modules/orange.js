@@ -1,8 +1,7 @@
-var template = Hogan.compile(document.getElementById('template-orange').innerHTML);
 
 var Orange = FruitMachine.define({
 	module: 'orange',
-	template: template,
+	template: templates.orange,
 
 	setup: function() {
 		this.delegate = new Delegate(this.el);

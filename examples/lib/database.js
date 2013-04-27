@@ -1,54 +1,12 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Example 1</title>
-<link rel="stylesheet" type="text/css" href="app.css">
-<link rel="stylesheet" type="text/css" href="modules/layout.css">
-<link rel="stylesheet" type="text/css" href="modules/apple.css">
-<link rel="stylesheet" type="text/css" href="modules/orange.css">
-</head>
-<body>
-<div class='app' id='app'></div>
-
-<!-- layout-i -->
-<script type="text/template" id='template-layout'>
-	<div class='layout_header'>{{{title}}}</div>
-	<div class='layout_content'>
-		<div class='layout_list'>{{{uniqueId1}}}</div>
-		<div class='layout_body'>{{{uniqueId2}}}</div>
-	</div>
-</script>
-
-<!-- module-apple -->
-<script type="text/template" id='template-apple'>
-	{{#items}}
-		<div class='apple-item' data-id='{{articleId}}'>{{title}}</div>
-	{{/items}}
-</script>
-
-<!-- template-orange -->
-<script type="text/template" id='template-orange'>
-	<div class='orange_date'>{{date}}</div>
-	<div class='orange_title'>{{title}}</div>
-	<div class='orange_body'>{{{body}}}</div>
-	<div class='orange_byline'>by {{author}}</div>
-</script>
-
-<script type="text/javascript" src="../libs/hogan.js"></script>
-<script type="text/javascript" src="../libs/delegate.js"></script>
-<script type="text/javascript" src="../../build/fruitmachine.js"></script>
-<script type="text/javascript" src="modules/layout.js"></script>
-<script type="text/javascript" src="modules/apple.js"></script>
-<script type="text/javascript" src="modules/orange.js"></script>
-<script>
 
 /**
  * Dummy Data Stores
  */
 
+var database = {};
+
 // Mock synchronous API
-function getArticlesSync() {
+database.getSync = function() {
 	return [
 		{
 			articleId: 'article1',
@@ -71,10 +29,10 @@ function getArticlesSync() {
 			title: 'Article 5'
 		}
 	];
-}
+};
 
 // Mock asynchonous API
-function getFullArticleAsync(id, callback) {
+database.getAsync = function(id, callback) {
 	var database = {
 		article1: {
 			date: '3rd May 2012',
@@ -111,75 +69,4 @@ function getFullArticleAsync(id, callback) {
 	setTimeout(function() {
 		callback(database[id]);
 	}, 100);
-}
-
-/**
- * Layout
- */
-
-var layout = {
-	module: 'layout',
-	model: {
-		title: 'Example 1'
-	},
-	children: [
-		{
-			id: 'uniqueId1',
-			module: 'apple'
-		},
-		{
-			id: 'uniqueId2',
-			module: 'orange',
-		}
-	]
 };
-
-/**
- * Usage
- */
-
-// Create the FruitMachine View
-var view = new FruitMachine.View(layout);
-
-// Get some data from our database.
-var articles = getArticlesSync();
-
-// Set some data
-// on module apple.
-view
-	.module('apple')
-	.model.set({ items: articles });
-
-// Render the view,
-// inject it into the
-// DOM and call setup.
-view
-	.render()
-	.inject(document.getElementById('app'))
-	.setup();
-
-// Make an async call for the first article data
-setArticle(articles[0].articleId);
-
-// Setup a listener on the 'apple' view.
-view.module('apple').on('itemclick', setArticle);
-
-/**
- * Methods
- */
-
-function setArticle(id) {
-	getFullArticleAsync(id, function(article) {
-		var orange = view.module('orange');
-
-		orange.model.set(article);
-
-		orange
-			.render()
-			.setup();
-	});
-}
-
-</script>
-</body>
-</html>

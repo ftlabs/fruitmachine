@@ -1,5 +1,7 @@
 
-.orange {}
+.orange {
+	padding: 20px;
+}
 
 .orange_date,
 .orange_byline {
