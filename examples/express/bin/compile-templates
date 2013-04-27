@@ -1,0 +1,21 @@
+#!/usr/bin/env node
+
+var exec = require('child_process').exec;
+var hogan = require('hogan.js');
+var fs = require('fs');
+var path = require('path');
+var root = __dirname + '/../';
+var command = 'find lib/**/*.hjs';
+
+exec(command, { cwd: root }, function(err, stdout) {
+	var templates = stdout.trim().split('\n');
+	templates.forEach(compile);
+});
+
+function compile(filepath) {
+	filepath = root + filepath;
+	var string = fs.readFileSync(filepath, 'utf8');
+	var fn = 'module.exports = new Hogan(' + hogan.compile(string, { asString: true }) + ');';
+	var jspath = path.dirname(filepath) + '/template.js';
+	fs.writeFileSync(jspath, fn);
+}

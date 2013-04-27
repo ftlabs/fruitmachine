@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Fruit Machine - TODO App</title>
+</head>
+<body>
+	<div id='app'></div>
+
+<!-- layout-i -->
+<script type="text/template" id="template-layout">
+	<div class='layout {{{fm_classes}}}' {{{fm_attrs}}}>
+		<div class='layout_header'>{{{1}}}</div>
+		<div class='layout_content'>
+			<div class='layout_list'>{{{2}}}</div>
+			<div class='layout_body'>{{{3}}}</div>
+		</div>
+	</div>
+</script>
+
+<!-- module-pineapple -->
+<script type="text/template" id="template-pineapple">
+	<div class='module-pineapple {{{fm_classes}}}' {{{fm_attrs}}}>
+		<form class='module-pineapple_form'>
+			<input class='module-pineapple_input' type='text' placeholder='Add a new item...' />
+		</form>
+	</div>
+</script>
+
+<!-- template-banana -->
+<script type="text/template" id="template-banana">
+	<div class="module-banana" {{{fm_attrs}}}><div>{{title}}</div><div>{{{child_view_id}}}</div></div>
+</script>
+
+<!-- template-stawberry -->
+<script type="text/template" id="template-strawberry">
+	<div class="module-stawberry" {{{fm_attrs}}}>{{title}}</div>
+</script>
+<script type="text/javascript" src="../libs/hogan.js"></script>
+<script type="text/javascript" src="../../lib/fruitmachine.js"></script>
+<script>
+
+
+// Register module templates
+var templates = {
+	'layout': Hogan.compile(document.getElementById('template-layout').innerHTML),
+	'pineapple': Hogan.compile(document.getElementById('template-pineapple').innerHTML),
+	'banana': Hogan.compile(document.getElementById('template-banana').innerHTML),
+	'strawberry': Hogan.compile(document.getElementById('template-strawberry').innerHTML)
+};
+
+
+var Banana = FruitMachine.module('banana', {
+	template: templates.banana,
+
+	setup: function() {
+		alert('foo');
+	}
+});
+
+var Strawberry = FruitMachine.module('strawberry', {
+	template: templates.strawberry,
+
+	setup: function() {
+
+	}
+});
+
+var modelA = {
+	title: 'A title'
+}
+
+var modelB = {
+	title: 'B title'
+}
+
+var layout = {
+	module: 'banana',
+	model: modelA,
+	views: [
+		{
+			id: 'child_view_id',
+			module: 'strawberry',
+			model: modelB
+		}
+	]
+};
+
+var view = new FruitMachine(layout);
+
+// var strawberry = new Strawberry({ id: 'child_view_id', model: modelB })
+// var view = new Banana({ model: modelA, views: strawberry });
+
+document.body.appendChild(view.node());
+</script>
+</body>
+</html>

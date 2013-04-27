@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>title</title>
+<link rel="stylesheet" type="text/css" href="../libs/examples.css">
+</head>
+<body>
+	<div id="app"></div>
+<script type="text/javascript" src="../libs/examples.js"></script>
+<script type="text/javascript" src="../libs/hogan.js"></script>
+<script type="text/javascript" src="../../lib/fruitmachine.js"></script>
+
+<!-- Layout Template -->
+<script type="text/template" id="template-layout">
+	{{{module_1}}}{{{module_2}}}{{{module_3}}}
+</script>
+
+<!-- Apple Template -->
+<script type="text/template" id="template-apple">
+	<h1>{{name}}</h1>
+	<div>{{twitter}}</div>
+	<div class="apple_children">
+		{{#children}}
+			<div class="apple_child">{{{child}}}</div>
+		{{/children}}
+	</div>
+</script>
+
+<!-- Orange Template -->
+<script type="text/template" id="template-orange">
+	<h1>This is module orange title</h1>
+	<div>This is module orange body</div>
+</script>
+<script>
+
+
+
+var templates = {
+	'layout': Hogan.compile(document.getElementById('template-layout').innerHTML),
+	'apple': Hogan.compile(document.getElementById('template-apple').innerHTML),
+	'orange': Hogan.compile(document.getElementById('template-orange').innerHTML)
+};
+
+// Define a template getter
+// function for FruitMachine to use
+FruitMachine.templates(function(module) {
+	return templates[module];
+});
+
+// Define a FruitMachine view definition
+var layout = {
+	id: 'master',
+	module: 'layout',
+	children: [
+		{
+			id: 'module_1',
+			module: 'apple',
+			data: {
+				id: '1234',
+				name: 'Wilson',
+				twitter: 'wilsonpage'
+			},
+			children: [
+				{
+					id: 'module_2',
+					module: 'orange'
+				},
+				{
+					id: 'module_3',
+					module: 'orange'
+				}
+			]
+		}
+	]
+};
+
+
+// Create a new FruitMachine view
+// using our view definition.
+var view = new FruitMachine(layout);
+var container = document.getElementById('app');
+
+view
+	.render()
+	.inject(container);
+
+//var apples = view.children('apple');
+//var oranges = view.children('orange');
+
+exec("view.children('apple');");
+exec("view.children('orange');");
+
+</script>
+</body>
+</html>

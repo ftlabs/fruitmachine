@@ -1,0 +1,44 @@
+{
+  "name": "fruitmachine",
+  "description": "A modular view layout manager for client and server.",
+  "version": "0.3.1",
+  "homepage": "https://github.com/wilsonpage/fruitmachine",
+  "author": {
+    "name": "Wilson Page",
+    "email": "wilsonpage@me.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/wilsonpage/fruitmachine.git"
+  },
+  "bugs": {
+    "url": "https://github.com/wilsonpage/fruitmachine/issues"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/wilsonpage/fruitmachine/blob/master/LICENSE-MIT"
+    }
+  ],
+  "main": "lib/index",
+  "engines": {
+    "node": "*"
+  },
+  "scripts": {
+    "test": "grunt buster"
+  },
+  "dependencies": {
+    "event": "git://github.com/wilsonpage/event.git"
+  },
+  "devDependencies": {
+    "grunt-contrib-watch": "~0.3.1",
+    "grunt-contrib-uglify": "~0.1.2",
+    "grunt": "~0.4.1",
+    "buster": "~0.6.2",
+    "grunt-readme": "git://github.com/wilsonpage/grunt-readme.git",
+    "grunt-version": "git://github.com/wilsonpage/grunt-version.git",
+    "browserify": "~2.11.0",
+    "grunt-buster": "~0.1.2"
+  },
+  "keywords": []
+}
