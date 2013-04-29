@@ -32,7 +32,7 @@ var Model = FruitMachine.Model;
 
 // Create the FruitMachine View
 var layout = new LayoutB();
-var masthead = new Masthead({ id: 'child_1', model: { title: 'Example: Todo' }});
+var masthead = new Masthead({ id: 'child_1', model: { title: 'Todo' }});
 var strawberry = new Strawberry({ id: 'child_2' });
 var list = new List({ id: 'child_3' });
 var collection = [];

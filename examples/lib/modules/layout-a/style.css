@@ -1,0 +1,32 @@
+
+
+.layout-a {
+	height: 100%;
+}
+
+.layout-a_header {
+	height: 80px;
+	margin-bottom: -80px;
+	font-size: 44px;
+	font-weight: bold;
+	line-height: 1em;
+	border-bottom: solid 1px #DDD;
+}
+
+.layout-a_content {
+	height: 100%;
+	padding-top: 80px;
+}
+
+.layout-a_list {
+	float: left;
+	width: 20%;
+	height: 100%;
+	border-right: solid 1px #DDD;
+}
+
+.layout-a_body {
+	float: left;
+	width: 80%;
+	height: 100%;
+}

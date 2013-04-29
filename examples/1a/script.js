@@ -4,17 +4,21 @@
  */
 
 var layout = {
-	module: 'layout',
-	model: {
-		title: 'Example 1'
-	},
+	module: 'layout-a',
 	children: [
 		{
-			id: 'uniqueId1',
+			id: 'child_1',
+			module: 'masthead',
+			model: {
+				title: 'Article viewer'
+			}
+		},
+		{
+			id: 'child_2',
 			module: 'apple'
 		},
 		{
-			id: 'uniqueId2',
+			id: 'child_3',
 			module: 'orange'
 		}
 	]
@@ -26,15 +30,14 @@ var layout = {
 
 // Create the FruitMachine View
 var view = new FruitMachine.View(layout);
+var apple = view.module('apple');
 
 // Get some data from our database.
 var articles = database.getSync();
 
 // Set some data
 // on module apple.
-view
-	.module('apple')
-	.model.set({ items: articles });
+apple.model.set({ items: articles });
 
 // Render the view,
 // inject it into the
@@ -48,14 +51,14 @@ view
 setArticle(articles[0].articleId);
 
 // Setup a listener on the 'apple' view.
-view.module('apple').on('itemclick', setArticle);
+apple.on('itemclick', setArticle);
 
 /**
  * Methods
  */
 
 function setArticle(id) {
-	getFullArticleAsync(id, function(article) {
+	database.getAsync(id, function(article) {
 		var orange = view.module('orange');
 
 		orange.model.set(article);

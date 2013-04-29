@@ -1,6 +1,6 @@
 
 
-templates.layoutB = function(data){
+var templateLayoutB = function(data){
 	return "<div class='layout-b_header'>" + (data.child_1||'') + "</div>" +
 	"<div class='layout-b_content'>" +
 		"<div class='layout-b_body'>" +

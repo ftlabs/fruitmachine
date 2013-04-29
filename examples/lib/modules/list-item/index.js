@@ -1,7 +1,7 @@
 
 var ListItem = FruitMachine.define({
 	module: 'list-item',
-	template: templates.listItem,
+	template: templateListItem,
 
 	setup: function() {
 		var self = this;

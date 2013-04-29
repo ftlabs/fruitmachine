@@ -1,7 +1,7 @@
 
 var Strawberry = FruitMachine.define({
 	module: 'strawberry',
-	template: templates.strawberry,
+	template: templateStrawberry,
 
 	setup: function() {
 		var self = this;

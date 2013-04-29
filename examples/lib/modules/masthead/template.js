@@ -1,2 +1,2 @@
 
-templates.masthead = Hogan.compile("{{title}}");
+var templateMasthead = Hogan.compile("Example: {{title}}");
