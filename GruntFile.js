@@ -10,7 +10,7 @@ module.exports = function(grunt) {
       src: [
         'component.json',
         'package.json',
-        'lib/fruitmachine.js'
+        'lib/index.js'
       ]
     },
 
