@@ -40,7 +40,7 @@ module.exports = function(grunt) {
 
     watch: {
       scripts: {
-        files: ['lib/*.js'],
+        files: ['lib/**/*.js'],
         tasks: ['browserify']
       }
     }
