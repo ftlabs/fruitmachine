@@ -82,32 +82,6 @@ module.exports = {
 };
 },{}],3:[function(require,module,exports){
 
-/**
- * Module Dependencies
- */
-
-var store = require('./store');
-var mixin = require('./util').mixin;
-
-/**
- * Exports
- */
-
-var defaults = store.config = module.exports = {
-	templateIterator: 'children',
-	templateInstance: 'child',
-	model: {
-		toJSON: function(model) {
-			return model.toJSON();
-		}
-	}
-};
-
-defaults.set = function(options) {
-	mixin(defaults, options);
-};
-},{"./store":2,"./util":1}],4:[function(require,module,exports){
-
 /*jslint browser:true, node:true*/
 
 /**
@@ -117,7 +91,7 @@ defaults.set = function(options) {
  * If views require custom interactions devs can extend
  * the basic functionality.
  *
- * @version 0.2.5
+ * @version 0.3.3
  * @copyright The Financial Times Limited [All Rights Reserved]
  * @author Wilson Page <wilson.page@ft.com>
  */
@@ -125,7 +99,7 @@ defaults.set = function(options) {
 'use strict';
 
 // Version
-FruitMachine.VERSION = '0.2.5';
+FruitMachine.VERSION = '0.3.3';
 
 // Public interface
 FruitMachine.View = require('./view');
@@ -152,7 +126,33 @@ function FruitMachine(options) {
  */
 
 module.exports = FruitMachine;
-},{"./model":5,"./define":6,"./util":1,"./store":2,"./config":3,"./view":7,"event":8}],6:[function(require,module,exports){
+},{"./model":4,"./define":5,"./util":1,"./store":2,"./config":6,"./view":7,"event":8}],6:[function(require,module,exports){
+
+/**
+ * Module Dependencies
+ */
+
+var store = require('./store');
+var mixin = require('./util').mixin;
+
+/**
+ * Exports
+ */
+
+var defaults = store.config = module.exports = {
+	templateIterator: 'children',
+	templateInstance: 'child',
+	model: {
+		toJSON: function(model) {
+			return model.toJSON();
+		}
+	}
+};
+
+defaults.set = function(options) {
+	mixin(defaults, options);
+};
+},{"./store":2,"./util":1}],5:[function(require,module,exports){
 
 /*jslint browser:true, node:true*/
 
@@ -1034,7 +1034,7 @@ View.prototype.fireStatic = events.fireStatic;
  */
 
 View.extend = extend(util.keys(View.prototype));
-},{"../config":3,"./events":9,"../extend":10,"../model":5,"../util":1,"../store":2}],8:[function(require,module,exports){
+},{"../config":6,"./events":9,"../extend":10,"../model":4,"../util":1,"../store":2}],8:[function(require,module,exports){
 
 /**
  * Event
@@ -1132,7 +1132,7 @@ function mixin(a, b) {
   for (var key in b) a[key] = b[key];
   return a;
 }
-},{}],5:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -1394,6 +1394,6 @@ function fireBubble(view, args, event) {
 
 exports.fireStatic = events.prototype.fire;
 exports.off = events.prototype.off;
-},{"event":8}]},{},[4])(4)
+},{"event":8}]},{},[3])(3)
 });
 ;
