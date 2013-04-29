@@ -16,5 +16,13 @@ buster.testCase('Model#get()', {
     var result = model.get('baz');
 
     assert.equals(typeof result, 'undefined');
+  },
+
+  "Should return entire source data object if no key is given": function() {
+    var data = { foo: 'bar' };
+    var model = new FruitMachine.Model(data);
+    var result = model.get();
+
+    assert.equals(result, data);
   }
 });
