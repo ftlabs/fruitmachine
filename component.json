@@ -1,13 +1,16 @@
 {
   "name": "fruitmachine",
   "description": "Assembles dynamic views on the client and server",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "main": "lib/fruitmachine.js",
   "scripts": [
     "lib/fruitmachine.js"
   ],
   "ignore": [
+    "artwork/",
+    "docs/",
     "examples/",
+    "tasks/",
     "test/",
     "README.md"
   ],
