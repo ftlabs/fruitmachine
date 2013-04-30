@@ -15,8 +15,8 @@ A modular view layout manager for client and server.
 
 ## Contributors
 
-Wilson Page wilsonpage@me.com
-Matt Andrews wilsonpage@me.com
+- **Wilson Page** &lt;wilsonpage@me.com&gt;
+- **Matt Andrews** &lt;wilsonpage@me.com&gt;
 
 
 ## License

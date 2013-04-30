@@ -12,5 +12,5 @@
 ## Contributors
 
 {{#pkg.contributors}}
-{{name}} {{email}}
+- **{{name}}** &lt;{{email}}&gt;
 {{/pkg.contributors}}
