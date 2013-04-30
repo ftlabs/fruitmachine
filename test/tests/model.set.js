@@ -56,5 +56,12 @@ buster.testCase('Model#set()', {
 
     assert.called(callback1);
     assert.called(callback2);
+  },
+
+  "Should allow falsey values to be set": function() {
+    var model = new FruitMachine.Model();
+
+    model.set('foo', false);
+    assert.equals(model.get('foo'), false);
   }
 });
