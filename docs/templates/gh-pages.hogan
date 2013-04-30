@@ -28,20 +28,7 @@
         </ul>
       </header>
       <section>
-				<h2>Usage</h2>
-<h2>Why not use Backbone?</h2>
-<ul>
-<li>No deps</li>
-<li>Can be retrofitted into a parts of a legacy system, it&#39;s not a religion</li>
-<li>Serverside has been considered from the start</li>
-<li>It doesn&#39;t care how you manage your data</li>
-<li>Modules are designed to be reused in multiple contexts, you create layouts, not fixed views</li>
-<li>A little more structured than Backbone</li>
-</ul>
-<h2>Contributors</h2>
-<p>Wilson Page wilsonpage@me.com
-Matt Andrews wilsonpage@me.com</p>
-
+				{{{partials.html.intro}}}
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/wilsonpage">wilsonpage</a></p>

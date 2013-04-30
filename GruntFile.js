@@ -10,21 +10,25 @@ module.exports = function(grunt) {
       src: [
         'component.json',
         'package.json',
-        'lib/fruitmachine.js'
+        'lib/index.js'
       ]
     },
 
     readme: {
-      options: {
-        comment: 'docs/comment.hogan',
-        readme: 'docs/readme.hogan'
-      },
-      dist: {
-        src: [
-          'lib/view.js',
+      dest: {
+        code: [
+          'lib/view/index.js',
+          { path: 'lib/view/events.js', cons: 'View' },
           'lib/model.js'
         ],
-        dest: 'README.md'
+        partials: [
+          'docs/templates/intro.hogan'
+        ],
+        output: {
+          'docs/templates/gh-pages.hogan': 'index.html',
+          'docs/templates/api.hogan': 'docs/api.md',
+          'docs/templates/readme.hogan': 'README.md'
+        }
       }
     },
 
@@ -40,7 +44,7 @@ module.exports = function(grunt) {
 
     watch: {
       scripts: {
-        files: ['lib/*.js'],
+        files: ['lib/**/*.js'],
         tasks: ['browserify']
       }
     }

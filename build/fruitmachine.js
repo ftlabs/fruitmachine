@@ -91,7 +91,7 @@ module.exports = {
  * If views require custom interactions devs can extend
  * the basic functionality.
  *
- * @version 0.2.5
+ * @version 0.3.3
  * @copyright The Financial Times Limited [All Rights Reserved]
  * @author Wilson Page <wilson.page@ft.com>
  */
@@ -99,7 +99,7 @@ module.exports = {
 'use strict';
 
 // Version
-FruitMachine.VERSION = '0.2.5';
+FruitMachine.VERSION = '0.3.3';
 
 // Public interface
 FruitMachine.View = require('./view');
@@ -188,105 +188,7 @@ module.exports = function(props) {
   return store.modules[view.prototype._module] = view;
 };
 
-},{"./store":2,"./view":7}],8:[function(require,module,exports){
-
-/**
- * Event
- *
- * A super lightweight
- * event emitter library.
- *
- * @version 0.1.4
- * @author Wilson Page <wilson.page@me.com>
- */
-
-/**
- * Creates a new event emitter
- * instance, or if passed an
- * object, mixes the event logic
- * into it.
- *
- * @param  {Object} obj
- * @return {Object}
- */
-var Event = module.exports = function(obj) {
-	if (!(this instanceof Event)) return new Event(obj);
-	if (obj) return mixin(obj, Event.prototype);
-};
-
-/**
- * Registers a callback
- * with an event name.
- *
- * @param  {String}   name
- * @param  {Function} cb
- * @return {Event}
- */
-Event.prototype.on = function(name, cb) {
-	this._cbs = this._cbs || {};
-	(this._cbs[name] || (this._cbs[name] = [])).push(cb);
-	return this;
-};
-
-/**
- * Removes a single callback,
- * or all callbacks associated
- * with the passed event name.
- *
- * @param  {String}   name
- * @param  {Function} cb
- * @return {Event}
- */
-Event.prototype.off = function(name, cb) {
-	this._cbs = this._cbs || {};
-
-	if (!name) return this._cbs = {};
-	if (!cb) return delete this._cbs[name];
-
-	var cbs = this._cbs[name] || [];
-	var i;
-
-	while (cbs && ~(i = cbs.indexOf(cb))) cbs.splice(i, 1);
-	return this;
-};
-
-/**
- * Fires an event. Which triggers
- * all callbacks registered on this
- * event name.
- *
- * @param  {String} name
- * @return {Event}
- */
-Event.prototype.fire = function(name) {
-	this._cbs = this._cbs || {};
-
-	var cbs = (this._cbs[name] || (this._cbs[name] = []));
-	var args = [].slice.call(arguments, 1);
-	var l = cbs.length;
-
-	while (l--) cbs[l].apply(this, args);
-	return this;
-};
-
-/**
- * Util
- */
-
-/**
- * Mixes in the properties
- * of the second object into
- * the first.
- *
- * @param  {Object} a
- * @param  {Object} b
- * @return {Object}
- */
-function mixin(a, b) {
-  for (var key in b) a[key] = b[key];
-  return a;
-}
-},{}],7:[function(require,module,exports){
+},{"./store":2,"./view":7}],7:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -1132,7 +1034,105 @@ View.prototype.fireStatic = events.fireStatic;
  */
 
 View.extend = extend(util.keys(View.prototype));
-},{"../config":6,"./events":9,"../extend":10,"../model":4,"../util":1,"../store":2}],4:[function(require,module,exports){
+},{"../config":6,"./events":9,"../extend":10,"../model":4,"../util":1,"../store":2}],8:[function(require,module,exports){
+
+/**
+ * Event
+ *
+ * A super lightweight
+ * event emitter library.
+ *
+ * @version 0.1.4
+ * @author Wilson Page <wilson.page@me.com>
+ */
+
+/**
+ * Creates a new event emitter
+ * instance, or if passed an
+ * object, mixes the event logic
+ * into it.
+ *
+ * @param  {Object} obj
+ * @return {Object}
+ */
+var Event = module.exports = function(obj) {
+	if (!(this instanceof Event)) return new Event(obj);
+	if (obj) return mixin(obj, Event.prototype);
+};
+
+/**
+ * Registers a callback
+ * with an event name.
+ *
+ * @param  {String}   name
+ * @param  {Function} cb
+ * @return {Event}
+ */
+Event.prototype.on = function(name, cb) {
+	this._cbs = this._cbs || {};
+	(this._cbs[name] || (this._cbs[name] = [])).push(cb);
+	return this;
+};
+
+/**
+ * Removes a single callback,
+ * or all callbacks associated
+ * with the passed event name.
+ *
+ * @param  {String}   name
+ * @param  {Function} cb
+ * @return {Event}
+ */
+Event.prototype.off = function(name, cb) {
+	this._cbs = this._cbs || {};
+
+	if (!name) return this._cbs = {};
+	if (!cb) return delete this._cbs[name];
+
+	var cbs = this._cbs[name] || [];
+	var i;
+
+	while (cbs && ~(i = cbs.indexOf(cb))) cbs.splice(i, 1);
+	return this;
+};
+
+/**
+ * Fires an event. Which triggers
+ * all callbacks registered on this
+ * event name.
+ *
+ * @param  {String} name
+ * @return {Event}
+ */
+Event.prototype.fire = function(name) {
+	this._cbs = this._cbs || {};
+
+	var cbs = (this._cbs[name] || (this._cbs[name] = []));
+	var args = [].slice.call(arguments, 1);
+	var l = cbs.length;
+
+	while (l--) cbs[l].apply(this, args);
+	return this;
+};
+
+/**
+ * Util
+ */
+
+/**
+ * Mixes in the properties
+ * of the second object into
+ * the first.
+ *
+ * @param  {Object} a
+ * @param  {Object} b
+ * @return {Object}
+ */
+function mixin(a, b) {
+  for (var key in b) a[key] = b[key];
+  return a;
+}
+},{}],4:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -1173,7 +1173,9 @@ function Model(data) {
  * @api public
  */
 Model.prototype.get = function(key) {
-  return this._data[key];
+  return key
+    ? this._data[key]
+    : this._data;
 };
 
 /**
@@ -1356,28 +1358,39 @@ exports.on = function(name, module, cb) {
 
 exports.fire = function(name) {
   var parent = this.parent;
-
-  this.event = this.event || {
+  var _event = this.event;
+  var event = {
     target: this,
     propagate: true,
     stopPropagation: function(){ this.propagate = false; }
   };
 
-  // Trigger event
-  events.prototype.fire.apply(this, arguments);
+  fireBubble(this, arguments, event);
 
-  // Trigger the same event on the parent view
-  if (this.event.propagate && parent) {
-    parent.event = this.event;
-    this.fire.apply(parent, arguments);
-  }
-
-  // Remove the event reference
-  delete this.event;
+  // COMPLEX:
+  // If an earlier event object was
+  // cached, restore the the event
+  // back onto the view. If there
+  // wasn't an earlier event, make
+  // sure the `event` key has been
+  // deleted off the view.
+  if (_event) this.event = _event;
+  else delete this.event;
 
   // Allow chaining
   return this;
 };
+
+function fireBubble(view, args, event) {
+  if (!view || !event.propagate) return;
+
+  view.event = event;
+  events.prototype.fire.apply(view, args);
+
+  fireBubble(view.parent, args, event);
+}
+
+
 
 exports.fireStatic = events.prototype.fire;
 exports.off = events.prototype.off;

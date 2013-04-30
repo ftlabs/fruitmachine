@@ -5,7 +5,8 @@ config["FruitMachineTests"] = {
 	environment: "browser",
 	sources: [
 		'build/fruitmachine.js',
-		'examples/libs/hogan.js',
+		'node_modules/hogan.js/lib/template.js',
+		'node_modules/hogan.js/lib/compiler.js',
 		'test/helpers/*.js'
 	],
 	tests: [
