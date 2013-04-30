@@ -1,0 +1,9 @@
+![fm logo](artwork/logo.jpg)
+
+{{pkg.description}}
+
+{{>intro}}
+
+## License
+Copyright (c) 2012 {{pkg.author.name}}
+Licensed under the MIT license.

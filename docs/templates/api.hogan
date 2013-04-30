@@ -1,0 +1,10 @@
+# API
+
+{{#jsdoc}}
+### {{#ctx.cons}}{{ctx.cons}}#{{/ctx.cons}}{{ctx.name}}();
+
+{{{description.summary}}}
+{{#description.body}}
+\n{{{description.body}}}
+{{/description.body}}
+{{/jsdoc}}
