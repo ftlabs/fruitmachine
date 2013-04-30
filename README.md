@@ -1,8 +1,6 @@
 ![fm logo](artwork/logo.jpg)
 
-A lightweight modular layout engine for client and server.
-
-A lightweight modular layout engine for client and server. Currently powering the award winning FT Web App.
+A lightweight modular layout engine for client and server. Currently powering the award winning FT Web App. FruitMachine was designed to construct nested view layouts from strictly modular components.
 
 ```js
 // Define a module
@@ -20,6 +18,24 @@ apple.render().inject(document.body);
 apple.el.outerHTML;
 //=> <div class="apple">hello</div>
 ```
+
+## Contents
+
+- [Introduction](docs/introduction.md)
+- [Getting started](docs/getting-started.md)
+- [Defining modules](docs/defining-modules.md)
+- [Instantiation](docs/instantiation.md)
+- [Queries](docs/queries.md)
+- [Templates](docs/templates.md)
+- [Template markup](docs/template-markup.md)
+- [El](docs/view-el.md)
+- [Helpers](docs/helpers.md)
+- [DOM injection](docs/dom-injection.md)
+- [Extending](docs/extending.md)
+
+
+
+
 
 ## Why not Backbone?
 
