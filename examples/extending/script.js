@@ -1,9 +1,3 @@
-## Extending
-
-It is common in an application to have module's that share behaviour, but are slightly different. In this case you can extend from modules you have already defined ([working example](http://wilsonpage.github.io/fruitmachine/examples/extending)).
-
-```js
-
 var Apple = FruitMachine.define({
   module: 'apple',
   template: function(){ return ''; },
@@ -44,4 +38,3 @@ apple.setup();
 
 pear.setup();
 //=> alert - 'but i am an pear'
-```

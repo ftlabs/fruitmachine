@@ -1,8 +1,8 @@
-# View Assembly
+## View Assembly
 
 When View modules are nested in one another a heiracical view structure is formed. For flexbibily *FruitMachine* allows nested views to be assembled in a variety of different ways.
 
-### Manual
+#### Manual
 
 ```js
 var layout = new Layout();
@@ -17,7 +17,7 @@ apple.children.length; //=> 1
 orange.children.length; //=> 0
 ```
 
-### Lazy
+#### Lazy
 
 ```js
 var layout = new Layout({
@@ -29,7 +29,7 @@ var layout = new Layout({
           module: 'orange'
         }
       ]
-    } 
+    }
   ]
 });
 
@@ -38,7 +38,7 @@ apple.children.length; //=> 1
 orange.children.length; //=> 0
 ```
 
-### Super lazy
+#### Super lazy
 
 ```js
 var layout = new FruitMachine.View({
@@ -51,7 +51,7 @@ var layout = new FruitMachine.View({
           module: 'orange'
         }
       ]
-    } 
+    }
   ]
 });
 
@@ -59,5 +59,3 @@ layout.children.length; //=> 1
 apple.children.length; //=> 1
 orange.children.length; //=> 0
 ```
-
-

@@ -1,6 +1,6 @@
 ## Getting started
 
-Let's start with a very simple example to demonstrate how to work with FruitMachine.
+Let's start with a very simple example to demonstrate how to work with FruitMachine ([working example here](http://wilsonpage.github.io/fruitmachine/examples/getting-started)):
 
 #### Define some modules
 
@@ -42,10 +42,11 @@ layout.render(); /* 1 */
 
 ```js
 layout.inject(document.body); /* 1 */
-document.body.innerHTML; //=> <div class="layout" id="fmid-195834-a"><div class="apple" id="fmid-243252-a">I am an apple</div></div>
+document.body.innerHTML; //=> <div class="layout" id="fmid-195834-a"><div class="apple" id="fmid-243252-a">I am an apple</div></div> /* 2 */
 ```
 
-
+1. *The contents of the element passed are replaced with the view module's element*
+2. *You can see the `innerHTML` of the `<body>` is now the generated markup of our view. Don't worry about the id attributes, they are gerated by FruitMachine, and are used internally to retreive views from the DOM.*
 
 ### Lazy Views
 
