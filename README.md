@@ -1,10 +1,26 @@
 ![fm logo](artwork/logo.jpg)
 
-A modular view layout manager for client and server.
+A lightweight modular layout engine for client and server
 
-## Usage
+A lightweight modular layout engine for client and server Currently powering the award winning FT Web App.
 
-## Why not use Backbone?
+```js
+var Apple = FruitMachine.define({
+  module: 'apple',
+  template: function() { return 'hello' }
+});
+
+var apple = new Apple();
+
+apple
+  .render()
+  .inject(document.body);
+
+apple.el.outerHTML;
+//=> <div class="apple">hello</div>
+```
+
+## Why not Backbone?
 
 - No deps
 - Can be retrofitted into a parts of a legacy system, it's not a religion
@@ -13,10 +29,14 @@ A modular view layout manager for client and server.
 - Modules are designed to be reused in multiple contexts, you create layouts, not fixed views
 - A little more structured than Backbone
 
-## Contributors
+## Author
 
 - **Wilson Page** &lt;wilsonpage@me.com&gt;
-- **Matt Andrews** &lt;wilsonpage@me.com&gt;
+
+## Contributors
+
+- **Wilson Page** @wilsonpage
+- **Matt Andrews** @matthew-andrews
 
 
 ## License

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Fruitmachine by wilsonpage</title>
+    <title>FruitMachine by wilsonpage</title>
 
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
@@ -15,8 +15,8 @@
   <body>
     <div class="wrapper">
       <header>
-        <h1>Fruitmachine</h1>
-        <p>View rendering engine</p>
+        <h1>FruitMachine</h1>
+        <p>A lightweight modular layout engine for client and server</p>
 
         <p class="view"><a href="https://github.com/wilsonpage/fruitmachine">View the Project on GitHub <small>wilsonpage/fruitmachine</small></a></p>
 
@@ -28,8 +28,21 @@
         </ul>
       </header>
       <section>
-				<h2>Usage</h2>
-<h2>Why not use Backbone?</h2>
+				<p>A lightweight modular layout engine for client and server Currently powering the award winning FT Web App.</p>
+<pre><code class="lang-js">var Apple = FruitMachine.define({
+  module: &#39;apple&#39;,
+  template: function() { return &#39;hello&#39; }
+});
+
+var apple = new Apple();
+
+apple
+  .render()
+  .inject(document.body);
+
+apple.el.outerHTML;
+//=&gt; &lt;div class=&quot;apple&quot;&gt;hello&lt;/div&gt;</code></pre>
+<h2>Why not Backbone?</h2>
 <ul>
 <li>No deps</li>
 <li>Can be retrofitted into a parts of a legacy system, it&#39;s not a religion</li>
@@ -38,10 +51,14 @@
 <li>Modules are designed to be reused in multiple contexts, you create layouts, not fixed views</li>
 <li>A little more structured than Backbone</li>
 </ul>
-<h2>Contributors</h2>
+<h2>Author</h2>
 <ul>
 <li><strong>Wilson Page</strong> &lt;wilsonpage@me.com&gt;</li>
-<li><strong>Matt Andrews</strong> &lt;wilsonpage@me.com&gt;</li>
+</ul>
+<h2>Contributors</h2>
+<ul>
+<li><strong>Wilson Page</strong> @wilsonpage</li>
+<li><strong>Matt Andrews</strong> @matthew-andrews</li>
 </ul>
 
       </section>
