@@ -17,23 +17,27 @@ apple.el.outerHTML;
 //=> <div class="apple">hello</div>
 ```
 
+## Examples
+
+- [Article viewer](http://wilsonpage.github.io/fruitmachine/examples/1a/)
+- [TODO](http://wilsonpage.github.io/fruitmachine/examples/todo/)
+
 ## Contents
 
-- [Introduction](docs/introduction.md)
-- [Getting started](docs/getting-started.md)
-- [Defining modules](docs/defining-modules.md)
-- [Instantiation](docs/instantiation.md)
-- [Queries](docs/queries.md)
-- [Templates](docs/templates.md)
-- [Template markup](docs/template-markup.md)
-- [El](docs/view-el.md)
-- [Helpers](docs/helpers.md)
-- [DOM injection](docs/dom-injection.md)
-- [Extending](docs/extending.md)
-
-
-
-
+- [Introduction](https://github.com/wilsonpage/fruitmachine/tree/master/docs/introduction.md)
+- [Getting started](https://github.com/wilsonpage/fruitmachine/tree/master/docs/getting-started.md)
+- [Defining modules](https://github.com/wilsonpage/fruitmachine/tree/master/docs/view-defining-modules.md)
+- [View assembly](https://github.com/wilsonpage/fruitmachine/tree/master/docs/view-assembly.md)
+- [Instantiation](https://github.com/wilsonpage/fruitmachine/tree/master/docs/view-instantiation.md)
+- [Queries](https://github.com/wilsonpage/fruitmachine/tree/master/docs/view-queries.md)
+- [Templates](https://github.com/wilsonpage/fruitmachine/tree/master/docs/view-templates.md)
+- [Template markup](https://github.com/wilsonpage/fruitmachine/tree/master/docs/view-template-markup.md)
+- [Rendering](https://github.com/wilsonpage/fruitmachine/tree/master/docs/view-rendering.md)
+- [El](https://github.com/wilsonpage/fruitmachine/tree/master/docs/view-el.md)
+- [Helpers](https://github.com/wilsonpage/fruitmachine/tree/master/docs/view-helpers.md)
+- [DOM injection](https://github.com/wilsonpage/fruitmachine/tree/master/docs/view-injection.md)
+- [Removing & destroying](https://github.com/wilsonpage/fruitmachine/tree/master/docs/view-removing-and-destroying.md)
+- [Extending](https://github.com/wilsonpage/fruitmachine/tree/master/docs/view-extending.md)
 
 ## Why not Backbone?
 
