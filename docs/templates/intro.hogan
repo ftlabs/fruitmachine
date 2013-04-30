@@ -34,5 +34,5 @@ apple.el.outerHTML;
 ## Contributors
 
 {{#pkg.contributors}}
-- **{{name}}** @{{github}}
+- **{{name}}** [@{{github}}](http://github.com/{{github}})
 {{/pkg.contributors}}

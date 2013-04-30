@@ -1,7 +1,7 @@
 {
   "name": "fruitmachine",
   "title": "FruitMachine",
-  "description": "A lightweight modular layout engine for client and server",
+  "description": "A lightweight modular layout engine for client and server.",
   "version": "0.3.3",
   "homepage": "https://github.com/wilsonpage/fruitmachine",
   "author": {

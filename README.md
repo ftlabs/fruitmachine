@@ -1,8 +1,8 @@
 ![fm logo](artwork/logo.jpg)
 
-A lightweight modular layout engine for client and server
+A lightweight modular layout engine for client and server.
 
-A lightweight modular layout engine for client and server Currently powering the award winning FT Web App.
+A lightweight modular layout engine for client and server. Currently powering the award winning FT Web App.
 
 ```js
 var Apple = FruitMachine.define({
@@ -35,8 +35,8 @@ apple.el.outerHTML;
 
 ## Contributors
 
-- **Wilson Page** @wilsonpage
-- **Matt Andrews** @matthew-andrews
+- **Wilson Page** [@wilsonpage](http://github.com/wilsonpage)
+- **Matt Andrews** [@matthew-andrews](http://github.com/matthew-andrews)
 
 
 ## License
