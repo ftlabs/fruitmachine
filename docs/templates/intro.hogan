@@ -1,16 +1,17 @@
 {{pkg.description}} Currently powering the award winning FT Web App.
 
 ```js
+// Define a module
 var Apple = FruitMachine.define({
   module: 'apple',
-  template: function() { return 'hello' }
+  template: function(){ return 'hello' }
 });
 
+// Create an instance
 var apple = new Apple();
 
-apple
-  .render()
-  .inject(document.body);
+// Render & inject into DOM
+apple.render().inject(document.body);
 
 apple.el.outerHTML;
 //=> <div class="apple">hello</div>
@@ -28,11 +29,11 @@ apple.el.outerHTML;
 ## Author
 
 {{#pkg.author}}
-- **{{name}}** &lt;{{email}}&gt;
+- **{{name}}** - [@{{github}}](http://github.com/{{github}})
 {{/pkg.author}}
 
 ## Contributors
 
 {{#pkg.contributors}}
-- **{{name}}** [@{{github}}](http://github.com/{{github}})
+- **{{name}}** - [@{{github}}](http://github.com/{{github}})
 {{/pkg.contributors}}

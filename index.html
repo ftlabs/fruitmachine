@@ -29,16 +29,17 @@
       </header>
       <section>
 				<p>A lightweight modular layout engine for client and server. Currently powering the award winning FT Web App.</p>
-<pre><code class="lang-js">var Apple = FruitMachine.define({
+<pre><code class="lang-js">// Define a module
+var Apple = FruitMachine.define({
   module: &#39;apple&#39;,
-  template: function() { return &#39;hello&#39; }
+  template: function(){ return &#39;hello&#39; }
 });
 
+// Create an instance
 var apple = new Apple();
 
-apple
-  .render()
-  .inject(document.body);
+// Render &amp; inject into DOM
+apple.render().inject(document.body);
 
 apple.el.outerHTML;
 //=&gt; &lt;div class=&quot;apple&quot;&gt;hello&lt;/div&gt;</code></pre>
@@ -53,12 +54,12 @@ apple.el.outerHTML;
 </ul>
 <h2>Author</h2>
 <ul>
-<li><strong>Wilson Page</strong> &lt;wilsonpage@me.com&gt;</li>
+<li><strong>Wilson Page</strong> - <a href="http://github.com/wilsonpage">@wilsonpage</a></li>
 </ul>
 <h2>Contributors</h2>
 <ul>
-<li><strong>Wilson Page</strong> <a href="http://github.com/wilsonpage">@wilsonpage</a></li>
-<li><strong>Matt Andrews</strong> <a href="http://github.com/matthew-andrews">@matthew-andrews</a></li>
+<li><strong>Wilson Page</strong> - <a href="http://github.com/wilsonpage">@wilsonpage</a></li>
+<li><strong>Matt Andrews</strong> - <a href="http://github.com/matthew-andrews">@matthew-andrews</a></li>
 </ul>
 
       </section>

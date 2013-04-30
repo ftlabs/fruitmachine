@@ -5,16 +5,17 @@ A lightweight modular layout engine for client and server.
 A lightweight modular layout engine for client and server. Currently powering the award winning FT Web App.
 
 ```js
+// Define a module
 var Apple = FruitMachine.define({
   module: 'apple',
-  template: function() { return 'hello' }
+  template: function(){ return 'hello' }
 });
 
+// Create an instance
 var apple = new Apple();
 
-apple
-  .render()
-  .inject(document.body);
+// Render & inject into DOM
+apple.render().inject(document.body);
 
 apple.el.outerHTML;
 //=> <div class="apple">hello</div>
@@ -31,12 +32,12 @@ apple.el.outerHTML;
 
 ## Author
 
-- **Wilson Page** &lt;wilsonpage@me.com&gt;
+- **Wilson Page** - [@wilsonpage](http://github.com/wilsonpage)
 
 ## Contributors
 
-- **Wilson Page** [@wilsonpage](http://github.com/wilsonpage)
-- **Matt Andrews** [@matthew-andrews](http://github.com/matthew-andrews)
+- **Wilson Page** - [@wilsonpage](http://github.com/wilsonpage)
+- **Matt Andrews** - [@matthew-andrews](http://github.com/matthew-andrews)
 
 
 ## License
