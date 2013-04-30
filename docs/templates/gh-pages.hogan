@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Fruitmachine by wilsonpage</title>
+    <title>{{pkg.title}} by wilsonpage</title>
 
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
@@ -15,8 +15,8 @@
   <body>
     <div class="wrapper">
       <header>
-        <h1>Fruitmachine</h1>
-        <p>View rendering engine</p>
+        <h1>{{pkg.title}}</h1>
+        <p>{{pkg.description}}</p>
 
         <p class="view"><a href="https://github.com/wilsonpage/fruitmachine">View the Project on GitHub <small>wilsonpage/fruitmachine</small></a></p>
 

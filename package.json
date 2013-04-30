@@ -1,12 +1,13 @@
 {
   "name": "fruitmachine",
   "title": "FruitMachine",
-  "description": "A modular view layout manager for client and server.",
+  "description": "A lightweight modular layout engine for client and server",
   "version": "0.3.3",
   "homepage": "https://github.com/wilsonpage/fruitmachine",
   "author": {
     "name": "Wilson Page",
-    "email": "wilsonpage@me.com"
+    "email": "wilsonpage@me.com",
+    "github": "wilsonpage"
   },
   "repository": {
     "type": "git",
@@ -51,7 +52,7 @@
     },
     {
       "name": "Matt Andrews",
-      "email": "wilsonpage@me.com",
+      "email": "matt@mattandre.ws",
       "github": "matthew-andrews"
     }
   ]

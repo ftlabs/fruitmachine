@@ -1,6 +1,22 @@
-## Usage
+{{pkg.description}} Currently powering the award winning FT Web App.
 
-## Why not use Backbone?
+```js
+var Apple = FruitMachine.define({
+  module: 'apple',
+  template: function() { return 'hello' }
+});
+
+var apple = new Apple();
+
+apple
+  .render()
+  .inject(document.body);
+
+apple.el.outerHTML;
+//=> <div class="apple">hello</div>
+```
+
+## Why not Backbone?
 
 - No deps
 - Can be retrofitted into a parts of a legacy system, it's not a religion
@@ -9,8 +25,14 @@
 - Modules are designed to be reused in multiple contexts, you create layouts, not fixed views
 - A little more structured than Backbone
 
+## Author
+
+{{#pkg.author}}
+- **{{name}}** &lt;{{email}}&gt;
+{{/pkg.author}}
+
 ## Contributors
 
 {{#pkg.contributors}}
-- **{{name}}** &lt;{{email}}&gt;
+- **{{name}}** @{{github}}
 {{/pkg.contributors}}
