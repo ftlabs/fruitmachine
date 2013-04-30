@@ -7,12 +7,12 @@ Let's start with a very simple example to demonstrate how to work with FruitMach
 ```js
 var Apple = FruitMachine.define({
   module: 'apple',
-  template: function(){ return 'I am an apple' } /* 1 */
+  template: function(){ return 'I am an apple'; } /* 1 */
 });
 
 var Layout = FruitMachine.define({
   module: 'layout',
-  template: function(data){ return data.child1 } /* 1 */
+  template: function(data){ return data.child1; } /* 1 */
 });
 ```
 
@@ -41,8 +41,11 @@ layout.render(); /* 1 */
 #### Injecting the view into the DOM
 
 ```js
-layout.inject(document.body);
+layout.inject(document.body); /* 1 */
+document.body.innerHTML; //=> <div class="layout" id="fmid-195834-a"><div class="apple" id="fmid-243252-a">I am an apple</div></div>
 ```
+
+
 
 ### Lazy Views
 

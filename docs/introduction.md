@@ -22,8 +22,8 @@ A FruitMachine view is like a simplified DOM tree. Like elements, views have pro
 
 FruitMachine tries to stay as far away from your data as possible, but of course each module must have data associated with it, and FruitMachine must be able to drop this data into the module's template.
 
-FruitMachine comes with it's own Model class (`FruitMachine.Model`) out of the box, just in case you don't have you own; but we have built FruitMachine such that you can bring along your own types of Model should you wish. If you wish to go down this route, you just need to tell FruitMachine how it can get hold of the Model's data when it need to template.
+FruitMachine comes with it's own Model class (`FruitMachine.Model`) out of the box, just in case you don't have you own; but we have built FruitMachine such that you can bring along your own types of Model should you wish. If you wish to go down this route, you just need to tell FruitMachine how it can get hold of the Model's data when it needs to template.
 
 #### What templating langauge does it use?
 
-FruitMachine doesn't care what type of templates you are using, it just expects to be given a function that will return a string. FruitMachine will pass any model data associated with the model as the first argument to this function. This means you can use any templates you like! Although we like to use [Hogan](http://twitter.github.io/hogan.js/).
+FruitMachine doesn't care what type of templates you are using, it just expects to be given a function that will return a string. FruitMachine will pass any model data associated with the model as the first argument to this function. This means you can use any templates you like! We like to use [Hogan](http://twitter.github.io/hogan.js/).
