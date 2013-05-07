@@ -25,7 +25,6 @@ module.exports = function(grunt) {
           'docs/templates/intro.hogan'
         ],
         output: {
-          'docs/templates/gh-pages.hogan': 'index.html',
           'docs/templates/api.hogan': 'docs/api.md',
           'docs/templates/readme.hogan': 'README.md'
         }
@@ -55,7 +54,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-readme');
   grunt.loadNpmTasks('grunt-version');
-
 
   // Load local tasks
   grunt.loadTasks('tasks');
