@@ -39,8 +39,8 @@ or
 
 Download the [production version][min] (~3k gzipped) or the [development version][max].
 
-[min]: fruitmachine/master/build/fruitmachine.min.js
-[max]: fruitmachine/master/build/fruitmachine.js
+[min]: fruitmachine/raw/master/build/fruitmachine.min.js
+[max]: fruitmachine/raw/master/build/fruitmachine.js
 
 ## Examples
 
