@@ -28,20 +28,20 @@ apple.el.outerHTML;
 
 ## Documentation
 
-- [Introduction](tree/master/docs/introduction.md)
-- [Getting started](tree/master/docs/getting-started.md)
-- [Defining modules](tree/master/docs/view-defining-modules.md)
-- [View assembly](tree/master/docs/view-assembly.md)
-- [Instantiation](tree/master/docs/view-instantiation.md)
-- [Queries](tree/master/docs/view-queries.md)
-- [Templates](tree/master/docs/view-templates.md)
-- [Template markup](tree/master/docs/view-template-markup.md)
-- [Rendering](tree/master/docs/view-rendering.md)
-- [El](tree/master/docs/view-el.md)
-- [Helpers](tree/master/docs/view-helpers.md)
-- [DOM injection](tree/master/docs/view-injection.md)
-- [Removing & destroying](tree/master/docs/view-removing-and-destroying.md)
-- [Extending](tree/master/docs/view-extending.md)
+- [Introduction](blob/master/docs/introduction.md)
+- [Getting started](blob/master/docs/getting-started.md)
+- [Defining modules](blob/master/docs/view-defining-modules.md)
+- [View assembly](blob/master/docs/view-assembly.md)
+- [Instantiation](blob/master/docs/view-instantiation.md)
+- [Queries](blob/master/docs/view-queries.md)
+- [Templates](blob/master/docs/view-templates.md)
+- [Template markup](blob/master/docs/view-template-markup.md)
+- [Rendering](blob/master/docs/view-rendering.md)
+- [El](blob/master/docs/view-el.md)
+- [Helpers](blob/master/docs/view-helpers.md)
+- [DOM injection](blob/master/docs/view-injection.md)
+- [Removing & destroying](blob/master/docs/view-removing-and-destroying.md)
+- [Extending](blob/master/docs/view-extending.md)
 
 ## Why not Backbone?
 
