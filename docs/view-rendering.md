@@ -16,6 +16,6 @@ apple
 
 //...some time later
 
-apple.model('name', 'Matt');
+apple.model.set('name', 'Matt');
 apple.render();
 ```
