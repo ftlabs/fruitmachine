@@ -1,6 +1,6 @@
 # FruitMachine
 
-A lightweight modular layout engine for client and server. Currently powering the award winning FT Web App.
+A lightweight modular layout engine for client and server. Currently powering the award winning [FT Web App](http://apps.ft.com/ftwebapp/).
 
 FruitMachine was designed to construct nested view layouts from strictly modular components. We wanted it to be as light and unopinionated as possible so that it could be applied to almost any layout problem.
 
