@@ -9,6 +9,7 @@
     "email": "wilsonpage@me.com",
     "github": "wilsonpage"
   },
+  "organization": "The Financial Times Limited",
   "repository": {
     "type": "git",
     "url": "git://github.com/wilsonpage/fruitmachine.git"

@@ -3,5 +3,5 @@
 {{{partials.md.intro}}}
 
 ## License
-Copyright (c) 2012 {{pkg.author.name}}
+Copyright (c) 2012 {{pkg.organization}}
 Licensed under the MIT license.

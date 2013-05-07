@@ -82,5 +82,5 @@ $ npm test
 
 
 ## License
-Copyright (c) 2012 Wilson Page
+Copyright (c) 2012 The Financial Times Limited
 Licensed under the MIT license.
