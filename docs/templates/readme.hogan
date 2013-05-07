@@ -1,4 +1,4 @@
-{{pkg.title}}
+# {{pkg.title}}
 
 {{{partials.md.intro}}}
 
