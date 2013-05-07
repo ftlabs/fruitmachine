@@ -45,6 +45,13 @@ apple.el.outerHTML;
 - [Removing & destroying](fruitmachine/blob/master/docs/view-removing-and-destroying.md)
 - [Extending](fruitmachine/blob/master/docs/view-extending.md)
 
+## Tests
+
+```
+$ npm install
+$ npm test
+```
+
 ## Author
 
 - **Wilson Page** - [@wilsonpage](http://github.com/wilsonpage)
