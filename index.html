@@ -40,7 +40,9 @@ var Apple = FruitMachine.define({
 var apple = new Apple();
 
 // Render &amp; inject into DOM
-apple.render().inject(document.body);
+apple
+  .render()
+  .inject(document.body);
 
 apple.el.outerHTML;
 //=&gt; &lt;div class=&quot;apple&quot;&gt;hello&lt;/div&gt;</code></pre>
