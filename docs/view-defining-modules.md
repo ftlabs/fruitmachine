@@ -6,12 +6,12 @@ var Apple = FruitMachine.define({
   template: templateFunction,
   tag: 'section',
   classes: [ 'class-1', 'class-2'],
-  
+
   // Event callbacks (optional)
-  onIntitalize: function(options){},
-  onSetup: function(){},
-  onTeardown: function(){},
-  onDestroy: function(){}
+  intitalize: function(options){},
+  setup: function(){},
+  teardown: function(){},
+  destroy: function(){}
 });
 ```
 
@@ -28,10 +28,10 @@ Internally `define` extends the default `FruitMachine.View.prototype` with the p
 - `template {Function}` A function that will return the module's html (we like [Hogan](http://twitter.github.com/hogan.js/)
 - `tag {String}` The html tag to use on the root element (defaults to 'div') *(optional)*
 - `classes {Array}` A list of classes to add to the root element. *(optional)*
-- `onInitialize {Function}` Define a function to run when the VIew is first instantiated (only ever runs once) *(optional)*
-- `onSetup {Function}` A function to be run every time `View#setup()` is called. Should be used to bind any DOM event listeners. You can safely assume the presence of `this.el` at this point. *(optional)*
-- `onTeardown {Function}` A function to be run when `View#teardown()` or `View#destroy()` is called. `onTeardown` will also run if you attempt to setup an already 'setup' view.
-- `onDestroy {Function}` Run when `View#destroy()` is called (will only ever run once) *(optional)*
+- `initialize {Function}` Define a function to run when the VIew is first instantiated (only ever runs once) *(optional)*
+- `detup {Function}` A function to be run every time `View#setup()` is called. Should be used to bind any DOM event listeners. You can safely assume the presence of `this.el` at this point. *(optional)*
+- `teardown {Function}` A function to be run when `View#teardown()` or `View#destroy()` is called. `teardown` will also run if you attempt to setup an already 'setup' view.
+- `destroy {Function}` Run when `View#destroy()` is called (will only ever run once) *(optional)*
 
 
-  
+
