@@ -28,20 +28,20 @@ apple.el.outerHTML;
 
 ## Documentation
 
-- [Introduction](blob/master/docs/introduction.md)
-- [Getting started](blob/master/docs/getting-started.md)
-- [Defining modules](blob/master/docs/view-defining-modules.md)
-- [View assembly](blob/master/docs/view-assembly.md)
-- [Instantiation](blob/master/docs/view-instantiation.md)
-- [Queries](blob/master/docs/view-queries.md)
-- [Templates](blob/master/docs/view-templates.md)
-- [Template markup](blob/master/docs/view-template-markup.md)
-- [Rendering](blob/master/docs/view-rendering.md)
-- [El](blob/master/docs/view-el.md)
-- [Helpers](blob/master/docs/view-helpers.md)
-- [DOM injection](blob/master/docs/view-injection.md)
-- [Removing & destroying](blob/master/docs/view-removing-and-destroying.md)
-- [Extending](blob/master/docs/view-extending.md)
+- [Introduction](fruitmachine/blob/master/docs/introduction.md)
+- [Getting started](fruitmachine/blob/master/docs/getting-started.md)
+- [Defining modules](fruitmachine/blob/master/docs/view-defining-modules.md)
+- [View assembly](fruitmachine/blob/master/docs/view-assembly.md)
+- [Instantiation](fruitmachine/blob/master/docs/view-instantiation.md)
+- [Queries](fruitmachine/blob/master/docs/view-queries.md)
+- [Templates](fruitmachine/blob/master/docs/view-templates.md)
+- [Template markup](fruitmachine/blob/master/docs/view-template-markup.md)
+- [Rendering](fruitmachine/blob/master/docs/view-rendering.md)
+- [El](fruitmachine/blob/master/docs/view-el.md)
+- [Helpers](fruitmachine/blob/master/docs/view-helpers.md)
+- [DOM injection](fruitmachine/blob/master/docs/view-injection.md)
+- [Removing & destroying](fruitmachine/blob/master/docs/view-removing-and-destroying.md)
+- [Extending](fruitmachine/blob/master/docs/view-extending.md)
 
 ## Why not Backbone?
 
