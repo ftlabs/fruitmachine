@@ -43,15 +43,6 @@ apple.el.outerHTML;
 - [Removing & destroying](fruitmachine/blob/master/docs/view-removing-and-destroying.md)
 - [Extending](fruitmachine/blob/master/docs/view-extending.md)
 
-## Why not Backbone?
-
-- No deps
-- Can be retrofitted into a parts of a legacy system, it's not a religion
-- Serverside has been considered from the start
-- It doesn't care how you manage your data
-- Modules are designed to be reused in multiple contexts, you create layouts, not fixed views
-- A little more structured than Backbone
-
 ## Author
 
 {{#pkg.author}}
