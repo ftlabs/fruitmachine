@@ -25,9 +25,19 @@ apple.el.outerHTML;
 
 ## Installation
 
-- `$ npm install fruitmachine`
-- `$ bower install fruitmachine`
-- Download the [production version][min] (~3k gzipped) or the [development version][max].
+```
+$ npm install fruitmachine
+```
+
+or
+
+```
+$ bower install fruitmachine
+```
+
+or
+
+Download the [production version][min] (~3k gzipped) or the [development version][max].
 
 [min]: fruitmachine/raw/master/build/fruitmachine.min.js
 [max]: fruitmachine/raw/master/build/fruitmachine.js
