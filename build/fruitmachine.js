@@ -82,6 +82,68 @@ module.exports = {
 };
 },{}],3:[function(require,module,exports){
 
+/**
+ * Module Dependencies
+ */
+
+var store = require('./store');
+var mixin = require('./util').mixin;
+
+/**
+ * Exports
+ */
+
+var defaults = store.config = module.exports = {
+	templateIterator: 'children',
+	templateInstance: 'child',
+	model: {
+		toJSON: function(model) {
+			return model.toJSON();
+		}
+	}
+};
+
+defaults.set = function(options) {
+	mixin(defaults, options);
+};
+},{"./store":2,"./util":1}],4:[function(require,module,exports){
+
+/*jslint browser:true, node:true*/
+
+'use strict';
+
+/**
+ * Module Dependencies
+ */
+
+var View = require('./view');
+var store = require('./store');
+
+/**
+ * Creates and registers a
+ * FruitMachine view constructor
+ * and stores an internal reference.
+ *
+ * The user is able to pass in an already
+ * defined View constructor, or an object
+ * representing the View's prototype.
+ *
+ * @param  {Object|View}
+ * @return {View}
+ */
+module.exports = function(props) {
+  var view = ('function' !== typeof props)
+    ? View.extend(props)
+    : props;
+
+  // Store the module by module type
+  // so that module can be referred to
+  // by just a string in layout definitions
+  return store.modules[view.prototype._module] = view;
+};
+
+},{"./store":2,"./view":5}],6:[function(require,module,exports){
+
 /*jslint browser:true, node:true*/
 
 /**
@@ -126,69 +188,7 @@ function FruitMachine(options) {
  */
 
 module.exports = FruitMachine;
-},{"./model":4,"./define":5,"./util":1,"./store":2,"./config":6,"./view":7,"event":8}],6:[function(require,module,exports){
-
-/**
- * Module Dependencies
- */
-
-var store = require('./store');
-var mixin = require('./util').mixin;
-
-/**
- * Exports
- */
-
-var defaults = store.config = module.exports = {
-	templateIterator: 'children',
-	templateInstance: 'child',
-	model: {
-		toJSON: function(model) {
-			return model.toJSON();
-		}
-	}
-};
-
-defaults.set = function(options) {
-	mixin(defaults, options);
-};
-},{"./store":2,"./util":1}],5:[function(require,module,exports){
-
-/*jslint browser:true, node:true*/
-
-'use strict';
-
-/**
- * Module Dependencies
- */
-
-var View = require('./view');
-var store = require('./store');
-
-/**
- * Creates and registers a
- * FruitMachine view constructor
- * and stores an internal reference.
- *
- * The user is able to pass in an already
- * defined View constructor, or an object
- * representing the View's prototype.
- *
- * @param  {Object|View}
- * @return {View}
- */
-module.exports = function(props) {
-  var view = ('function' !== typeof props)
-    ? View.extend(props)
-    : props;
-
-  // Store the module by module type
-  // so that module can be referred to
-  // by just a string in layout definitions
-  return store.modules[view.prototype._module] = view;
-};
-
-},{"./store":2,"./view":7}],7:[function(require,module,exports){
+},{"./model":7,"./define":4,"./util":1,"./store":2,"./config":3,"./view":5,"event":8}],5:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -1034,7 +1034,7 @@ View.prototype.fireStatic = events.fireStatic;
  */
 
 View.extend = extend(util.keys(View.prototype));
-},{"../config":6,"./events":9,"../extend":10,"../model":4,"../util":1,"../store":2}],8:[function(require,module,exports){
+},{"../config":3,"./events":9,"../extend":10,"../model":7,"../util":1,"../store":2}],8:[function(require,module,exports){
 
 /**
  * Event
@@ -1056,8 +1056,8 @@ View.extend = extend(util.keys(View.prototype));
  * @return {Object}
  */
 var Event = module.exports = function(obj) {
-	if (!(this instanceof Event)) return new Event(obj);
-	if (obj) return mixin(obj, Event.prototype);
+  if (!(this instanceof Event)) return new Event(obj);
+  if (obj) return mixin(obj, Event.prototype);
 };
 
 /**
@@ -1069,9 +1069,9 @@ var Event = module.exports = function(obj) {
  * @return {Event}
  */
 Event.prototype.on = function(name, cb) {
-	this._cbs = this._cbs || {};
-	(this._cbs[name] || (this._cbs[name] = [])).push(cb);
-	return this;
+  this._cbs = this._cbs || {};
+  (this._cbs[name] || (this._cbs[name] = [])).unshift(cb);
+  return this;
 };
 
 /**
@@ -1084,16 +1084,16 @@ Event.prototype.on = function(name, cb) {
  * @return {Event}
  */
 Event.prototype.off = function(name, cb) {
-	this._cbs = this._cbs || {};
+  this._cbs = this._cbs || {};
 
-	if (!name) return this._cbs = {};
-	if (!cb) return delete this._cbs[name];
+  if (!name) return this._cbs = {};
+  if (!cb) return delete this._cbs[name];
 
-	var cbs = this._cbs[name] || [];
-	var i;
+  var cbs = this._cbs[name] || [];
+  var i;
 
-	while (cbs && ~(i = cbs.indexOf(cb))) cbs.splice(i, 1);
-	return this;
+  while (cbs && ~(i = cbs.indexOf(cb))) cbs.splice(i, 1);
+  return this;
 };
 
 /**
@@ -1105,14 +1105,16 @@ Event.prototype.off = function(name, cb) {
  * @return {Event}
  */
 Event.prototype.fire = function(name) {
-	this._cbs = this._cbs || {};
+  this._cbs = this._cbs || {};
+  var cbs = this._cbs[name];
 
-	var cbs = (this._cbs[name] || (this._cbs[name] = []));
-	var args = [].slice.call(arguments, 1);
-	var l = cbs.length;
+  if (cbs) {
+    var args = [].slice.call(arguments, 1);
+    var l = cbs.length;
+    while (l--) cbs[l].apply(this, args);
+  }
 
-	while (l--) cbs[l].apply(this, args);
-	return this;
+  return this;
 };
 
 /**
@@ -1132,7 +1134,7 @@ function mixin(a, b) {
   for (var key in b) a[key] = b[key];
   return a;
 }
-},{}],4:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -1192,7 +1194,7 @@ Model.prototype.set = function(data, value) {
   // If a string key is passed
   // with a value. Set the value
   // on the key in the data store.
-  if ('string' === typeof data && value) {
+  if ('string' === typeof data && typeof value !== 'undefined') {
     this._data[data] = value;
     this.fire('change:' + data, value);
   }
@@ -1329,6 +1331,14 @@ var events = require('event');
  * Exports
  */
 
+/**
+ * Registers a event listener.
+ *
+ * @param  {String}   name
+ * @param  {String}   module
+ * @param  {Function} cb
+ * @return {View}
+ */
 exports.on = function(name, module, cb) {
 
   // cb can be passed as
@@ -1355,7 +1365,12 @@ exports.on = function(name, module, cb) {
   return this;
 };
 
-
+/**
+ * Fires an event on a view.
+ *
+ * @param  {String} name
+ * @return {View}
+ */
 exports.fire = function(name) {
   var parent = this.parent;
   var _event = this.event;
@@ -1365,7 +1380,7 @@ exports.fire = function(name) {
     stopPropagation: function(){ this.propagate = false; }
   };
 
-  fireBubble(this, arguments, event);
+  propagate(this, arguments, event);
 
   // COMPLEX:
   // If an earlier event object was
@@ -1381,19 +1396,16 @@ exports.fire = function(name) {
   return this;
 };
 
-function fireBubble(view, args, event) {
+function propagate(view, args, event) {
   if (!view || !event.propagate) return;
 
   view.event = event;
   events.prototype.fire.apply(view, args);
-
-  fireBubble(view.parent, args, event);
+  propagate(view.parent, args, event);
 }
-
-
 
 exports.fireStatic = events.prototype.fire;
 exports.off = events.prototype.off;
-},{"event":8}]},{},[3])(3)
+},{"event":8}]},{},[6])(6)
 });
 ;
