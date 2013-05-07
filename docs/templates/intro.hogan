@@ -21,6 +21,25 @@ apple.el.outerHTML;
 //=> <div class="apple">hello</div>
 ```
 
+## Installation
+
+```
+$ npm install fruitmachine
+```
+
+or
+
+```
+$ bower install fruitmachine
+```
+
+or
+
+Download the [production version][min] (~3k gzipped) or the [development version][max].
+
+[min]: fruitmachine/master/build/fruitmachine.min.js
+[max]: fruitmachine/master/build/fruitmachine.js
+
 ## Examples
 
 - [Article viewer](http://wilsonpage.github.io/fruitmachine/examples/1a/)
