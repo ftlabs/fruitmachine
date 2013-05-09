@@ -84,16 +84,29 @@ buster.testCase('View#remove()', {
     refute(list._ids.foo);
   },
 
+  "Should remove the reference back to the parent view": function() {
+    var layout = new Layout();
+    var apple = new Apple({ slot: 1 });
+
+    layout.add(apple);
+
+    assert.equals(apple.parent, layout);
+
+    layout.remove(apple);
+
+    refute(apple.parent);
+  },
+
   "Should remove slot reference": function() {
     var layout = new Layout();
     var apple = new Apple({ slot: 1 });
 
     layout.add(apple);
 
-    assert.equals(layout._slots[1], apple);
+    assert.equals(layout.slots[1], apple);
 
     layout.remove(apple);
 
-    refute(layout._slots[1]);
+    refute(layout.slots[1]);
   }
 });
