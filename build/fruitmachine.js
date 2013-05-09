@@ -50,7 +50,43 @@ function FruitMachine(options) {
  */
 
 module.exports = FruitMachine;
-},{"./define":3,"./store":1,"./config":4,"./view":5,"utils":6,"model":7,"event":8}],6:[function(require,module,exports){
+},{"./define":3,"./store":1,"./config":4,"./view":5,"utils":6,"model":7,"event":8}],3:[function(require,module,exports){
+
+/*jslint browser:true, node:true*/
+
+'use strict';
+
+/**
+ * Module Dependencies
+ */
+
+var View = require('./view');
+var store = require('./store');
+
+/**
+ * Creates and registers a
+ * FruitMachine view constructor
+ * and stores an internal reference.
+ *
+ * The user is able to pass in an already
+ * defined View constructor, or an object
+ * representing the View's prototype.
+ *
+ * @param  {Object|View}
+ * @return {View}
+ */
+module.exports = function(props) {
+  var view = ('function' !== typeof props)
+    ? View.extend(props)
+    : props;
+
+  // Store the module by module type
+  // so that module can be referred to
+  // by just a string in layout definitions
+  return store.modules[view.prototype._module] = view;
+};
+
+},{"./store":1,"./view":5}],6:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -240,43 +276,7 @@ function mixin(a, b) {
   for (var key in b) a[key] = b[key];
   return a;
 }
-},{}],3:[function(require,module,exports){
-
-/*jslint browser:true, node:true*/
-
-'use strict';
-
-/**
- * Module Dependencies
- */
-
-var View = require('./view');
-var store = require('./store');
-
-/**
- * Creates and registers a
- * FruitMachine view constructor
- * and stores an internal reference.
- *
- * The user is able to pass in an already
- * defined View constructor, or an object
- * representing the View's prototype.
- *
- * @param  {Object|View}
- * @return {View}
- */
-module.exports = function(props) {
-  var view = ('function' !== typeof props)
-    ? View.extend(props)
-    : props;
-
-  // Store the module by module type
-  // so that module can be referred to
-  // by just a string in layout definitions
-  return store.modules[view.prototype._module] = view;
-};
-
-},{"./store":1,"./view":5}],4:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 
 /**
  * Module Dependencies
