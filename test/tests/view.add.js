@@ -10,6 +10,15 @@ buster.testCase('View#add()', {
     assert.equals(this.view.children.length, 1);
   },
 
+  "Should store a reference to the child via slot if the view added has a slot": function() {
+    var apple = new Apple({ slot: 1 });
+    var layout = new Layout();
+
+    layout.add(apple);
+
+    assert.equals(layout._slots[1], apple);
+  },
+
   "Should add a JSON config as a child.": function() {
     this.view.add({ module: 'pear' });
     assert.equals(this.view.children.length, 1);

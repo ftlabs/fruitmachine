@@ -6,7 +6,7 @@ var helpers = {};
 
 var templates = helpers.templates = {
   'apple': Hogan.compile('{{{my_child_module}}}'),
-  'layout': Hogan.compile('{{{slot_1}}}{{{slot_2}}}{{{slot_3}}}'),
+  'layout': Hogan.compile('{{{slot_1}}}{{{slot_2}}}{{{slot_3}}}{{{1}}}'),
   'list': Hogan.compile('{{#children}}{{{child}}}{{/children}}'),
   'orange': Hogan.compile('{{text}}'),
   'pear': Hogan.compile('{{text}}')

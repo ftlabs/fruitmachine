@@ -82,68 +82,6 @@ module.exports = {
 };
 },{}],3:[function(require,module,exports){
 
-/**
- * Module Dependencies
- */
-
-var store = require('./store');
-var mixin = require('./util').mixin;
-
-/**
- * Exports
- */
-
-var defaults = store.config = module.exports = {
-	templateIterator: 'children',
-	templateInstance: 'child',
-	model: {
-		toJSON: function(model) {
-			return model.toJSON();
-		}
-	}
-};
-
-defaults.set = function(options) {
-	mixin(defaults, options);
-};
-},{"./store":2,"./util":1}],4:[function(require,module,exports){
-
-/*jslint browser:true, node:true*/
-
-'use strict';
-
-/**
- * Module Dependencies
- */
-
-var View = require('./view');
-var store = require('./store');
-
-/**
- * Creates and registers a
- * FruitMachine view constructor
- * and stores an internal reference.
- *
- * The user is able to pass in an already
- * defined View constructor, or an object
- * representing the View's prototype.
- *
- * @param  {Object|View}
- * @return {View}
- */
-module.exports = function(props) {
-  var view = ('function' !== typeof props)
-    ? View.extend(props)
-    : props;
-
-  // Store the module by module type
-  // so that module can be referred to
-  // by just a string in layout definitions
-  return store.modules[view.prototype._module] = view;
-};
-
-},{"./store":2,"./view":5}],6:[function(require,module,exports){
-
 /*jslint browser:true, node:true*/
 
 /**
@@ -188,7 +126,69 @@ function FruitMachine(options) {
  */
 
 module.exports = FruitMachine;
-},{"./model":7,"./define":4,"./util":1,"./store":2,"./config":3,"./view":5,"event":8}],5:[function(require,module,exports){
+},{"./model":4,"./define":5,"./util":1,"./store":2,"./config":6,"./view":7,"event":8}],6:[function(require,module,exports){
+
+/**
+ * Module Dependencies
+ */
+
+var store = require('./store');
+var mixin = require('./util').mixin;
+
+/**
+ * Exports
+ */
+
+var defaults = store.config = module.exports = {
+	templateIterator: 'children',
+	templateInstance: 'child',
+	model: {
+		toJSON: function(model) {
+			return model.toJSON();
+		}
+	}
+};
+
+defaults.set = function(options) {
+	mixin(defaults, options);
+};
+},{"./store":2,"./util":1}],5:[function(require,module,exports){
+
+/*jslint browser:true, node:true*/
+
+'use strict';
+
+/**
+ * Module Dependencies
+ */
+
+var View = require('./view');
+var store = require('./store');
+
+/**
+ * Creates and registers a
+ * FruitMachine view constructor
+ * and stores an internal reference.
+ *
+ * The user is able to pass in an already
+ * defined View constructor, or an object
+ * representing the View's prototype.
+ *
+ * @param  {Object|View}
+ * @return {View}
+ */
+module.exports = function(props) {
+  var view = ('function' !== typeof props)
+    ? View.extend(props)
+    : props;
+
+  // Store the module by module type
+  // so that module can be referred to
+  // by just a string in layout definitions
+  return store.modules[view.prototype._module] = view;
+};
+
+},{"./store":2,"./view":7}],7:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -261,7 +261,9 @@ View.prototype._configure = function(options) {
   this.classes = this.classes || options.classes || [];
   this.helpers = this.helpers || options.helpers || [];
   this.template = this.setTemplate(options.template || this.template);
+  this._slot = options.slot || options._slot;
   this.children = [];
+  this._slots = {};
 
   // Create id and module
   // lookup objects
@@ -326,8 +328,32 @@ View.prototype.add = function(children, options) {
   var at = options && options.at;
   var inject = options && options.inject;
   var child;
+  var ob;
 
   if (!children) return this;
+
+
+  if (!util.isArray(children)) {
+    ob = children;
+    children = [];
+
+    for (var slot in ob) {
+      child = ob[slot];
+
+      if ('object' !== typeof child) {
+        children = ob;
+        break;
+      }
+
+      // We set the slot on the private
+      // '_slot' key so that it works
+      // for instantiated children as
+      // well as plain json objects.
+      child._slot = slot;
+
+      children.push(child);
+    }
+  }
 
   // Make sure it's an array
   children = [].concat(children);
@@ -349,6 +375,10 @@ View.prototype.add = function(children, options) {
 
   // Allow chaining
   return this;
+};
+
+View.prototype.slot = function(slot, child) {
+
 };
 
 /**
@@ -427,6 +457,9 @@ View.prototype._addLookup = function(child) {
 
   // Add a lookup for id
   this._ids[child.id()] = child;
+
+  // Store a reference by slot
+  if (child._slot) this._slots[child._slot] = child;
 };
 
 /**
@@ -624,7 +657,7 @@ View.prototype.toHTML = function() {
   // Loop each child
   this.each(function(child) {
     html = child.toHTML();
-    data[child.id()] = html;
+    data[child._slot || child.id()] = html;
     tmp = {};
     tmp[config.templateInstance] = html;
     data.children.push(mixin(tmp, toJSON(child.model)));
@@ -1034,7 +1067,7 @@ View.prototype.fireStatic = events.fireStatic;
  */
 
 View.extend = extend(util.keys(View.prototype));
-},{"../config":3,"./events":9,"../extend":10,"../model":7,"../util":1,"../store":2}],8:[function(require,module,exports){
+},{"../config":6,"./events":9,"../extend":10,"../model":4,"../util":1,"../store":2}],8:[function(require,module,exports){
 
 /**
  * Event
@@ -1134,7 +1167,7 @@ function mixin(a, b) {
   for (var key in b) a[key] = b[key];
   return a;
 }
-},{}],7:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -1406,6 +1439,6 @@ function propagate(view, args, event) {
 
 exports.fireStatic = events.prototype.fire;
 exports.off = events.prototype.off;
-},{"event":8}]},{},[6])(6)
+},{"event":8}]},{},[3])(3)
 });
 ;
