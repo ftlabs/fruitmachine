@@ -18,8 +18,7 @@ module.exports = function(grunt) {
       dest: {
         code: [
           'lib/view/index.js',
-          { path: 'lib/view/events.js', cons: 'View' },
-          'lib/model.js'
+          { path: 'lib/view/events.js', cons: 'View' }
         ],
         partials: [
           'docs/templates/intro.hogan'
