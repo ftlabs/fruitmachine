@@ -31,7 +31,9 @@
     "test": "grunt buster"
   },
   "dependencies": {
-    "event": "git://github.com/wilsonpage/event.git"
+    "event": "git://github.com/wilsonpage/event.git",
+    "model": "git://github.com/wilsonpage/model.git",
+    "utils": "git://github.com/wilsonpage/utils.git"
   },
   "devDependencies": {
     "hogan.js": "*",
