@@ -7,18 +7,18 @@ var layout = {
 	module: 'layout-a',
 	children: [
 		{
-			id: 'child_1',
+			slot: 1,
 			module: 'masthead',
 			model: {
 				title: 'Article viewer'
 			}
 		},
 		{
-			id: 'child_2',
+			slot: 2,
 			module: 'apple'
 		},
 		{
-			id: 'child_3',
+			slot: 3,
 			module: 'orange'
 		}
 	]

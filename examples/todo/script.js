@@ -1,30 +1,5 @@
 
 var Model = FruitMachine.Model;
-// var collection = {
-// 	get: function() {
-// 		if (collection.cache) return collection.cache;
-// 		var items = JSON.parse(localStorage.items || '[]');
-// 		items = items.map(function(item) { return new Model(item); });
-// 		return collection.cache = items;
-// 	},
-// 	toJSON: function() {
-// 		return collection.get().map(function(model) { return model.toJSON(); });
-// 	},
-// 	save: function(items) {
-// 		collection.cache = items;
-// 		localStorage.items = JSON.stringify(collection.toJSON());
-// 	},
-// 	add: function(item){
-// 		var items = collection.get();
-// 		items.unshift(new Model(item));
-// 		collection.save(items);
-// 	},
-// 	remove: function(index) {
-// 		var items = collection.get();
-// 		items.splice(index, 1);
-// 		collection.save(items);
-// 	}
-// };
 
 /**
  * Usage
@@ -32,18 +7,17 @@ var Model = FruitMachine.Model;
 
 // Create the FruitMachine View
 var layout = new LayoutB();
-var masthead = new Masthead({ id: 'child_1', model: { title: 'Todo' }});
-var strawberry = new Strawberry({ id: 'child_2' });
-var list = new List({ id: 'child_3' });
+var masthead = new Masthead({ model: { title: 'Todo' }});
+var strawberry = new Strawberry();
+var list = new List();
 var collection = [];
 
 layout
-	.add(masthead)
-	.add(strawberry)
-	.add(list)
+	.add(masthead, 1)
+	.add(strawberry, 2)
+	.add(list, 3)
 	.on('submit', onSubmit)
 	.on('closebuttonclick', onCloseButtonClick);
-
 
 // Render the view,
 // inject it into the
@@ -56,12 +30,10 @@ layout
 
 function onSubmit(value) {
 	var model = new Model({ text: value });
-	var item = new ListItem({ model: model });
+	var item = new ListItem({ model: model }).render();
 
-	list
-		.add(item)
-		.render()
-		.setup();
+	list.add(item, { at: 0, inject: true });
+	item.setup();
 
 	collection.unshift(model);
 }

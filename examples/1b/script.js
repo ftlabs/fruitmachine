@@ -4,14 +4,16 @@
  */
 
 // Create the FruitMachine View
-var layout = new Layout({ model: { title: 'Example 1b' }});
-var apple = new Apple({ id: 'uniqueId1' });
-var orange = new Orange({ id: 'uniqueId2' });
+var layout = new LayoutA({ model: { title: 'Example 1b' }});
+var masthead = new Masthead();
+var apple = new Apple();
+var orange = new Orange();
 var articles = database.getSync();
 
 layout
-	.add(apple)
-	.add(orange);
+	.add(masthead, 1)
+	.add(apple, 2)
+	.add(orange, 3);
 
 // Set some data
 // on module apple.
