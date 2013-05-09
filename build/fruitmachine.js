@@ -50,43 +50,7 @@ function FruitMachine(options) {
  */
 
 module.exports = FruitMachine;
-},{"./define":3,"./store":1,"./config":4,"./view":5,"utils":6,"model":7,"event":8}],3:[function(require,module,exports){
-
-/*jslint browser:true, node:true*/
-
-'use strict';
-
-/**
- * Module Dependencies
- */
-
-var View = require('./view');
-var store = require('./store');
-
-/**
- * Creates and registers a
- * FruitMachine view constructor
- * and stores an internal reference.
- *
- * The user is able to pass in an already
- * defined View constructor, or an object
- * representing the View's prototype.
- *
- * @param  {Object|View}
- * @return {View}
- */
-module.exports = function(props) {
-  var view = ('function' !== typeof props)
-    ? View.extend(props)
-    : props;
-
-  // Store the module by module type
-  // so that module can be referred to
-  // by just a string in layout definitions
-  return store.modules[view.prototype._module] = view;
-};
-
-},{"./store":1,"./view":5}],6:[function(require,module,exports){
+},{"./define":3,"./store":1,"./config":4,"./view":5,"utils":6,"model":7,"event":8}],6:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -276,7 +240,43 @@ function mixin(a, b) {
   for (var key in b) a[key] = b[key];
   return a;
 }
-},{}],4:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
+
+/*jslint browser:true, node:true*/
+
+'use strict';
+
+/**
+ * Module Dependencies
+ */
+
+var View = require('./view');
+var store = require('./store');
+
+/**
+ * Creates and registers a
+ * FruitMachine view constructor
+ * and stores an internal reference.
+ *
+ * The user is able to pass in an already
+ * defined View constructor, or an object
+ * representing the View's prototype.
+ *
+ * @param  {Object|View}
+ * @return {View}
+ */
+module.exports = function(props) {
+  var view = ('function' !== typeof props)
+    ? View.extend(props)
+    : props;
+
+  // Store the module by module type
+  // so that module can be referred to
+  // by just a string in layout definitions
+  return store.modules[view.prototype._module] = view;
+};
+
+},{"./store":1,"./view":5}],4:[function(require,module,exports){
 
 /**
  * Module Dependencies
@@ -348,20 +348,19 @@ function View(options) {
   // we create a view of that module type.
   if (options.module) {
     var LazyView = store.modules[options.module] || View;
-    options._module = options.module;
+    options._module = options.module; // needed?
     delete options.module;
     return new LazyView(options);
   }
 
   // Various config steps
   this._configure(options);
-
-  // Add any children passed
-  // in the options object
-  this.add(options.children);
+  this._add(options.children);
 
   // Run initialize hooks
   if (this.initialize) this.initialize(options);
+
+  // Fire initialize event hook
   this.fireStatic('initialize', options);
 }
 
@@ -380,10 +379,10 @@ proto._configure = function(options) {
   this.tag = options.tag || this.tag || 'div';
   this.classes = this.classes || options.classes || [];
   this.helpers = this.helpers || options.helpers || [];
-  this.template = this.setTemplate(options.template || this.template);
-  this._slot = options.slot || options._slot;
+  this.template = this._setTemplate(options.template || this.template);
+  this.slot = options.slot || options.slot;
   this.children = [];
-  this._slots = {};
+  this.slots = {};
 
   // Create id and module
   // lookup objects
@@ -401,6 +400,19 @@ proto._configure = function(options) {
   // Attach helpers
   this.helpers.forEach(this.attachHelper, this);
 };
+
+proto._add = function(children) {
+  if (!children) return;
+
+  var isArray = util.isArray(children);
+  var child;
+
+  for (var key in children) {
+    child = children[key];
+    if (!isArray) child.slot = key;
+    this.add(child);
+  }
+},
 
 /**
  * Instantiates the given
@@ -427,7 +439,7 @@ proto.attachHelper = function(helper) {
  * @return {Function}
  * @api private
  */
-proto.setTemplate = function(fn) {
+proto._setTemplate = function(fn) {
   return fn && fn.render
     ? util.bind(fn.render, fn)
     : fn;
@@ -440,67 +452,43 @@ proto.setTemplate = function(fn) {
  *
  *  - `at` The child index at which to insert
  *  - `inject` Injects the child's view element into the parent's
+ *  - `slot` The slot at which to insert the child
  *
- * @param {View|Object|Array} children
- * @param {Object} options
+ * @param {View|Object} children
+ * @param {Object|String|Number} options|slot
  */
-proto.add = function(children, options) {
+proto.add = function(child, options) {
+  if (!child) return this;
+
+  // Options
   var at = options && options.at;
   var inject = options && options.inject;
-  var child;
-  var ob;
+  var slot = ('object' === typeof options)
+    ? options.slot
+    : options;
 
-  if (!children) return this;
+  // Remove this view first if it already has a parent
+  if (child.parent) child.remove({ fromDOM: false });
 
-  // Cope with children passed in
-  // as an object list as opposed
-  // to an array. Keys defining slots.
-  if (!util.isArray(children)) {
-    ob = children;
-    children = [];
+  // Assign a slot (prefering defined option)
+  slot = child.slot = slot || child.slot;
 
-    for (var slot in ob) {
-      child = ob[slot];
+  // Remove any module that already occupies this slot
+  var resident = this.slots[slot];
+  if (resident) resident.remove({ fromDOM: false });
 
-      if ('object' !== typeof child) {
-        children = ob;
-        break;
-      }
+  // If it's not a View, make it one.
+  if (!(child instanceof View)) child = new View(child);
 
-      // We set the slot on the private
-      // '_slot' key so that it works
-      // for instantiated children as
-      // well as plain json objects.
-      child._slot = slot;
+  util.insert(child, this.children, at);
+  this._addLookup(child);
 
-      children.push(child);
-    }
-  }
-
-  // Make sure it's an array
-  children = [].concat(children);
-
-  for (var i = 0, l = children.length; i < l; i++) {
-    child = children[i];
-
-    // If it's not a View, make it one.
-    if (!(child instanceof View)) child = new View(child);
-
-    util.insert(child, this.children, at);
-    this._addLookup(child);
-    child.parent = this;
-
-    // We append the child to the parent view if there is a view
-    // element and the users hasn't flagged `append` false.
-    if (inject) this.injectElement(child.el, options);
-  }
+  // We append the child to the parent view if there is a view
+  // element and the users hasn't flagged `append` false.
+  if (inject) this.injectElement(child.el, options);
 
   // Allow chaining
   return this;
-};
-
-proto.slot = function(slot, child) {
-
 };
 
 /**
@@ -582,7 +570,9 @@ proto._addLookup = function(child) {
   this._ids[child.id()] = child;
 
   // Store a reference by slot
-  if (child._slot) this._slots[child._slot] = child;
+  if (child.slot) this.slots[child.slot] = child;
+
+  child.parent = this;
 };
 
 /**
@@ -600,15 +590,15 @@ proto._removeLookup = function(child) {
 
   // Remove the id and slot lookup
   delete this._ids[child._id];
-  delete this._slots[child._slot];
+  delete this.slots[child.slot];
+  delete child.parent;
 };
 
 /**
  * Injects an element into the
  * View's root element.
  *
- * By default the element is appended
- * but then
+ * By default the element is appended.
  *
  * Options:
  *
@@ -782,7 +772,7 @@ proto.toHTML = function() {
   this.each(function(child) {
     tmp = {};
     html = child.toHTML();
-    data[child._slot || child.id()] = html;
+    data[child.slot || child.id()] = html;
     tmp[config.templateInstance] = html;
     data.children.push(mixin(tmp, toJSON(child.model)));
   });

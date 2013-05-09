@@ -11,6 +11,7 @@ Adds a child view(s) to another View.
 
  - `at` The child index at which to insert
  - `inject` Injects the child's view element into the parent's
+ - `slot` The slot at which to insert the child
 
 ### remove();
 
