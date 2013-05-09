@@ -175,6 +175,18 @@ exports.isPlainObject = function(ob) {
  */
 
 /**
+ * Locals
+ */
+
+var proto = Event.prototype;
+
+/**
+ * Expose `Event`
+ */
+
+module.exports = Event;
+
+/**
  * Creates a new event emitter
  * instance, or if passed an
  * object, mixes the event logic
@@ -183,10 +195,10 @@ exports.isPlainObject = function(ob) {
  * @param  {Object} obj
  * @return {Object}
  */
-var Event = module.exports = function(obj) {
+function Event(obj) {
   if (!(this instanceof Event)) return new Event(obj);
-  if (obj) return mixin(obj, Event.prototype);
-};
+  if (obj) return mixin(obj, proto);
+}
 
 /**
  * Registers a callback
@@ -196,7 +208,7 @@ var Event = module.exports = function(obj) {
  * @param  {Function} cb
  * @return {Event}
  */
-Event.prototype.on = function(name, cb) {
+proto.on = function(name, cb) {
   this._cbs = this._cbs || {};
   (this._cbs[name] || (this._cbs[name] = [])).unshift(cb);
   return this;
@@ -211,7 +223,7 @@ Event.prototype.on = function(name, cb) {
  * @param  {Function} cb
  * @return {Event}
  */
-Event.prototype.off = function(name, cb) {
+proto.off = function(name, cb) {
   this._cbs = this._cbs || {};
 
   if (!name) return this._cbs = {};
@@ -232,7 +244,7 @@ Event.prototype.off = function(name, cb) {
  * @param  {String} name
  * @return {Event}
  */
-Event.prototype.fire = function(options) {
+proto.fire = function(options) {
   this._cbs = this._cbs || {};
   var name = options.name || options;
   var ctx = options.ctx || this;
@@ -315,6 +327,12 @@ var mixin = util.mixin;
 module.exports = View;
 
 /**
+ * Locals
+ */
+
+var proto = View.prototype;
+
+/**
  * View constructor
  *
  * @constructor
@@ -355,7 +373,7 @@ function View(options) {
  * @param  {Object} options
  * @api private
  */
-View.prototype._configure = function(options) {
+proto._configure = function(options) {
   this._module = this._module || options._module;
   this._id = options.id || util.uniqueId('auto_');
   this._fmid = options.fmid || util.uniqueId('fmid');
@@ -392,7 +410,7 @@ View.prototype._configure = function(options) {
  * @return {View}
  * @api private
  */
-View.prototype.attachHelper = function(helper) {
+proto.attachHelper = function(helper) {
   if (helper) helper(this);
 },
 
@@ -409,7 +427,7 @@ View.prototype.attachHelper = function(helper) {
  * @return {Function}
  * @api private
  */
-View.prototype.setTemplate = function(fn) {
+proto.setTemplate = function(fn) {
   return fn && fn.render
     ? util.bind(fn.render, fn)
     : fn;
@@ -426,7 +444,7 @@ View.prototype.setTemplate = function(fn) {
  * @param {View|Object|Array} children
  * @param {Object} options
  */
-View.prototype.add = function(children, options) {
+proto.add = function(children, options) {
   var at = options && options.at;
   var inject = options && options.inject;
   var child;
@@ -434,7 +452,9 @@ View.prototype.add = function(children, options) {
 
   if (!children) return this;
 
-
+  // Cope with children passed in
+  // as an object list as opposed
+  // to an array. Keys defining slots.
   if (!util.isArray(children)) {
     ob = children;
     children = [];
@@ -479,7 +499,7 @@ View.prototype.add = function(children, options) {
   return this;
 };
 
-View.prototype.slot = function(slot, child) {
+proto.slot = function(slot, child) {
 
 };
 
@@ -509,7 +529,7 @@ View.prototype.slot = function(slot, child) {
  * @return {FruitMachine}
  * @api public
  */
-View.prototype.remove = function(param1, param2) {
+proto.remove = function(param1, param2) {
 
   // Allow view.remove(child[, options])
   // and view.remove([options]);
@@ -533,6 +553,7 @@ View.prototype.remove = function(param1, param2) {
   }
 
   if (parent) {
+
     // Remove reference from views array
     index = parent.children.indexOf(this);
     parent.children.splice(index, 1);
@@ -551,7 +572,7 @@ View.prototype.remove = function(param1, param2) {
  * @param {View} child
  * @api private
  */
-View.prototype._addLookup = function(child) {
+proto._addLookup = function(child) {
 
   // Add a lookup for module
   this._modules[child._module] = this._modules[child._module] || [];
@@ -571,14 +592,15 @@ View.prototype._addLookup = function(child) {
  * @param {View} child
  * @api private
  */
-View.prototype._removeLookup = function(child) {
+proto._removeLookup = function(child) {
 
   // Remove the module lookup
   var index = this._modules[child._module].indexOf(child);
   this._modules[child._module].splice(index, 1);
 
-  // Remove the id lookup
+  // Remove the id and slot lookup
   delete this._ids[child._id];
+  delete this._slots[child._slot];
 };
 
 /**
@@ -597,7 +619,7 @@ View.prototype._removeLookup = function(child) {
  * @return {[type]}
  * @api private
  */
-View.prototype.injectElement = function(el, options) {
+proto.injectElement = function(el, options) {
   var at = options && options.at;
   var parent = this.el;
   if (!el || !parent) return;
@@ -626,7 +648,7 @@ View.prototype.injectElement = function(el, options) {
  * @return {View|String}
  * @api public
  */
-View.prototype.id = function(id) {
+proto.id = function(id) {
   if (!id) return this._id;
 
   var child = this._ids[id];
@@ -654,7 +676,7 @@ View.prototype.id = function(id) {
  * @param  {String} key
  * @return {View}
  */
-View.prototype.module = function(key) {
+proto.module = function(key) {
   if (!key) return this._module;
 
   var view = this._modules[key];
@@ -683,7 +705,7 @@ View.prototype.module = function(key) {
  * @return {Array}
  * @api public
  */
-View.prototype.modules = function(key) {
+proto.modules = function(key) {
   var list = this._modules[key] || [];
 
   // Then loop each child and run the
@@ -710,7 +732,7 @@ View.prototype.modules = function(key) {
  * @param  {Function} fn
  * @return {[type]}
  */
-View.prototype.each = function(fn) {
+proto.each = function(fn) {
   var l = this.children.length;
   var result;
 
@@ -746,7 +768,7 @@ View.prototype.each = function(fn) {
  * @return {String}
  * @api public
  */
-View.prototype.toHTML = function() {
+proto.toHTML = function() {
   var toJSON = config.model.toJSON;
   var data = {};
   var html;
@@ -758,9 +780,9 @@ View.prototype.toHTML = function() {
 
   // Loop each child
   this.each(function(child) {
+    tmp = {};
     html = child.toHTML();
     data[child._slot || child.id()] = html;
-    tmp = {};
     tmp[config.templateInstance] = html;
     data.children.push(mixin(tmp, toJSON(child.model)));
   });
@@ -786,7 +808,7 @@ View.prototype.toHTML = function() {
  * @return {String}
  * @api private
  */
-View.prototype._wrapHTML = function(html) {
+proto._wrapHTML = function(html) {
   return '<' + this.tag + ' class="' + this._module + ' ' + this.classes.join(' ') + '" id="' + this._fmid + '">' + html + '</' + this.tag + '>';
 };
 
@@ -799,7 +821,7 @@ View.prototype._wrapHTML = function(html) {
  *
  * @return {View}
  */
-View.prototype.render = function() {
+proto.render = function() {
   var html = this.toHTML();
   var el = util.toNode(html);
 
@@ -832,7 +854,7 @@ View.prototype.render = function() {
  * @param  {Object} options
  * @return {View}
  */
-View.prototype.setup = function(options) {
+proto.setup = function(options) {
   var shallow = options && options.shallow;
 
   // Attempt to fetch the view's
@@ -879,7 +901,7 @@ View.prototype.setup = function(options) {
  * @param  {Object} options
  * @return {View}
  */
-View.prototype.teardown = function(options) {
+proto.teardown = function(options) {
   var shallow = options && options.shallow;
 
   // Call 'setup' on all subviews
@@ -929,7 +951,7 @@ View.prototype.teardown = function(options) {
  *
  * @api public
  */
-View.prototype.destroy = function(options) {
+proto.destroy = function(options) {
   options = options || {};
 
   var remove = options.remove !== false;
@@ -998,7 +1020,7 @@ View.prototype.destroy = function(options) {
  * @return {View}
  * @api public
  */
-View.prototype.empty = function() {
+proto.empty = function() {
   var l = this.children.length;
   while (l--) this.children[l].destroy();
   return this;
@@ -1012,7 +1034,7 @@ View.prototype.empty = function() {
  * @return {Element}
  * @api private
  */
-View.prototype.closestElement = function() {
+proto.closestElement = function() {
   var view = this.parent;
   while (view && !view.el && view.parent) view = view.parent;
   return view && view.el;
@@ -1030,7 +1052,7 @@ View.prototype.closestElement = function() {
  * @return {Element|undefined}
  * @api private
  */
-View.prototype.getElement = function() {
+proto.getElement = function() {
   if (!util.hasDom()) return;
   return this.el = this.el
     || document.getElementById(this._fmid)
@@ -1051,7 +1073,7 @@ View.prototype.getElement = function() {
  * @return {View}
  * @api private
  */
-View.prototype.setElement = function(el) {
+proto.setElement = function(el) {
   var existing = this.el;
 
   if (existing && existing.parentNode) {
@@ -1074,7 +1096,7 @@ View.prototype.setElement = function(el) {
  * @return void
  * @api private
  */
-View.prototype.purgeElementCaches = function() {
+proto.purgeElementCaches = function() {
   this.el = null;
   this.each(function(child) {
     child.purgeElementCaches();
@@ -1088,7 +1110,7 @@ View.prototype.purgeElementCaches = function() {
  * @return {Boolean}
  * @api private
  */
-View.prototype.inDOM = function() {
+proto.inDOM = function() {
   if (this.parent) return this.parent.inDOM();
   return !!(this.el && this.el.parentNode);
 };
@@ -1101,7 +1123,7 @@ View.prototype.inDOM = function() {
  * @return {View}
  * @api public
  */
-View.prototype.inject = function(dest) {
+proto.inject = function(dest) {
   if (dest) {
     dest.innerHTML = '';
     this.appendTo(dest);
@@ -1120,7 +1142,7 @@ View.prototype.inject = function(dest) {
  * @return {View}
  * @api public
  */
-View.prototype.appendTo = function(dest) {
+proto.appendTo = function(dest) {
   if (this.el && dest && dest.appendChild) {
     dest.appendChild(this.el);
   }
@@ -1141,7 +1163,7 @@ View.prototype.appendTo = function(dest) {
  * @return {Object}
  * @api public
  */
-View.prototype.toJSON = function() {
+proto.toJSON = function() {
   var json = {};
   json.children = [];
 
@@ -1159,10 +1181,10 @@ View.prototype.toJSON = function() {
 };
 
 // Events
-View.prototype.on = events.on;
-View.prototype.off = events.off;
-View.prototype.fire = events.fire;
-View.prototype.fireStatic = events.fireStatic;
+proto.on = events.on;
+proto.off = events.off;
+proto.fire = events.fire;
+proto.fireStatic = events.fireStatic;
 
 /**
  * Allow Views to be extended
@@ -1189,6 +1211,12 @@ var mixin = require('utils').mixin;
 module.exports = Model;
 
 /**
+ * Locals
+ */
+
+var proto = Model.prototype;
+
+/**
  * Model constructor.
  *
  * @constructor
@@ -1209,7 +1237,7 @@ function Model(data) {
  * @return {*}
  * @api public
  */
-Model.prototype.get = function(key) {
+proto.get = function(key) {
   return key
     ? this._data[key]
     : this._data;
@@ -1224,7 +1252,7 @@ Model.prototype.get = function(key) {
  * @param {String|Object} key
  * @param {*|undefined} value
  */
-Model.prototype.set = function(data, value) {
+proto.set = function(data, value) {
 
   // If a string key is passed
   // with a value. Set the value
@@ -1253,7 +1281,7 @@ Model.prototype.set = function(data, value) {
  *
  * @return {Model}
  */
-Model.prototype.clear = function() {
+proto.clear = function() {
   this._data = {};
   this.fire('change');
 
@@ -1266,7 +1294,7 @@ Model.prototype.clear = function() {
  *
  * @return {undefined}
  */
-Model.prototype.destroy = function() {
+proto.destroy = function() {
   for (var key in this._data) this._data[key] = null;
   delete this._data;
   this.fire('destroy');
@@ -1278,12 +1306,12 @@ Model.prototype.destroy = function() {
  *
  * @return {Object}
  */
-Model.prototype.toJSON = function() {
+proto.toJSON = function() {
   return mixin({}, this._data);
 };
 
 // Mixin events
-events(Model.prototype);
+events(proto);
 },{"event":8,"utils":6}],10:[function(require,module,exports){
 /*jshint browser:true, node:true*/
 

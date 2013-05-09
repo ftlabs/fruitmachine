@@ -4,7 +4,7 @@
 
 View constructor
 
-### View#add();
+### add();
 
 Adds a child view(s) to another View.
 \nOptions:
@@ -12,7 +12,7 @@ Adds a child view(s) to another View.
  - `at` The child index at which to insert
  - `inject` Injects the child's view element into the parent's
 
-### View#remove();
+### remove();
 
 Removes a child view from
 its current View contexts
@@ -35,7 +35,7 @@ otherwise stated.
     layout.remove(apple, { el: false });
     apple.remove({ el: false });
 
-### View#id();
+### id();
 
 Returns a decendent module
 by id, or if called with no
@@ -48,7 +48,7 @@ arguments, returns this view's id.
     myView.id('my_other_views_id');
     //=> View
 
-### View#module();
+### module();
 
 Returns the first descendent
 View with the passed module type.
@@ -62,7 +62,7 @@ View's own module type is returned.
     myView.modules('apple');
     //=> View
 
-### View#modules();
+### modules();
 
 Returns a list of descendent
 Views that match the module
@@ -76,7 +76,7 @@ Element.querySelectorAll();).
     myView.modules('apple');
     //=> [ View, View, View ]
 
-### View#each();
+### each();
 
 Calls the passed function
 for each of the view's
@@ -87,7 +87,7 @@ children.
         // Do stuff with each child view...
     });
 
-### View#toHTML();
+### toHTML();
 
 Templates the view, including
 any descendent views returning
@@ -110,14 +110,14 @@ and printed with `{{{child}}}}`.
         {{{child}}}
     {{/children}}
 
-### View#render();
+### render();
 
 Renders the view and replaces
 the `view.el` with a freshly
 rendered node.
 \nFires a `render` event on the view.
 
-### View#setup();
+### setup();
 
 Sets up a view and all descendent
 views.
@@ -132,7 +132,7 @@ Options:
 
  - `shallow` Does not recurse when `true` (default `false`)
 
-### View#teardown();
+### teardown();
 
 Tearsdown a view and all descendent
 views that have been setup.
@@ -143,7 +143,7 @@ Options:
 
  - `shallow` Does not recurse when `true` (default `false`)
 
-### View#destroy();
+### destroy();
 
 Completely destroys a view. This means
 a view is torn down, removed from it's
@@ -159,21 +159,21 @@ Options:
 
  - `fromDOM` Whether the view should be removed from DOM (default `true`)
 
-### View#empty();
+### empty();
 
 Destroys all children.
 
-### View#inject();
+### inject();
 
 Empties the destination element
 and appends the view into it.
 
-### View#appendTo();
+### appendTo();
 
 Appends the view element into
 the destination element.
 
-### View#toJSON();
+### toJSON();
 
 Returns a JSON represention of
 a FruitMachine View. This can
@@ -189,33 +189,4 @@ Registers a event listener.
 ### View#fire();
 
 Fires an event on a view.
-
-### Model();
-
-Model constructor.
-
-### Model#get();
-
-Gets a value by key
-\nIf no key is given, the
-whole model is returned.
-
-### Model#set();
-
-Sets data on the model.
-\nAccepts either a key and
-value, or an object literal.
-
-### Model#clear();
-
-CLears the data store.
-
-### Model#destroy();
-
-Deletes the data store.
-
-### Model#toJSON();
-
-Returns a shallow
-clone of the data store.
 
