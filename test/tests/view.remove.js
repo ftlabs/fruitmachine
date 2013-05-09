@@ -82,5 +82,18 @@ buster.testCase('View#remove()', {
 
     refute(~list.children.indexOf(apple));
     refute(list._ids.foo);
+  },
+
+  "Should remove slot reference": function() {
+    var layout = new Layout();
+    var apple = new Apple({ slot: 1 });
+
+    layout.add(apple);
+
+    assert.equals(layout._slots[1], apple);
+
+    layout.remove(apple);
+
+    refute(layout._slots[1]);
   }
 });
