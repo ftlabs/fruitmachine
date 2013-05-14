@@ -28,7 +28,7 @@ layout
 	.setup();
 
 // Make an async call for the first article data
-setArticle(articles[0].articleId);
+setArticle(articles[0].id);
 
 // Setup a listener on the 'apple' view.
 apple.on('itemclick', setArticle);
