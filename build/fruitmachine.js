@@ -519,10 +519,13 @@ proto.add = function(child, options) {
  */
 proto.remove = function(param1, param2) {
 
+  // Don't do anything if the first arg is undefined
+  if (arguments.length === 1 && !param1) return this;
+
   // Allow view.remove(child[, options])
   // and view.remove([options]);
   if (param1 instanceof View) {
-    param1.remove(param2);
+    param1.remove(param2 || {});
     return this;
   }
 
@@ -536,8 +539,8 @@ proto.remove = function(param1, param2) {
   // Unless stated otherwise,
   // remove the view element
   // from its parent node.
-  if (fromDOM) {
-    if (el && el.parentNode) el.parentNode.removeChild(el);
+  if (fromDOM && el && el.parentNode) {
+    el.parentNode.removeChild(el);
   }
 
   if (parent) {
@@ -639,7 +642,8 @@ proto.injectElement = function(el, options) {
  * @api public
  */
 proto.id = function(id) {
-  if (!id) return this._id;
+  var args = arguments.length;
+  if (!args) return this._id;
 
   var child = this._ids[id];
   if (child) return child;
@@ -1302,7 +1306,7 @@ proto.toJSON = function() {
 
 // Mixin events
 events(proto);
-},{"event":8,"utils":6}],10:[function(require,module,exports){
+},{"utils":6,"event":8}],10:[function(require,module,exports){
 /*jshint browser:true, node:true*/
 
 'use strict';
