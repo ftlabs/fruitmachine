@@ -52,7 +52,6 @@ function Machine() {
   self._store = new Store();
 
   function MachineView(options) {
-  	debugger;
     return new View(self._store, options);
   }
 
@@ -80,7 +79,7 @@ MachineInstance.Events = require('event');
 MachineInstance.config = require('./config').set;
 
 module.exports = MachineInstance;
-},{"./store":1,"./define":4,"./extend":5,"./config":2,"./view":6,"model":7,"utils":8,"event":9}],8:[function(require,module,exports){
+},{"./store":1,"./define":4,"./extend":5,"./config":2,"./view":6,"utils":7,"model":8,"event":9}],7:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -306,7 +305,7 @@ module.exports = function(store, props) {
   }
 
   DefinedView.prototype = View.prototype;
-  DefinedView.extend = extend(util.keys(DefinedView.prototype));
+  DefinedView.extend = extend(util.keys(View.prototype));
 
   // Store the module by module type
   // so that module can be referred to
@@ -315,7 +314,7 @@ module.exports = function(store, props) {
   return DefinedView;
 };
 
-},{"./extend":5,"./view":6,"utils":8}],5:[function(require,module,exports){
+},{"./extend":5,"./view":6,"utils":7}],5:[function(require,module,exports){
 /*jshint browser:true, node:true*/
 
 'use strict';
@@ -385,7 +384,7 @@ function protect(keys, ob) {
     }
   }
 }
-},{"utils":8}],2:[function(require,module,exports){
+},{"utils":7}],2:[function(require,module,exports){
 
 /**
  * Module Dependencies
@@ -411,7 +410,7 @@ var defaults = store.config = module.exports = {
 defaults.set = function(options) {
 	mixin(defaults, options);
 };
-},{"./store":1,"utils":8}],6:[function(require,module,exports){
+},{"./store":1,"utils":7}],6:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -1296,7 +1295,7 @@ proto.fireStatic = events.fireStatic;
  */
 
 View.extend = extend(util.keys(View.prototype));
-},{"../config":2,"./events":10,"../extend":5,"utils":8,"model":7}],7:[function(require,module,exports){
+},{"./events":10,"../extend":5,"../config":2,"utils":7,"model":8}],8:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -1417,7 +1416,7 @@ proto.toJSON = function() {
 
 // Mixin events
 events(proto);
-},{"event":9,"utils":8}],10:[function(require,module,exports){
+},{"event":9,"utils":7}],10:[function(require,module,exports){
 
 /**
  * Module Dependencies
