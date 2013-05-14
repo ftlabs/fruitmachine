@@ -108,5 +108,15 @@ buster.testCase('View#remove()', {
     layout.remove(apple);
 
     refute(layout.slots[1]);
+  },
+
+  "Should not remove itself if first argument is undefined": function() {
+    var layout = new Layout();
+    var apple = new Apple({ slot: 1 });
+
+    layout.add(apple);
+    apple.remove(undefined);
+
+    assert(layout.module('apple'));
   }
 });

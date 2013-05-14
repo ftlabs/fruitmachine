@@ -29,7 +29,7 @@ layout
 
 
 function onSubmit(value) {
-	var model = new Model({ text: value });
+	var model = new Model({ title: value });
 	var item = new ListItem({ model: model }).render();
 
 	list.add(item, { at: 0, inject: true });

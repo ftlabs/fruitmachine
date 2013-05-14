@@ -9,23 +9,23 @@ var database = {};
 database.getSync = function() {
 	return [
 		{
-			articleId: 'article1',
+			id: 'article1',
 			title: 'Article 1'
 		},
 		{
-			articleId: 'article2',
+			id: 'article2',
 			title: 'Article 2'
 		},
 		{
-			articleId: 'article3',
+			id: 'article3',
 			title: 'Article 3'
 		},
 		{
-			articleId: 'article4',
+			id: 'article4',
 			title: 'Article 4'
 		},
 		{
-			articleId: 'article5',
+			id: 'article5',
 			title: 'Article 5'
 		}
 	];

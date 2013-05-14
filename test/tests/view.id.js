@@ -13,5 +13,11 @@ buster.testCase('View#id()', {
     assert.equals(view.id(), id);
   },
 
+  "Should not return the view's own id the first argument is undefined": function() {
+    var id = 'a_view_id';
+    var view = new FruitMachine.View({ id: id });
+    refute(view.id(undefined));
+  },
+
   tearDown: helpers.tearDown
 });
