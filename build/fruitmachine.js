@@ -1293,7 +1293,7 @@ proto.fireStatic = events.fireStatic;
  */
 
 View.extend = extend(util.keys(View.prototype));
-},{"../config":2,"./events":10,"../extend":5,"utils":7,"model":8}],8:[function(require,module,exports){
+},{"../config":2,"./events":10,"../extend":5,"model":8,"utils":7}],8:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
