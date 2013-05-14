@@ -49,9 +49,10 @@ var extend = require('./extend');
  */
 function Machine() {
   var self = this;
-  this._store = new Store();
+  self._store = new Store();
 
   function MachineView(options) {
+  	debugger;
     return new View(self._store, options);
   }
 
@@ -79,7 +80,7 @@ MachineInstance.Events = require('event');
 MachineInstance.config = require('./config').set;
 
 module.exports = MachineInstance;
-},{"./store":1,"./define":4,"./extend":5,"./config":2,"./view":6,"utils":7,"model":8,"event":9}],7:[function(require,module,exports){
+},{"./store":1,"./define":4,"./extend":5,"./config":2,"./view":6,"model":7,"utils":8,"event":9}],8:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -310,11 +311,11 @@ module.exports = function(store, props) {
   // Store the module by module type
   // so that module can be referred to
   // by just a string in layout definitions
-  store.modules[DefinedView.prototype._module] = DefinedView;
+  store.modules[DefinedView.prototype._module] = View;
   return DefinedView;
 };
 
-},{"./extend":5,"./view":6,"utils":7}],5:[function(require,module,exports){
+},{"./extend":5,"./view":6,"utils":8}],5:[function(require,module,exports){
 /*jshint browser:true, node:true*/
 
 'use strict';
@@ -384,7 +385,7 @@ function protect(keys, ob) {
     }
   }
 }
-},{"utils":7}],2:[function(require,module,exports){
+},{"utils":8}],2:[function(require,module,exports){
 
 /**
  * Module Dependencies
@@ -410,7 +411,7 @@ var defaults = store.config = module.exports = {
 defaults.set = function(options) {
 	mixin(defaults, options);
 };
-},{"./store":1,"utils":7}],6:[function(require,module,exports){
+},{"./store":1,"utils":8}],6:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -451,6 +452,9 @@ function View(store, options) {
   // Shallow clone the options
   options = mixin({}, options);
 
+  // Attach the store to the object
+  this._store = store;
+
   // If a `module` property is passed
   // we create a view of that module type.
   if (options.module) {
@@ -463,7 +467,6 @@ function View(store, options) {
   // Various config steps
   this._configure(options);
   this._add(options.children);
-  this._store = store;
 
   // Run initialize hooks
   if (this.initialize) this.initialize(options);
@@ -1293,7 +1296,7 @@ proto.fireStatic = events.fireStatic;
  */
 
 View.extend = extend(util.keys(View.prototype));
-},{"../config":2,"./events":10,"../extend":5,"model":8,"utils":7}],8:[function(require,module,exports){
+},{"../config":2,"./events":10,"../extend":5,"utils":8,"model":7}],7:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -1414,7 +1417,7 @@ proto.toJSON = function() {
 
 // Mixin events
 events(proto);
-},{"event":9,"utils":7}],10:[function(require,module,exports){
+},{"event":9,"utils":8}],10:[function(require,module,exports){
 
 /**
  * Module Dependencies
