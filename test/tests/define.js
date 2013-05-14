@@ -2,9 +2,9 @@
 buster.testCase('FruitMachine.define()', {
 	setUp: function() {},
 
-	"Should store the module in FruitMachine.store under module type": function() {
+	"Should store the module in FruitMachine._store under module type": function() {
 		FruitMachine.define({ module: 'my-module-1' });
-		assert.defined(FruitMachine.store.modules['my-module-1']);
+		assert.defined(FruitMachine._store.modules['my-module-1']);
 	},
 
 	"Should return an instantiable constructor": function() {
@@ -70,7 +70,7 @@ buster.testCase('FruitMachine.define()', {
 	},
 
 	tearDown: function() {
-		delete FruitMachine.store.modules['my-module-1'];
-		delete FruitMachine.store.modules['my-module-2'];
+		delete FruitMachine._store.modules['my-module-1'];
+		delete FruitMachine._store.modules['my-module-2'];
 	}
 });
