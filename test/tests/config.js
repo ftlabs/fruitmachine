@@ -4,7 +4,7 @@
 buster.testCase('FruitMachine#config()', {
 
 	"Should be able to pass in a toJSON adaptor for custom models": function() {
-		var tmp = FruitMachine.store.config.model;
+		var tmp = FruitMachine._store.config.model;
 		var text = 'content from a foreign model';
 
 		// Make a custom model class

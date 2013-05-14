@@ -23,7 +23,7 @@ buster.testCase('FruitMachine#helpers()', {
   },
 
   "helper `initialize` should have been called": function() {
-    var view = new FruitMachine({
+    var view = new FruitMachine.View({
       module: 'apple',
       helpers: [this.helper]
     });
@@ -32,7 +32,7 @@ buster.testCase('FruitMachine#helpers()', {
   },
 
   "helper `setup` should have been called": function() {
-    var view = new FruitMachine({
+    var view = new FruitMachine.View({
       module: 'apple',
       helpers: [this.helper]
     });
@@ -46,7 +46,7 @@ buster.testCase('FruitMachine#helpers()', {
   },
 
   "helper `teardown` and `destroy` should have been called": function() {
-    var view = new FruitMachine({
+    var view = new FruitMachine.View({
       module: 'apple',
       helpers: [this.helper]
     });

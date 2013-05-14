@@ -79,7 +79,7 @@ MachineInstance.Events = require('event');
 MachineInstance.config = require('./config').set;
 
 module.exports = MachineInstance;
-},{"./define":4,"./store":1,"./extend":5,"./config":2,"./view":6,"utils":7,"model":8,"event":9}],7:[function(require,module,exports){
+},{"./store":1,"./define":4,"./extend":5,"./config":2,"./view":6,"utils":7,"model":8,"event":9}],7:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
