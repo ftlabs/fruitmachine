@@ -55,6 +55,10 @@ function Machine() {
     return new View(self._store, options);
   }
 
+  // HACK:MA I'm now doing this in
+  // two places, it'd be nicer if this
+  // were nicer.
+  MachineView.prototype = View.prototype;
   MachineView.extend = extend(util.keys(MachineView.prototype));
   this.View = MachineView;
 }
@@ -75,7 +79,7 @@ MachineInstance.Events = require('event');
 MachineInstance.config = require('./config').set;
 
 module.exports = MachineInstance;
-},{"./store":1,"./define":4,"./extend":5,"./config":2,"./view":6,"utils":7,"model":8,"event":9}],7:[function(require,module,exports){
+},{"./define":4,"./store":1,"./extend":5,"./config":2,"./view":6,"utils":7,"model":8,"event":9}],7:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -151,6 +155,120 @@ exports.isPlainObject = function(ob) {
   var c = (ob.constructor || '').toString();
   return !!~c.indexOf('Object');
 };
+},{}],9:[function(require,module,exports){
+
+/**
+ * Event
+ *
+ * A super lightweight
+ * event emitter library.
+ *
+ * @version 0.1.4
+ * @author Wilson Page <wilson.page@me.com>
+ */
+
+/**
+ * Locals
+ */
+
+var proto = Event.prototype;
+
+/**
+ * Expose `Event`
+ */
+
+module.exports = Event;
+
+/**
+ * Creates a new event emitter
+ * instance, or if passed an
+ * object, mixes the event logic
+ * into it.
+ *
+ * @param  {Object} obj
+ * @return {Object}
+ */
+function Event(obj) {
+  if (!(this instanceof Event)) return new Event(obj);
+  if (obj) return mixin(obj, proto);
+}
+
+/**
+ * Registers a callback
+ * with an event name.
+ *
+ * @param  {String}   name
+ * @param  {Function} cb
+ * @return {Event}
+ */
+proto.on = function(name, cb) {
+  this._cbs = this._cbs || {};
+  (this._cbs[name] || (this._cbs[name] = [])).unshift(cb);
+  return this;
+};
+
+/**
+ * Removes a single callback,
+ * or all callbacks associated
+ * with the passed event name.
+ *
+ * @param  {String}   name
+ * @param  {Function} cb
+ * @return {Event}
+ */
+proto.off = function(name, cb) {
+  this._cbs = this._cbs || {};
+
+  if (!name) return this._cbs = {};
+  if (!cb) return delete this._cbs[name];
+
+  var cbs = this._cbs[name] || [];
+  var i;
+
+  while (cbs && ~(i = cbs.indexOf(cb))) cbs.splice(i, 1);
+  return this;
+};
+
+/**
+ * Fires an event. Which triggers
+ * all callbacks registered on this
+ * event name.
+ *
+ * @param  {String} name
+ * @return {Event}
+ */
+proto.fire = function(options) {
+  this._cbs = this._cbs || {};
+  var name = options.name || options;
+  var ctx = options.ctx || this;
+  var cbs = this._cbs[name];
+
+  if (cbs) {
+    var args = [].slice.call(arguments, 1);
+    var l = cbs.length;
+    while (l--) cbs[l].apply(ctx, args);
+  }
+
+  return this;
+};
+
+/**
+ * Util
+ */
+
+/**
+ * Mixes in the properties
+ * of the second object into
+ * the first.
+ *
+ * @param  {Object} a
+ * @param  {Object} b
+ * @return {Object}
+ */
+function mixin(a, b) {
+  for (var key in b) a[key] = b[key];
+  return a;
+}
 },{}],4:[function(require,module,exports){
 
 /*jslint browser:true, node:true, laxbreak:true*/
@@ -186,12 +304,13 @@ module.exports = function(store, props) {
     return new View(store, options);
   }
 
+  DefinedView.prototype = View.prototype;
   DefinedView.extend = extend(util.keys(DefinedView.prototype));
 
   // Store the module by module type
   // so that module can be referred to
   // by just a string in layout definitions
-  store.modules[View.prototype._module] = DefinedView;
+  store.modules[DefinedView.prototype._module] = DefinedView;
   return DefinedView;
 };
 
@@ -1174,121 +1293,7 @@ proto.fireStatic = events.fireStatic;
  */
 
 View.extend = extend(util.keys(View.prototype));
-},{"../config":2,"./events":10,"../extend":5,"utils":7,"model":8}],9:[function(require,module,exports){
-
-/**
- * Event
- *
- * A super lightweight
- * event emitter library.
- *
- * @version 0.1.4
- * @author Wilson Page <wilson.page@me.com>
- */
-
-/**
- * Locals
- */
-
-var proto = Event.prototype;
-
-/**
- * Expose `Event`
- */
-
-module.exports = Event;
-
-/**
- * Creates a new event emitter
- * instance, or if passed an
- * object, mixes the event logic
- * into it.
- *
- * @param  {Object} obj
- * @return {Object}
- */
-function Event(obj) {
-  if (!(this instanceof Event)) return new Event(obj);
-  if (obj) return mixin(obj, proto);
-}
-
-/**
- * Registers a callback
- * with an event name.
- *
- * @param  {String}   name
- * @param  {Function} cb
- * @return {Event}
- */
-proto.on = function(name, cb) {
-  this._cbs = this._cbs || {};
-  (this._cbs[name] || (this._cbs[name] = [])).unshift(cb);
-  return this;
-};
-
-/**
- * Removes a single callback,
- * or all callbacks associated
- * with the passed event name.
- *
- * @param  {String}   name
- * @param  {Function} cb
- * @return {Event}
- */
-proto.off = function(name, cb) {
-  this._cbs = this._cbs || {};
-
-  if (!name) return this._cbs = {};
-  if (!cb) return delete this._cbs[name];
-
-  var cbs = this._cbs[name] || [];
-  var i;
-
-  while (cbs && ~(i = cbs.indexOf(cb))) cbs.splice(i, 1);
-  return this;
-};
-
-/**
- * Fires an event. Which triggers
- * all callbacks registered on this
- * event name.
- *
- * @param  {String} name
- * @return {Event}
- */
-proto.fire = function(options) {
-  this._cbs = this._cbs || {};
-  var name = options.name || options;
-  var ctx = options.ctx || this;
-  var cbs = this._cbs[name];
-
-  if (cbs) {
-    var args = [].slice.call(arguments, 1);
-    var l = cbs.length;
-    while (l--) cbs[l].apply(ctx, args);
-  }
-
-  return this;
-};
-
-/**
- * Util
- */
-
-/**
- * Mixes in the properties
- * of the second object into
- * the first.
- *
- * @param  {Object} a
- * @param  {Object} b
- * @return {Object}
- */
-function mixin(a, b) {
-  for (var key in b) a[key] = b[key];
-  return a;
-}
-},{}],8:[function(require,module,exports){
+},{"../config":2,"./events":10,"../extend":5,"utils":7,"model":8}],8:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -1409,7 +1414,7 @@ proto.toJSON = function() {
 
 // Mixin events
 events(proto);
-},{"utils":7,"event":9}],10:[function(require,module,exports){
+},{"event":9,"utils":7}],10:[function(require,module,exports){
 
 /**
  * Module Dependencies
