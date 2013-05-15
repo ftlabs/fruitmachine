@@ -1,0 +1,11 @@
+
+.list-2_item {
+	list-style-type: none;
+	padding: 14px;
+	border-bottom: solid 1px #DDD;
+	cursor: pointer;
+}
+
+.list-2_item:hover {
+	background: #EEE;
+}
