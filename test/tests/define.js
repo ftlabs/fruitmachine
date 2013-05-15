@@ -52,6 +52,10 @@ buster.testCase('FruitMachine.define()', {
 			setup: setup2
 		}));
 
+		// TODO: Test defining a View3 that
+		// extends from View2 in the same
+		// way
+
 		var view1 = new View1()
 			.render()
 			.setup();

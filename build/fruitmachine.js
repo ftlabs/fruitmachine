@@ -305,12 +305,12 @@ module.exports = function(store, props) {
   }
 
   DefinedView.prototype = View.prototype;
-  DefinedView.extend = extend(util.keys(View.prototype));
+  DefinedView.extend = NormalView.extend;
 
   // Store the module by module type
   // so that module can be referred to
   // by just a string in layout definitions
-  store.modules[DefinedView.prototype._module] = View;
+  store.modules[View.prototype._module] = View;
   return DefinedView;
 };
 
@@ -1295,7 +1295,7 @@ proto.fireStatic = events.fireStatic;
  */
 
 View.extend = extend(util.keys(View.prototype));
-},{"./events":10,"../extend":5,"../config":2,"utils":7,"model":8}],8:[function(require,module,exports){
+},{"../config":2,"./events":10,"../extend":5,"utils":7,"model":8}],8:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 

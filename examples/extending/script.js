@@ -9,14 +9,16 @@ var Apple = FruitMachine.define({
   }
 });
 
-var Pear = FruitMachine.define(
-  Apple.extend({
+var extendedApple = Apple.extend({
     module: 'pear',
     template: function(){ return ''; },
     setup: function() {
       alert('and i am an pear');
     }
-  })
+  });
+
+var Pear = FruitMachine.define(
+  extendedApple
 );
 
 var apple = new Apple();
