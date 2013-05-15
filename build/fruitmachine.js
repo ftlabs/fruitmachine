@@ -1,36 +1,6 @@
 (function(e){if("function"==typeof bootstrap)bootstrap("fruitmachine",e);else if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else if("undefined"!=typeof ses){if(!ses.ok())return;ses.makeFruitMachine=e}else"undefined"!=typeof window?window.FruitMachine=e():global.FruitMachine=e()})(function(){var define,ses,bootstrap,module,exports;
 return (function(e,t,n){function i(n,s){if(!t[n]){if(!e[n]){var o=typeof require=="function"&&require;if(!s&&o)return o(n,!0);if(r)return r(n,!0);throw new Error("Cannot find module '"+n+"'")}var u=t[n]={exports:{}};e[n][0](function(t){var r=e[n][1][t];return i(r?r:t)},u,u.exports)}return t[n].exports}var r=typeof require=="function"&&require;for(var s=0;s<n.length;s++)i(n[s]);return i})({1:[function(require,module,exports){
 
-/*jslint browser:true, node:true*/
-
-/**
- * FruitMachine Singleton
- *
- * Renders layouts/modules from a basic layout definition.
- * If views require custom interactions devs can extend
- * the basic functionality.
- *
- * @version 0.3.3
- * @copyright The Financial Times Limited [All Rights Reserved]
- * @author Wilson Page <wilson.page@ft.com>
- */
-
-'use strict';
-
-/**
- * Module Dependencies
- */
-
-var fruitMachine = require('./fruitmachine');
-var Model = require('model');
-
-/**
- * Exports
- */
-
-module.exports = fruitMachine({ Model: Model });
-},{"./fruitmachine":2,"model":3}],4:[function(require,module,exports){
-
 /*jslint browser:true, node:true, laxbreak:true*/
 
 'use strict';
@@ -66,6 +36,36 @@ module.exports = function(fm) {
 /*jslint browser:true, node:true*/
 
 /**
+ * FruitMachine Singleton
+ *
+ * Renders layouts/modules from a basic layout definition.
+ * If views require custom interactions devs can extend
+ * the basic functionality.
+ *
+ * @version 0.3.3
+ * @copyright The Financial Times Limited [All Rights Reserved]
+ * @author Wilson Page <wilson.page@ft.com>
+ */
+
+'use strict';
+
+/**
+ * Module Dependencies
+ */
+
+var fruitMachine = require('./fruitmachine');
+var Model = require('model');
+
+/**
+ * Exports
+ */
+
+module.exports = fruitMachine({ Model: Model });
+},{"./fruitmachine":3,"model":4}],3:[function(require,module,exports){
+
+/*jslint browser:true, node:true*/
+
+/**
  * FruitMachine
  *
  * Renders layouts/modules from a basic layout definition.
@@ -86,6 +86,7 @@ module.exports = function(fm) {
 var view = require('./view');
 var define = require('./define');
 var utils = require('utils');
+var events = require('event');
 
 /**
  * Express-style function for
@@ -95,6 +96,13 @@ var utils = require('utils');
  */
 module.exports = function(options) {
 
+  /**
+   * Shortcut method for
+   * creating lazy views.
+   *
+   * @param  {[type]} options [description]
+   * @return {[type]}         [description]
+   */
   function fm(options) {
     var Module = fm.modules[options.module];
     if (Module) return new Module(options);
@@ -110,9 +118,9 @@ module.exports = function(options) {
     templateInstance: 'child'
   };
 
-  return fm;
+  return events(fm);
 };
-},{"./define":4,"./view":5,"utils":6}],6:[function(require,module,exports){
+},{"./define":1,"./view":5,"utils":6,"event":7}],6:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -188,128 +196,7 @@ exports.isPlainObject = function(ob) {
   var c = (ob.constructor || '').toString();
   return !!~c.indexOf('Object');
 };
-},{}],3:[function(require,module,exports){
-
-/*jshint browser:true, node:true*/
-
-'use strict';
-
-/**
- * Module Dependencies
- */
-
-var events = require('event');
-var mixin = require('utils').mixin;
-
-/**
- * Exports
- */
-
-module.exports = Model;
-
-/**
- * Locals
- */
-
-var proto = Model.prototype;
-
-/**
- * Model constructor.
- *
- * @constructor
- * @param {Object} data
- * @api public
- */
-function Model(data) {
-  this._data = mixin({}, data);
-}
-
-/**
- * Gets a value by key
- *
- * If no key is given, the
- * whole model is returned.
- *
- * @param  {String} key
- * @return {*}
- * @api public
- */
-proto.get = function(key) {
-  return key
-    ? this._data[key]
-    : this._data;
-};
-
-/**
- * Sets data on the model.
- *
- * Accepts either a key and
- * value, or an object literal.
- *
- * @param {String|Object} key
- * @param {*|undefined} value
- */
-proto.set = function(data, value) {
-
-  // If a string key is passed
-  // with a value. Set the value
-  // on the key in the data store.
-  if ('string' === typeof data && typeof value !== 'undefined') {
-    this._data[data] = value;
-    this.fire('change:' + data, value);
-  }
-
-  // Merge the object into the data store
-  if ('object' === typeof data) {
-    mixin(this._data, data);
-    for (var prop in data) this.fire('change:' + prop, data[prop]);
-  }
-
-  // Always fire a
-  // generic change event
-  this.fire('change');
-
-  // Allow chaining
-  return this;
-};
-
-/**
- * CLears the data store.
- *
- * @return {Model}
- */
-proto.clear = function() {
-  this._data = {};
-  this.fire('change');
-
-  // Allow chaining
-  return this;
-};
-
-/**
- * Deletes the data store.
- *
- * @return {undefined}
- */
-proto.destroy = function() {
-  for (var key in this._data) this._data[key] = null;
-  delete this._data;
-  this.fire('destroy');
-};
-
-/**
- * Returns a shallow
- * clone of the data store.
- *
- * @return {Object}
- */
-proto.toJSON = function() {
-  return mixin({}, this._data);
-};
-
-// Mixin events
-events(proto);
-},{"event":7,"utils":6}],7:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 
 /**
  * Event
@@ -444,10 +331,8 @@ var mixin = util.mixin;
 
 module.exports = function(fm) {
 
-  /**
-   * Locals
-   */
-
+  // Alias prototype for optimum
+  // compression via uglifyjs
   var proto = View.prototype;
 
   /**
@@ -482,6 +367,8 @@ module.exports = function(fm) {
    * @api private
    */
   proto._configure = function(options) {
+
+    // Setup static properties
     this._id = options.id || util.uniqueId('auto_');
     this._fmid = options.fmid || util.uniqueId('fmid');
     this.tag = options.tag || this.tag || 'div';
@@ -507,6 +394,14 @@ module.exports = function(fm) {
 
     // Attach helpers
     this.helpers.forEach(this.attachHelper, this);
+
+    // We fire and 'inflation' event here
+    // so that helpers can make some changes
+    // to the view before instantiation.
+    if (options.fmid) {
+      fm.fire('inflation', this, options);
+      this.fireStatic('inflation', options);
+    }
   };
 
   proto._add = function(children) {
@@ -1276,7 +1171,11 @@ module.exports = function(fm) {
     json.id = this.id();
     json.fmid = this._fmid;
     json.module = this._module;
-    json.model = this.model.get();
+    json.model = this.model.toJSON();
+
+    // Fire a hook to allow third
+    // parties to alter the json output
+    this.fireStatic('tojson', json);
 
     return json;
   };
@@ -1296,7 +1195,128 @@ module.exports = function(fm) {
   return View;
 };
 
-},{"./events":8,"../extend":9,"utils":6}],9:[function(require,module,exports){
+},{"./events":8,"../extend":9,"utils":6}],4:[function(require,module,exports){
+
+/*jshint browser:true, node:true*/
+
+'use strict';
+
+/**
+ * Module Dependencies
+ */
+
+var events = require('event');
+var mixin = require('utils').mixin;
+
+/**
+ * Exports
+ */
+
+module.exports = Model;
+
+/**
+ * Locals
+ */
+
+var proto = Model.prototype;
+
+/**
+ * Model constructor.
+ *
+ * @constructor
+ * @param {Object} data
+ * @api public
+ */
+function Model(data) {
+  this._data = mixin({}, data);
+}
+
+/**
+ * Gets a value by key
+ *
+ * If no key is given, the
+ * whole model is returned.
+ *
+ * @param  {String} key
+ * @return {*}
+ * @api public
+ */
+proto.get = function(key) {
+  return key
+    ? this._data[key]
+    : this._data;
+};
+
+/**
+ * Sets data on the model.
+ *
+ * Accepts either a key and
+ * value, or an object literal.
+ *
+ * @param {String|Object} key
+ * @param {*|undefined} value
+ */
+proto.set = function(data, value) {
+
+  // If a string key is passed
+  // with a value. Set the value
+  // on the key in the data store.
+  if ('string' === typeof data && typeof value !== 'undefined') {
+    this._data[data] = value;
+    this.fire('change:' + data, value);
+  }
+
+  // Merge the object into the data store
+  if ('object' === typeof data) {
+    mixin(this._data, data);
+    for (var prop in data) this.fire('change:' + prop, data[prop]);
+  }
+
+  // Always fire a
+  // generic change event
+  this.fire('change');
+
+  // Allow chaining
+  return this;
+};
+
+/**
+ * CLears the data store.
+ *
+ * @return {Model}
+ */
+proto.clear = function() {
+  this._data = {};
+  this.fire('change');
+
+  // Allow chaining
+  return this;
+};
+
+/**
+ * Deletes the data store.
+ *
+ * @return {undefined}
+ */
+proto.destroy = function() {
+  for (var key in this._data) this._data[key] = null;
+  delete this._data;
+  this.fire('destroy');
+};
+
+/**
+ * Returns a shallow
+ * clone of the data store.
+ *
+ * @return {Object}
+ */
+proto.toJSON = function() {
+  return mixin({}, this._data);
+};
+
+// Mixin events
+events(proto);
+},{"event":7,"utils":6}],9:[function(require,module,exports){
 /*jshint browser:true, node:true*/
 
 'use strict';
@@ -1454,6 +1474,6 @@ function propagate(view, args, event) {
 
 exports.fireStatic = events.prototype.fire;
 exports.off = events.prototype.off;
-},{"event":7}]},{},[1])(1)
+},{"event":7}]},{},[2])(2)
 });
 ;
