@@ -21,8 +21,6 @@ return (function(e,t,n){function i(n,s){if(!t[n]){if(!e[n]){var o=typeof require
 var fruitMachine = require('./fruitmachine');
 var Model = require('model');
 
-debugger;
-
 var fruitMachineInst = fruitMachine({ Model: Model });
 
 module.exports = fruitMachineInst;
@@ -59,15 +57,7 @@ module.exports = function(store, View) {
   };
 };
 
-},{}],5:[function(require,module,exports){
-var config = require('./config');
-function Store() {
-  this.modules = {};
-  this.config = config;
-}
-
-module.exports = Store;
-},{"./config":6}],2:[function(require,module,exports){
+},{}],2:[function(require,module,exports){
 
 /*jslint browser:true, node:true*/
 
@@ -120,7 +110,15 @@ function fruitMachine(options) {
 
 fruitMachine.VERSION = VERSION;
 module.exports = fruitMachine;
-},{"./define":4,"./store":5,"./view":7,"utils":8}],8:[function(require,module,exports){
+},{"./define":4,"./store":5,"./view":6,"utils":7}],5:[function(require,module,exports){
+var config = require('./config');
+function Store() {
+  this.modules = {};
+  this.config = config;
+}
+
+module.exports = Store;
+},{"./config":8}],7:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -317,7 +315,121 @@ proto.toJSON = function() {
 
 // Mixin events
 events(proto);
-},{"event":9,"utils":8}],7:[function(require,module,exports){
+},{"event":9,"utils":7}],9:[function(require,module,exports){
+
+/**
+ * Event
+ *
+ * A super lightweight
+ * event emitter library.
+ *
+ * @version 0.1.4
+ * @author Wilson Page <wilson.page@me.com>
+ */
+
+/**
+ * Locals
+ */
+
+var proto = Event.prototype;
+
+/**
+ * Expose `Event`
+ */
+
+module.exports = Event;
+
+/**
+ * Creates a new event emitter
+ * instance, or if passed an
+ * object, mixes the event logic
+ * into it.
+ *
+ * @param  {Object} obj
+ * @return {Object}
+ */
+function Event(obj) {
+  if (!(this instanceof Event)) return new Event(obj);
+  if (obj) return mixin(obj, proto);
+}
+
+/**
+ * Registers a callback
+ * with an event name.
+ *
+ * @param  {String}   name
+ * @param  {Function} cb
+ * @return {Event}
+ */
+proto.on = function(name, cb) {
+  this._cbs = this._cbs || {};
+  (this._cbs[name] || (this._cbs[name] = [])).unshift(cb);
+  return this;
+};
+
+/**
+ * Removes a single callback,
+ * or all callbacks associated
+ * with the passed event name.
+ *
+ * @param  {String}   name
+ * @param  {Function} cb
+ * @return {Event}
+ */
+proto.off = function(name, cb) {
+  this._cbs = this._cbs || {};
+
+  if (!name) return this._cbs = {};
+  if (!cb) return delete this._cbs[name];
+
+  var cbs = this._cbs[name] || [];
+  var i;
+
+  while (cbs && ~(i = cbs.indexOf(cb))) cbs.splice(i, 1);
+  return this;
+};
+
+/**
+ * Fires an event. Which triggers
+ * all callbacks registered on this
+ * event name.
+ *
+ * @param  {String} name
+ * @return {Event}
+ */
+proto.fire = function(options) {
+  this._cbs = this._cbs || {};
+  var name = options.name || options;
+  var ctx = options.ctx || this;
+  var cbs = this._cbs[name];
+
+  if (cbs) {
+    var args = [].slice.call(arguments, 1);
+    var l = cbs.length;
+    while (l--) cbs[l].apply(ctx, args);
+  }
+
+  return this;
+};
+
+/**
+ * Util
+ */
+
+/**
+ * Mixes in the properties
+ * of the second object into
+ * the first.
+ *
+ * @param  {Object} a
+ * @param  {Object} b
+ * @return {Object}
+ */
+function mixin(a, b) {
+  for (var key in b) a[key] = b[key];
+  return a;
+}
+},{}],6:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -1203,7 +1315,7 @@ module.exports = function(store, Model) {
   return View;
 };
 
-},{"../config":6,"../extend":10,"./events":11,"utils":8}],6:[function(require,module,exports){
+},{"../config":8,"./events":10,"../extend":11,"utils":7}],8:[function(require,module,exports){
 
 /**
  * Module Dependencies
@@ -1228,7 +1340,7 @@ var defaults = module.exports = {
 defaults.set = function(options) {
 	mixin(defaults, options);
 };
-},{"utils":8}],10:[function(require,module,exports){
+},{"utils":7}],11:[function(require,module,exports){
 /*jshint browser:true, node:true*/
 
 'use strict';
@@ -1298,121 +1410,7 @@ function protect(keys, ob) {
     }
   }
 }
-},{"utils":8}],9:[function(require,module,exports){
-
-/**
- * Event
- *
- * A super lightweight
- * event emitter library.
- *
- * @version 0.1.4
- * @author Wilson Page <wilson.page@me.com>
- */
-
-/**
- * Locals
- */
-
-var proto = Event.prototype;
-
-/**
- * Expose `Event`
- */
-
-module.exports = Event;
-
-/**
- * Creates a new event emitter
- * instance, or if passed an
- * object, mixes the event logic
- * into it.
- *
- * @param  {Object} obj
- * @return {Object}
- */
-function Event(obj) {
-  if (!(this instanceof Event)) return new Event(obj);
-  if (obj) return mixin(obj, proto);
-}
-
-/**
- * Registers a callback
- * with an event name.
- *
- * @param  {String}   name
- * @param  {Function} cb
- * @return {Event}
- */
-proto.on = function(name, cb) {
-  this._cbs = this._cbs || {};
-  (this._cbs[name] || (this._cbs[name] = [])).unshift(cb);
-  return this;
-};
-
-/**
- * Removes a single callback,
- * or all callbacks associated
- * with the passed event name.
- *
- * @param  {String}   name
- * @param  {Function} cb
- * @return {Event}
- */
-proto.off = function(name, cb) {
-  this._cbs = this._cbs || {};
-
-  if (!name) return this._cbs = {};
-  if (!cb) return delete this._cbs[name];
-
-  var cbs = this._cbs[name] || [];
-  var i;
-
-  while (cbs && ~(i = cbs.indexOf(cb))) cbs.splice(i, 1);
-  return this;
-};
-
-/**
- * Fires an event. Which triggers
- * all callbacks registered on this
- * event name.
- *
- * @param  {String} name
- * @return {Event}
- */
-proto.fire = function(options) {
-  this._cbs = this._cbs || {};
-  var name = options.name || options;
-  var ctx = options.ctx || this;
-  var cbs = this._cbs[name];
-
-  if (cbs) {
-    var args = [].slice.call(arguments, 1);
-    var l = cbs.length;
-    while (l--) cbs[l].apply(ctx, args);
-  }
-
-  return this;
-};
-
-/**
- * Util
- */
-
-/**
- * Mixes in the properties
- * of the second object into
- * the first.
- *
- * @param  {Object} a
- * @param  {Object} b
- * @return {Object}
- */
-function mixin(a, b) {
-  for (var key in b) a[key] = b[key];
-  return a;
-}
-},{}],11:[function(require,module,exports){
+},{"utils":7}],10:[function(require,module,exports){
 
 /**
  * Module Dependencies
