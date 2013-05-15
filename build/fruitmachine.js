@@ -17,14 +17,18 @@ return (function(e,t,n){function i(n,s){if(!t[n]){if(!e[n]){var o=typeof require
 
 'use strict';
 
-// External dependencies
+/**
+ * Module Dependencies
+ */
+
 var fruitMachine = require('./fruitmachine');
 var Model = require('model');
 
-var fruitMachineInst = fruitMachine({ Model: Model });
+/**
+ * Exports
+ */
 
-module.exports = fruitMachineInst;
-
+module.exports = fruitMachine({ Model: Model });
 },{"./fruitmachine":2,"model":3}],4:[function(require,module,exports){
 
 /*jslint browser:true, node:true, laxbreak:true*/
@@ -43,17 +47,17 @@ module.exports = fruitMachineInst;
  * @param  {Object|View}
  * @return {View}
  */
-module.exports = function(store, View) {
+module.exports = function(fm) {
   return function(props) {
     var view = ('function' !== typeof props)
-      ? View.extend(props)
+      ? fm.View.extend(props)
       : props;
 
     // Store the module by module type
     // so that module can be referred to
     // by just a string in layout definitions
-    store.modules[view.prototype._module] = view;
-    return store.modules[view.prototype._module];
+    fm.modules[view.prototype._module] = view;
+    return fm.modules[view.prototype._module];
   };
 };
 
@@ -75,13 +79,12 @@ module.exports = function(store, View) {
 
 'use strict';
 
-// Version
-var VERSION = '0.3.3';
+/**
+ * Module Dependencies
+ */
 
-// External dependencies
 var view = require('./view');
 var define = require('./define');
-var Store = require('./store');
 var utils = require('utils');
 
 /**
@@ -90,35 +93,26 @@ var utils = require('utils');
  *
  * @param {Object} options
  */
-function fruitMachine(options) {
-  var store = new Store();
-  var Model = options.Model;
-  var View = view(store, Model);
+module.exports = function(options) {
 
-  function LazyView(options) {
-    return new View(options);
+  function fm(options) {
+    var Module = fm.modules[options.module];
+    if (Module) return new Module(options);
   }
 
-  LazyView.Model = Model;
-  LazyView.View = View;
-  LazyView.define = define(store, View);
-  LazyView.store = store;
-  LazyView.util = utils;
+  fm.Model = options.Model;
+  fm.View = view(fm);
+  fm.define = define(fm);
+  fm.util = utils;
+  fm.modules = {};
+  fm.config = {
+    templateIterator: 'children',
+    templateInstance: 'child'
+  };
 
-  return LazyView;
-}
-
-fruitMachine.VERSION = VERSION;
-module.exports = fruitMachine;
-},{"./define":4,"./store":5,"./view":6,"utils":7}],5:[function(require,module,exports){
-var config = require('./config');
-function Store() {
-  this.modules = {};
-  this.config = config;
-}
-
-module.exports = Store;
-},{"./config":8}],7:[function(require,module,exports){
+  return fm;
+};
+},{"./define":4,"./view":5,"utils":6}],6:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -315,7 +309,7 @@ proto.toJSON = function() {
 
 // Mixin events
 events(proto);
-},{"event":9,"utils":7}],9:[function(require,module,exports){
+},{"event":7,"utils":6}],7:[function(require,module,exports){
 
 /**
  * Event
@@ -429,7 +423,7 @@ function mixin(a, b) {
   for (var key in b) a[key] = b[key];
   return a;
 }
-},{}],6:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -440,7 +434,6 @@ function mixin(a, b) {
  */
 
 var util = require('utils');
-var config = require('../config');
 var events = require('./events');
 var extend = require('../extend');
 var mixin = util.mixin;
@@ -449,8 +442,7 @@ var mixin = util.mixin;
  * Exports
  */
 
-module.exports = function(store, Model) {
-
+module.exports = function(fm) {
 
   /**
    * Locals
@@ -469,15 +461,6 @@ module.exports = function(store, Model) {
 
     // Shallow clone the options
     options = mixin({}, options);
-
-    // If a `module` property is passed
-    // we create a view of that module type.
-    if (options.module) {
-      var LazyView = store.modules[options.module] || View;
-      options._module = options.module; // needed?
-      delete options.module;
-      return new LazyView(options);
-    }
 
     // Various config steps
     this._configure(options);
@@ -499,7 +482,6 @@ module.exports = function(store, Model) {
    * @api private
    */
   proto._configure = function(options) {
-    this._module = this._module || options._module;
     this._id = options.id || util.uniqueId('auto_');
     this._fmid = options.fmid || util.uniqueId('fmid');
     this.tag = options.tag || this.tag || 'div';
@@ -520,7 +502,7 @@ module.exports = function(store, Model) {
     // the data passed in.
     var model = options.model || options.data || {};
     this.model = util.isPlainObject(model)
-      ? new Model(model)
+      ? new fm.Model(model)
       : model;
 
     // Attach helpers
@@ -604,7 +586,7 @@ module.exports = function(store, Model) {
     if (resident) resident.remove({ fromDOM: false });
 
     // If it's not a View, make it one.
-    if (!(child instanceof View)) child = new View(child);
+    if (!(child instanceof View)) child = fm(child);
 
     util.insert(child, this.children, at);
     this._addLookup(child);
@@ -889,22 +871,21 @@ module.exports = function(store, Model) {
    * @api public
    */
   proto.toHTML = function() {
-    var toJSON = config.model.toJSON;
     var data = {};
     var html;
     var tmp;
 
     // Create an array for view
     // children data needed in template.
-    data[config.templateIterator] = [];
+    data[fm.config.templateIterator] = [];
 
     // Loop each child
     this.each(function(child) {
       tmp = {};
       html = child.toHTML();
       data[child.slot || child.id()] = html;
-      tmp[config.templateInstance] = html;
-      data.children.push(mixin(tmp, toJSON(child.model)));
+      tmp[fm.config.templateInstance] = html;
+      data.children.push(mixin(tmp, child.model.toJSON()));
     });
 
     // Run the template render method
@@ -912,7 +893,7 @@ module.exports = function(store, Model) {
     // or child views) mixed with the
     // view's model data.
     html = this.template
-      ? this.template(mixin(data, toJSON(this.model)))
+      ? this.template(mixin(data, this.model.toJSON()))
       : '';
 
     // Wrap the html in a FruitMachine
@@ -1315,32 +1296,7 @@ module.exports = function(store, Model) {
   return View;
 };
 
-},{"../config":8,"./events":10,"../extend":11,"utils":7}],8:[function(require,module,exports){
-
-/**
- * Module Dependencies
- */
-
-var mixin = require('utils').mixin;
-
-/**
- * Exports
- */
-
-var defaults = module.exports = {
-	templateIterator: 'children',
-	templateInstance: 'child',
-	model: {
-		toJSON: function(model) {
-			return model.toJSON();
-		}
-	}
-};
-
-defaults.set = function(options) {
-	mixin(defaults, options);
-};
-},{"utils":7}],11:[function(require,module,exports){
+},{"./events":8,"../extend":9,"utils":6}],9:[function(require,module,exports){
 /*jshint browser:true, node:true*/
 
 'use strict';
@@ -1410,7 +1366,7 @@ function protect(keys, ob) {
     }
   }
 }
-},{"utils":7}],10:[function(require,module,exports){
+},{"utils":6}],8:[function(require,module,exports){
 
 /**
  * Module Dependencies
@@ -1498,6 +1454,6 @@ function propagate(view, args, event) {
 
 exports.fireStatic = events.prototype.fire;
 exports.off = events.prototype.off;
-},{"event":9}]},{},[1])(1)
+},{"event":7}]},{},[1])(1)
 });
 ;
