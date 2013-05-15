@@ -21,6 +21,8 @@ return (function(e,t,n){function i(n,s){if(!t[n]){if(!e[n]){var o=typeof require
 var fruitMachine = require('./fruitmachine');
 var Model = require('model');
 
+debugger;
+
 var fruitMachineInst = fruitMachine({ Model: Model });
 
 module.exports = fruitMachineInst;
@@ -57,6 +59,143 @@ module.exports = function(store, View) {
   };
 };
 
+},{}],5:[function(require,module,exports){
+var config = require('./config');
+function Store() {
+  this.modules = {};
+  this.config = config;
+}
+
+module.exports = Store;
+},{"./config":6}],2:[function(require,module,exports){
+
+/*jslint browser:true, node:true*/
+
+/**
+ * FruitMachine
+ *
+ * Renders layouts/modules from a basic layout definition.
+ * If views require custom interactions devs can extend
+ * the basic functionality.
+ *
+ * @version 0.3.3
+ * @copyright The Financial Times Limited [All Rights Reserved]
+ * @author Wilson Page <wilson.page@ft.com>
+ */
+
+'use strict';
+
+// Version
+var VERSION = '0.3.3';
+
+// External dependencies
+var view = require('./view');
+var define = require('./define');
+var Store = require('./store');
+var utils = require('utils');
+
+/**
+ * Express-style function for
+ * creating FruitMachines.
+ *
+ * @param {Object} options
+ */
+function fruitMachine(options) {
+  var store = new Store();
+  var Model = options.Model;
+  var View = view(store, Model);
+
+  function LazyView(options) {
+    return new View(options);
+  }
+
+  LazyView.Model = Model;
+  LazyView.View = View;
+  LazyView.define = define(store, View);
+  LazyView.store = store;
+  LazyView.util = utils;
+
+  return LazyView;
+}
+
+fruitMachine.VERSION = VERSION;
+module.exports = fruitMachine;
+},{"./define":4,"./store":5,"./view":7,"utils":8}],8:[function(require,module,exports){
+
+/*jshint browser:true, node:true*/
+
+'use strict';
+
+exports.bind = function(method, context) {
+  return function() { return method.apply(context, arguments); };
+};
+
+exports.isArray = function(arg) {
+  return arg instanceof Array;
+},
+
+exports.mixin = function(original) {
+  // Loop over every argument after the first.
+  [].slice.call(arguments, 1).forEach(function(source) {
+    for (var prop in source) {
+      original[prop] = source[prop];
+    }
+  });
+  return original;
+},
+
+exports.querySelectorId = function(id, el) {
+  if (!el) return;
+  return el.querySelector('#' + id);
+},
+
+/**
+ * Inserts an item into an array.
+ * Has the option to state an index.
+ *
+ * @param  {*} item
+ * @param  {Array} array
+ * @param  {Number} index
+ * @return void
+ */
+exports.insert = function(item, array, index) {
+  if (typeof index !== 'undefined') {
+    array.splice(index, 0, item);
+  } else {
+    array.push(item);
+  }
+},
+
+exports.toNode = function(html) {
+  var el = document.createElement('div');
+  el.innerHTML = html;
+  return el.removeChild(el.firstElementChild);
+},
+
+// Determine if we have a DOM
+// in the current environment.
+exports.hasDom = function() {
+	return typeof document !== 'undefined';
+};
+
+var i = 0;
+exports.uniqueId = function(prefix, suffix) {
+  prefix = prefix || 'id';
+  suffix = suffix || 'a';
+  return [prefix, (++i) * Math.round(Math.random() * 100000), suffix].join('-');
+};
+
+exports.keys = function(object) {
+  var keys = [];
+  for (var key in object) keys.push(key);
+  return keys;
+};
+
+exports.isPlainObject = function(ob) {
+  if (!ob) return false;
+  var c = (ob.constructor || '').toString();
+  return !!~c.indexOf('Object');
+};
 },{}],3:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
@@ -178,140 +317,7 @@ proto.toJSON = function() {
 
 // Mixin events
 events(proto);
-},{"utils":5,"event":6}],2:[function(require,module,exports){
-
-/*jslint browser:true, node:true*/
-
-/**
- * FruitMachine
- *
- * Renders layouts/modules from a basic layout definition.
- * If views require custom interactions devs can extend
- * the basic functionality.
- *
- * @version 0.3.3
- * @copyright The Financial Times Limited [All Rights Reserved]
- * @author Wilson Page <wilson.page@ft.com>
- */
-
-'use strict';
-
-// Version
-var VERSION = '0.3.3';
-
-// External dependencies
-var view = require('./view');
-var define = require('./define');
-var Store = require('./store');
-var utils = require('utils');
-
-/**
- * Express-style function for
- * creating FruitMachines.
- *
- * @param {Object} options
- */
-function fruitMachine(options) {
-  var store = new Store();
-  var Model = options.Model;
-  var View = view(store, Model);
-
-  return {
-    Model: Model,
-    View: View,
-    define: define(store, View),
-    store: store,
-    util: utils,
-  };
-}
-
-fruitMachine.VERSION = VERSION;
-module.exports = fruitMachine;
-},{"./define":4,"./store":7,"./view":8,"utils":5}],5:[function(require,module,exports){
-
-/*jshint browser:true, node:true*/
-
-'use strict';
-
-exports.bind = function(method, context) {
-  return function() { return method.apply(context, arguments); };
-};
-
-exports.isArray = function(arg) {
-  return arg instanceof Array;
-},
-
-exports.mixin = function(original) {
-  // Loop over every argument after the first.
-  [].slice.call(arguments, 1).forEach(function(source) {
-    for (var prop in source) {
-      original[prop] = source[prop];
-    }
-  });
-  return original;
-},
-
-exports.querySelectorId = function(id, el) {
-  if (!el) return;
-  return el.querySelector('#' + id);
-},
-
-/**
- * Inserts an item into an array.
- * Has the option to state an index.
- *
- * @param  {*} item
- * @param  {Array} array
- * @param  {Number} index
- * @return void
- */
-exports.insert = function(item, array, index) {
-  if (typeof index !== 'undefined') {
-    array.splice(index, 0, item);
-  } else {
-    array.push(item);
-  }
-},
-
-exports.toNode = function(html) {
-  var el = document.createElement('div');
-  el.innerHTML = html;
-  return el.removeChild(el.firstElementChild);
-},
-
-// Determine if we have a DOM
-// in the current environment.
-exports.hasDom = function() {
-	return typeof document !== 'undefined';
-};
-
-var i = 0;
-exports.uniqueId = function(prefix, suffix) {
-  prefix = prefix || 'id';
-  suffix = suffix || 'a';
-  return [prefix, (++i) * Math.round(Math.random() * 100000), suffix].join('-');
-};
-
-exports.keys = function(object) {
-  var keys = [];
-  for (var key in object) keys.push(key);
-  return keys;
-};
-
-exports.isPlainObject = function(ob) {
-  if (!ob) return false;
-  var c = (ob.constructor || '').toString();
-  return !!~c.indexOf('Object');
-};
-},{}],7:[function(require,module,exports){
-var config = require('./config');
-function Store() {
-  this.modules = {};
-  this.config = config;
-}
-
-module.exports = Store;
-},{"./config":9}],8:[function(require,module,exports){
+},{"event":9,"utils":8}],7:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -1197,7 +1203,7 @@ module.exports = function(store, Model) {
   return View;
 };
 
-},{"../config":9,"../extend":10,"./events":11,"utils":5}],9:[function(require,module,exports){
+},{"../config":6,"../extend":10,"./events":11,"utils":8}],6:[function(require,module,exports){
 
 /**
  * Module Dependencies
@@ -1222,7 +1228,7 @@ var defaults = module.exports = {
 defaults.set = function(options) {
 	mixin(defaults, options);
 };
-},{"utils":5}],10:[function(require,module,exports){
+},{"utils":8}],10:[function(require,module,exports){
 /*jshint browser:true, node:true*/
 
 'use strict';
@@ -1292,95 +1298,7 @@ function protect(keys, ob) {
     }
   }
 }
-},{"utils":5}],11:[function(require,module,exports){
-
-/**
- * Module Dependencies
- */
-
-var events = require('event');
-
-/**
- * Exports
- */
-
-/**
- * Registers a event listener.
- *
- * @param  {String}   name
- * @param  {String}   module
- * @param  {Function} cb
- * @return {View}
- */
-exports.on = function(name, module, cb) {
-  var args = arguments;
-
-  // cb can be passed as
-  // the second or third argument
-  if (args.length === 2) {
-    cb = module;
-    module = null;
-  }
-
-  // if a module is provided
-  // pass in a special callback
-  // function that checks the
-  // module
-  if (module) {
-    events.prototype.on.call(this, name, function() {
-      if (this.event.target.module() === module) {
-        cb.apply(this, args);
-      }
-    });
-  } else {
-    events.prototype.on.call(this, name, cb);
-  }
-
-  return this;
-};
-
-/**
- * Fires an event on a view.
- *
- * @param  {String} name
- * @return {View}
- */
-exports.fire = function(name) {
-  var parent = this.parent;
-  var _event = this.event;
-  var event = {
-    target: this,
-    propagate: true,
-    stopPropagation: function(){ this.propagate = false; }
-  };
-
-  propagate(this, arguments, event);
-
-  // COMPLEX:
-  // If an earlier event object was
-  // cached, restore the the event
-  // back onto the view. If there
-  // wasn't an earlier event, make
-  // sure the `event` key has been
-  // deleted off the view.
-  if (_event) this.event = _event;
-  else delete this.event;
-
-  // Allow chaining
-  return this;
-};
-
-function propagate(view, args, event) {
-  if (!view || !event.propagate) return;
-
-  view.event = event;
-  events.prototype.fire.apply(view, args);
-  propagate(view.parent, args, event);
-}
-
-exports.fireStatic = events.prototype.fire;
-exports.off = events.prototype.off;
-},{"event":6}],6:[function(require,module,exports){
+},{"utils":8}],9:[function(require,module,exports){
 
 /**
  * Event
@@ -1494,6 +1412,94 @@ function mixin(a, b) {
   for (var key in b) a[key] = b[key];
   return a;
 }
-},{}]},{},[1])(1)
+},{}],11:[function(require,module,exports){
+
+/**
+ * Module Dependencies
+ */
+
+var events = require('event');
+
+/**
+ * Exports
+ */
+
+/**
+ * Registers a event listener.
+ *
+ * @param  {String}   name
+ * @param  {String}   module
+ * @param  {Function} cb
+ * @return {View}
+ */
+exports.on = function(name, module, cb) {
+  var args = arguments;
+
+  // cb can be passed as
+  // the second or third argument
+  if (args.length === 2) {
+    cb = module;
+    module = null;
+  }
+
+  // if a module is provided
+  // pass in a special callback
+  // function that checks the
+  // module
+  if (module) {
+    events.prototype.on.call(this, name, function() {
+      if (this.event.target.module() === module) {
+        cb.apply(this, args);
+      }
+    });
+  } else {
+    events.prototype.on.call(this, name, cb);
+  }
+
+  return this;
+};
+
+/**
+ * Fires an event on a view.
+ *
+ * @param  {String} name
+ * @return {View}
+ */
+exports.fire = function(name) {
+  var parent = this.parent;
+  var _event = this.event;
+  var event = {
+    target: this,
+    propagate: true,
+    stopPropagation: function(){ this.propagate = false; }
+  };
+
+  propagate(this, arguments, event);
+
+  // COMPLEX:
+  // If an earlier event object was
+  // cached, restore the the event
+  // back onto the view. If there
+  // wasn't an earlier event, make
+  // sure the `event` key has been
+  // deleted off the view.
+  if (_event) this.event = _event;
+  else delete this.event;
+
+  // Allow chaining
+  return this;
+};
+
+function propagate(view, args, event) {
+  if (!view || !event.propagate) return;
+
+  view.event = event;
+  events.prototype.fire.apply(view, args);
+  propagate(view.parent, args, event);
+}
+
+exports.fireStatic = events.prototype.fire;
+exports.off = events.prototype.off;
+},{"event":9}]},{},[1])(1)
 });
 ;
