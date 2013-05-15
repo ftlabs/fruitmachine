@@ -9,13 +9,15 @@ var Apple = FruitMachine.define({
   }
 });
 
-var Pear = FruitMachine.define(Apple.extend({
-  module: 'pear',
-  template: function(){ return ''; },
-  setup: function() {
-    alert('and i am an pear');
-  }
-}));
+var Pear = FruitMachine.define(
+  Apple.extend({
+    module: 'pear',
+    template: function(){ return ''; },
+    setup: function() {
+      alert('and i am an pear');
+    }
+  })
+);
 
 var apple = new Apple();
 //=> alert - 'we are similar'
