@@ -9,13 +9,14 @@ buster.testCase('View#id()', {
 
   "Should return the view's own id if no arguments given.": function() {
     var id = 'a_view_id';
-    var view = new FruitMachine({ id: id });
+    var view = new Apple({ id: id });
+
     assert.equals(view.id(), id);
   },
 
   "Should not return the view's own id the first argument is undefined": function() {
     var id = 'a_view_id';
-    var view = new FruitMachine({ id: id });
+    var view = new Apple({ id: id });
     refute(view.id(undefined));
   },
 
