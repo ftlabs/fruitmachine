@@ -25,7 +25,39 @@ var fruitMachineInst = fruitMachine({ Model: Model });
 
 module.exports = fruitMachineInst;
 
-},{"./fruitmachine":2,"model":3}],3:[function(require,module,exports){
+},{"./fruitmachine":2,"model":3}],4:[function(require,module,exports){
+
+/*jslint browser:true, node:true, laxbreak:true*/
+
+'use strict';
+
+/**
+ * Creates and registers a
+ * FruitMachine view constructor
+ * and stores an internal reference.
+ *
+ * The user is able to pass in an already
+ * defined View constructor, or an object
+ * representing the View's prototype.
+ *
+ * @param  {Object|View}
+ * @return {View}
+ */
+module.exports = function(store, View) {
+  return function(props) {
+    var view = ('function' !== typeof props)
+      ? View.extend(props)
+      : props;
+
+    // Store the module by module type
+    // so that module can be referred to
+    // by just a string in layout definitions
+    store.modules[view.prototype._module] = view;
+    return store.modules[view.prototype._module];
+  };
+};
+
+},{}],3:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -146,121 +178,56 @@ proto.toJSON = function() {
 
 // Mixin events
 events(proto);
-},{"event":4,"utils":5}],4:[function(require,module,exports){
+},{"utils":5,"event":6}],2:[function(require,module,exports){
+
+/*jslint browser:true, node:true*/
 
 /**
- * Event
+ * FruitMachine
  *
- * A super lightweight
- * event emitter library.
+ * Renders layouts/modules from a basic layout definition.
+ * If views require custom interactions devs can extend
+ * the basic functionality.
  *
- * @version 0.1.4
- * @author Wilson Page <wilson.page@me.com>
+ * @version 0.3.3
+ * @copyright The Financial Times Limited [All Rights Reserved]
+ * @author Wilson Page <wilson.page@ft.com>
  */
 
+'use strict';
+
+// Version
+var VERSION = '0.3.3';
+
+// External dependencies
+var view = require('./view');
+var define = require('./define');
+var Store = require('./store');
+var utils = require('utils');
+
 /**
- * Locals
- */
-
-var proto = Event.prototype;
-
-/**
- * Expose `Event`
- */
-
-module.exports = Event;
-
-/**
- * Creates a new event emitter
- * instance, or if passed an
- * object, mixes the event logic
- * into it.
+ * Express-style function for
+ * creating FruitMachines.
  *
- * @param  {Object} obj
- * @return {Object}
+ * @param {Object} options
  */
-function Event(obj) {
-  if (!(this instanceof Event)) return new Event(obj);
-  if (obj) return mixin(obj, proto);
+function fruitMachine(options) {
+  var store = new Store();
+  var Model = options.Model;
+  var View = view(store, Model);
+
+  return {
+    Model: Model,
+    View: View,
+    define: define(store, View),
+    store: store,
+    util: utils,
+  };
 }
 
-/**
- * Registers a callback
- * with an event name.
- *
- * @param  {String}   name
- * @param  {Function} cb
- * @return {Event}
- */
-proto.on = function(name, cb) {
-  this._cbs = this._cbs || {};
-  (this._cbs[name] || (this._cbs[name] = [])).unshift(cb);
-  return this;
-};
-
-/**
- * Removes a single callback,
- * or all callbacks associated
- * with the passed event name.
- *
- * @param  {String}   name
- * @param  {Function} cb
- * @return {Event}
- */
-proto.off = function(name, cb) {
-  this._cbs = this._cbs || {};
-
-  if (!name) return this._cbs = {};
-  if (!cb) return delete this._cbs[name];
-
-  var cbs = this._cbs[name] || [];
-  var i;
-
-  while (cbs && ~(i = cbs.indexOf(cb))) cbs.splice(i, 1);
-  return this;
-};
-
-/**
- * Fires an event. Which triggers
- * all callbacks registered on this
- * event name.
- *
- * @param  {String} name
- * @return {Event}
- */
-proto.fire = function(options) {
-  this._cbs = this._cbs || {};
-  var name = options.name || options;
-  var ctx = options.ctx || this;
-  var cbs = this._cbs[name];
-
-  if (cbs) {
-    var args = [].slice.call(arguments, 1);
-    var l = cbs.length;
-    while (l--) cbs[l].apply(ctx, args);
-  }
-
-  return this;
-};
-
-/**
- * Util
- */
-
-/**
- * Mixes in the properties
- * of the second object into
- * the first.
- *
- * @param  {Object} a
- * @param  {Object} b
- * @return {Object}
- */
-function mixin(a, b) {
-  for (var key in b) a[key] = b[key];
-  return a;
-}
-},{}],5:[function(require,module,exports){
+fruitMachine.VERSION = VERSION;
+module.exports = fruitMachine;
+},{"./define":4,"./store":7,"./view":8,"utils":5}],5:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -336,38 +303,6 @@ exports.isPlainObject = function(ob) {
   var c = (ob.constructor || '').toString();
   return !!~c.indexOf('Object');
 };
-},{}],6:[function(require,module,exports){
-
-/*jslint browser:true, node:true, laxbreak:true*/
-
-'use strict';
-
-/**
- * Creates and registers a
- * FruitMachine view constructor
- * and stores an internal reference.
- *
- * The user is able to pass in an already
- * defined View constructor, or an object
- * representing the View's prototype.
- *
- * @param  {Object|View}
- * @return {View}
- */
-module.exports = function(store, View) {
-  return function(props) {
-    var view = ('function' !== typeof props)
-      ? View.extend(props)
-      : props;
-
-    // Store the module by module type
-    // so that module can be referred to
-    // by just a string in layout definitions
-    store.modules[view.prototype._module] = view;
-    return store.modules[view.prototype._module];
-  };
-};
-
 },{}],7:[function(require,module,exports){
 var config = require('./config');
 function Store() {
@@ -376,56 +311,7 @@ function Store() {
 }
 
 module.exports = Store;
-},{"./config":8}],2:[function(require,module,exports){
-
-/*jslint browser:true, node:true*/
-
-/**
- * FruitMachine
- *
- * Renders layouts/modules from a basic layout definition.
- * If views require custom interactions devs can extend
- * the basic functionality.
- *
- * @version 0.3.3
- * @copyright The Financial Times Limited [All Rights Reserved]
- * @author Wilson Page <wilson.page@ft.com>
- */
-
-'use strict';
-
-// Version
-var VERSION = '0.3.3';
-
-// External dependencies
-var view = require('./view');
-var define = require('./define');
-var Store = require('./store');
-var utils = require('utils');
-
-/**
- * Express-style function for
- * creating FruitMachines.
- *
- * @param {Object} options
- */
-function fruitMachine(options) {
-  var store = new Store();
-  var Model = options.Model;
-  var View = view(store, Model);
-
-  return {
-    Model: Model,
-    View: View,
-    define: define(store, View),
-    store: store,
-    util: utils,
-  };
-}
-
-fruitMachine.VERSION = VERSION;
-module.exports = fruitMachine;
-},{"./define":6,"./store":7,"./view":9,"utils":5}],9:[function(require,module,exports){
+},{"./config":9}],8:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -436,7 +322,6 @@ module.exports = fruitMachine;
  */
 
 var util = require('utils');
-var Model = require('model');
 var config = require('../config');
 var events = require('./events');
 var extend = require('../extend');
@@ -1311,7 +1196,8 @@ module.exports = function(store, Model) {
 
   return View;
 };
-},{"../config":8,"./events":10,"../extend":11,"utils":5,"model":3}],8:[function(require,module,exports){
+
+},{"../config":9,"../extend":10,"./events":11,"utils":5}],9:[function(require,module,exports){
 
 /**
  * Module Dependencies
@@ -1336,7 +1222,7 @@ var defaults = module.exports = {
 defaults.set = function(options) {
 	mixin(defaults, options);
 };
-},{"utils":5}],11:[function(require,module,exports){
+},{"utils":5}],10:[function(require,module,exports){
 /*jshint browser:true, node:true*/
 
 'use strict';
@@ -1406,7 +1292,7 @@ function protect(keys, ob) {
     }
   }
 }
-},{"utils":5}],10:[function(require,module,exports){
+},{"utils":5}],11:[function(require,module,exports){
 
 /**
  * Module Dependencies
@@ -1494,6 +1380,120 @@ function propagate(view, args, event) {
 
 exports.fireStatic = events.prototype.fire;
 exports.off = events.prototype.off;
-},{"event":4}]},{},[1])(1)
+},{"event":6}],6:[function(require,module,exports){
+
+/**
+ * Event
+ *
+ * A super lightweight
+ * event emitter library.
+ *
+ * @version 0.1.4
+ * @author Wilson Page <wilson.page@me.com>
+ */
+
+/**
+ * Locals
+ */
+
+var proto = Event.prototype;
+
+/**
+ * Expose `Event`
+ */
+
+module.exports = Event;
+
+/**
+ * Creates a new event emitter
+ * instance, or if passed an
+ * object, mixes the event logic
+ * into it.
+ *
+ * @param  {Object} obj
+ * @return {Object}
+ */
+function Event(obj) {
+  if (!(this instanceof Event)) return new Event(obj);
+  if (obj) return mixin(obj, proto);
+}
+
+/**
+ * Registers a callback
+ * with an event name.
+ *
+ * @param  {String}   name
+ * @param  {Function} cb
+ * @return {Event}
+ */
+proto.on = function(name, cb) {
+  this._cbs = this._cbs || {};
+  (this._cbs[name] || (this._cbs[name] = [])).unshift(cb);
+  return this;
+};
+
+/**
+ * Removes a single callback,
+ * or all callbacks associated
+ * with the passed event name.
+ *
+ * @param  {String}   name
+ * @param  {Function} cb
+ * @return {Event}
+ */
+proto.off = function(name, cb) {
+  this._cbs = this._cbs || {};
+
+  if (!name) return this._cbs = {};
+  if (!cb) return delete this._cbs[name];
+
+  var cbs = this._cbs[name] || [];
+  var i;
+
+  while (cbs && ~(i = cbs.indexOf(cb))) cbs.splice(i, 1);
+  return this;
+};
+
+/**
+ * Fires an event. Which triggers
+ * all callbacks registered on this
+ * event name.
+ *
+ * @param  {String} name
+ * @return {Event}
+ */
+proto.fire = function(options) {
+  this._cbs = this._cbs || {};
+  var name = options.name || options;
+  var ctx = options.ctx || this;
+  var cbs = this._cbs[name];
+
+  if (cbs) {
+    var args = [].slice.call(arguments, 1);
+    var l = cbs.length;
+    while (l--) cbs[l].apply(ctx, args);
+  }
+
+  return this;
+};
+
+/**
+ * Util
+ */
+
+/**
+ * Mixes in the properties
+ * of the second object into
+ * the first.
+ *
+ * @param  {Object} a
+ * @param  {Object} b
+ * @return {Object}
+ */
+function mixin(a, b) {
+  for (var key in b) a[key] = b[key];
+  return a;
+}
+},{}]},{},[1])(1)
 });
 ;
