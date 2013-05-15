@@ -58,5 +58,5 @@ module.exports = function(grunt) {
   grunt.loadTasks('tasks');
 
   // Default task.
-  grunt.registerTask('default', ['browserify', 'uglify', 'readme']);
+  grunt.registerTask('default', ['browserify', 'uglify']);
 };
