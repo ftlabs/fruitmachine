@@ -13,7 +13,7 @@ module.exports = Store;
 /*jslint browser:true, node:true*/
 
 /**
- * Machine
+ * FruitMachine
  *
  * Renders layouts/modules from a basic layout definition.
  * If views require custom interactions devs can extend
@@ -27,7 +27,7 @@ module.exports = Store;
 'use strict';
 
 // Version
-Machine.VERSION = '0.3.3';
+FruitMachine.VERSION = '0.3.3';
 
 // Module dependencies
 var Store = require('./store');
@@ -47,38 +47,38 @@ var extend = require('./extend');
  *
  * @param {Object} options
  */
-function Machine() {
+function FruitMachine() {
   var self = this;
   self._store = new Store();
 
-  function MachineView(options) {
+  function FruitMachineView(options) {
     return new View(self._store, options);
   }
 
   // HACK:MA I'm now doing this in
   // two places, it'd be nicer if this
   // were nicer.
-  MachineView.prototype = View.prototype;
-  MachineView.extend = extend(util.keys(MachineView.prototype));
-  this.View = MachineView;
+  FruitMachineView.prototype = View.prototype;
+  FruitMachineView.extend = View.extend;
+  this.View = FruitMachineView;
 }
 
-Machine.prototype.define = function(props) {
+FruitMachine.prototype.define = function(props) {
 	return define(this._store, props);
 };
 
 /**
- * Expose an instance of 'Machine'
+ * Expose an instance of 'FruitMachine'
  */
 
-var MachineInstance = new Machine();
+var fruitMachineInst = new FruitMachine();
 
-MachineInstance.util = require('utils');
-MachineInstance.Model = require('model');
-MachineInstance.Events = require('event');
-MachineInstance.config = require('./config').set;
+fruitMachineInst.util = require('utils');
+fruitMachineInst.Model = require('model');
+fruitMachineInst.Events = require('event');
+fruitMachineInst.config = require('./config').set;
 
-module.exports = MachineInstance;
+module.exports = fruitMachineInst;
 },{"./store":1,"./define":4,"./extend":5,"./config":2,"./view":6,"utils":7,"model":8,"event":9}],7:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
@@ -155,120 +155,6 @@ exports.isPlainObject = function(ob) {
   var c = (ob.constructor || '').toString();
   return !!~c.indexOf('Object');
 };
-},{}],9:[function(require,module,exports){
-
-/**
- * Event
- *
- * A super lightweight
- * event emitter library.
- *
- * @version 0.1.4
- * @author Wilson Page <wilson.page@me.com>
- */
-
-/**
- * Locals
- */
-
-var proto = Event.prototype;
-
-/**
- * Expose `Event`
- */
-
-module.exports = Event;
-
-/**
- * Creates a new event emitter
- * instance, or if passed an
- * object, mixes the event logic
- * into it.
- *
- * @param  {Object} obj
- * @return {Object}
- */
-function Event(obj) {
-  if (!(this instanceof Event)) return new Event(obj);
-  if (obj) return mixin(obj, proto);
-}
-
-/**
- * Registers a callback
- * with an event name.
- *
- * @param  {String}   name
- * @param  {Function} cb
- * @return {Event}
- */
-proto.on = function(name, cb) {
-  this._cbs = this._cbs || {};
-  (this._cbs[name] || (this._cbs[name] = [])).unshift(cb);
-  return this;
-};
-
-/**
- * Removes a single callback,
- * or all callbacks associated
- * with the passed event name.
- *
- * @param  {String}   name
- * @param  {Function} cb
- * @return {Event}
- */
-proto.off = function(name, cb) {
-  this._cbs = this._cbs || {};
-
-  if (!name) return this._cbs = {};
-  if (!cb) return delete this._cbs[name];
-
-  var cbs = this._cbs[name] || [];
-  var i;
-
-  while (cbs && ~(i = cbs.indexOf(cb))) cbs.splice(i, 1);
-  return this;
-};
-
-/**
- * Fires an event. Which triggers
- * all callbacks registered on this
- * event name.
- *
- * @param  {String} name
- * @return {Event}
- */
-proto.fire = function(options) {
-  this._cbs = this._cbs || {};
-  var name = options.name || options;
-  var ctx = options.ctx || this;
-  var cbs = this._cbs[name];
-
-  if (cbs) {
-    var args = [].slice.call(arguments, 1);
-    var l = cbs.length;
-    while (l--) cbs[l].apply(ctx, args);
-  }
-
-  return this;
-};
-
-/**
- * Util
- */
-
-/**
- * Mixes in the properties
- * of the second object into
- * the first.
- *
- * @param  {Object} a
- * @param  {Object} b
- * @return {Object}
- */
-function mixin(a, b) {
-  for (var key in b) a[key] = b[key];
-  return a;
-}
 },{}],4:[function(require,module,exports){
 
 /*jslint browser:true, node:true, laxbreak:true*/
@@ -1295,7 +1181,121 @@ proto.fireStatic = events.fireStatic;
  */
 
 View.extend = extend(util.keys(View.prototype));
-},{"../config":2,"./events":10,"../extend":5,"utils":7,"model":8}],8:[function(require,module,exports){
+},{"./events":10,"../config":2,"../extend":5,"utils":7,"model":8}],9:[function(require,module,exports){
+
+/**
+ * Event
+ *
+ * A super lightweight
+ * event emitter library.
+ *
+ * @version 0.1.4
+ * @author Wilson Page <wilson.page@me.com>
+ */
+
+/**
+ * Locals
+ */
+
+var proto = Event.prototype;
+
+/**
+ * Expose `Event`
+ */
+
+module.exports = Event;
+
+/**
+ * Creates a new event emitter
+ * instance, or if passed an
+ * object, mixes the event logic
+ * into it.
+ *
+ * @param  {Object} obj
+ * @return {Object}
+ */
+function Event(obj) {
+  if (!(this instanceof Event)) return new Event(obj);
+  if (obj) return mixin(obj, proto);
+}
+
+/**
+ * Registers a callback
+ * with an event name.
+ *
+ * @param  {String}   name
+ * @param  {Function} cb
+ * @return {Event}
+ */
+proto.on = function(name, cb) {
+  this._cbs = this._cbs || {};
+  (this._cbs[name] || (this._cbs[name] = [])).unshift(cb);
+  return this;
+};
+
+/**
+ * Removes a single callback,
+ * or all callbacks associated
+ * with the passed event name.
+ *
+ * @param  {String}   name
+ * @param  {Function} cb
+ * @return {Event}
+ */
+proto.off = function(name, cb) {
+  this._cbs = this._cbs || {};
+
+  if (!name) return this._cbs = {};
+  if (!cb) return delete this._cbs[name];
+
+  var cbs = this._cbs[name] || [];
+  var i;
+
+  while (cbs && ~(i = cbs.indexOf(cb))) cbs.splice(i, 1);
+  return this;
+};
+
+/**
+ * Fires an event. Which triggers
+ * all callbacks registered on this
+ * event name.
+ *
+ * @param  {String} name
+ * @return {Event}
+ */
+proto.fire = function(options) {
+  this._cbs = this._cbs || {};
+  var name = options.name || options;
+  var ctx = options.ctx || this;
+  var cbs = this._cbs[name];
+
+  if (cbs) {
+    var args = [].slice.call(arguments, 1);
+    var l = cbs.length;
+    while (l--) cbs[l].apply(ctx, args);
+  }
+
+  return this;
+};
+
+/**
+ * Util
+ */
+
+/**
+ * Mixes in the properties
+ * of the second object into
+ * the first.
+ *
+ * @param  {Object} a
+ * @param  {Object} b
+ * @return {Object}
+ */
+function mixin(a, b) {
+  for (var key in b) a[key] = b[key];
+  return a;
+}
+},{}],8:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -1416,7 +1416,7 @@ proto.toJSON = function() {
 
 // Mixin events
 events(proto);
-},{"event":9,"utils":7}],10:[function(require,module,exports){
+},{"utils":7,"event":9}],10:[function(require,module,exports){
 
 /**
  * Module Dependencies
