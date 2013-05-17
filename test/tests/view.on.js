@@ -37,5 +37,14 @@ buster.testCase('View#on()', {
 	  assert(spy.called);
 	},
 
+	"Should pass the correct arguments to delegate event listeners": function() {
+		var spy = this.spy();
+		var apple = this.view.module('apple');
+
+		this.view.on('testevent', 'apple', spy);
+		apple.fire('testevent', 'foo', 'bar');
+	  assert(spy.calledWith('foo', 'bar'));
+	},
+
 	tearDown: helpers.destroyView
 });
