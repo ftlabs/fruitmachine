@@ -1,40 +1,6 @@
 (function(e){if("function"==typeof bootstrap)bootstrap("fruitmachine",e);else if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else if("undefined"!=typeof ses){if(!ses.ok())return;ses.makeFruitMachine=e}else"undefined"!=typeof window?window.FruitMachine=e():global.FruitMachine=e()})(function(){var define,ses,bootstrap,module,exports;
 return (function(e,t,n){function i(n,s){if(!t[n]){if(!e[n]){var o=typeof require=="function"&&require;if(!s&&o)return o(n,!0);if(r)return r(n,!0);throw new Error("Cannot find module '"+n+"'")}var u=t[n]={exports:{}};e[n][0](function(t){var r=e[n][1][t];return i(r?r:t)},u,u.exports)}return t[n].exports}var r=typeof require=="function"&&require;for(var s=0;s<n.length;s++)i(n[s]);return i})({1:[function(require,module,exports){
 
-/*jslint browser:true, node:true, laxbreak:true*/
-
-'use strict';
-
-/**
- * Creates and registers a
- * FruitMachine view constructor
- * and stores an internal reference.
- *
- * The user is able to pass in an already
- * defined View constructor, or an object
- * representing the View's prototype.
- *
- * @param  {Object|View}
- * @return {View}
- */
-module.exports = function(fm) {
-  return function(props) {
-    var view = ('object' === typeof props)
-      ? fm.View.extend(props)
-      : props;
-    var module = view.prototype._module;
-
-    // Store the module by module type
-    // so that module can be referred to
-    // by just a string in layout definitions
-    if (module) fm.modules[module] = view;
-
-    return view;
-  };
-};
-
-},{}],2:[function(require,module,exports){
-
 /*jslint browser:true, node:true*/
 
 /**
@@ -63,7 +29,42 @@ var Model = require('model');
  */
 
 module.exports = fruitMachine({ Model: Model });
-},{"./fruitmachine":3,"model":4}],3:[function(require,module,exports){
+},{"./fruitmachine":2,"model":3}],4:[function(require,module,exports){
+
+/*jslint browser:true, node:true, laxbreak:true*/
+
+'use strict';
+
+/**
+ * Creates and registers a
+ * FruitMachine view constructor
+ * and stores an internal reference.
+ *
+ * The user is able to pass in an already
+ * defined View constructor, or an object
+ * representing the View's prototype.
+ *
+ * @param  {Object|View}
+ * @return {View}
+ */
+module.exports = function(fm) {
+  return function(props) {
+    var view = ('object' === typeof props)
+      ? fm.View.extend(props)
+      : props;
+
+    var module = view.prototype._module;
+
+    // Store the module by module type
+    // so that module can be referred to
+    // by just a string in layout definitions
+    if (module) fm.modules[module] = view;
+
+    return view;
+  };
+};
+
+},{}],2:[function(require,module,exports){
 
 /*jslint browser:true, node:true*/
 
@@ -122,7 +123,7 @@ module.exports = function(options) {
 
   return events(fm);
 };
-},{"./define":1,"./view":5,"utils":6,"event":7}],6:[function(require,module,exports){
+},{"./define":4,"./view":5,"utils":6,"event":7}],6:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -312,7 +313,7 @@ function mixin(a, b) {
   for (var key in b) a[key] = b[key];
   return a;
 }
-},{}],4:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -1297,6 +1298,7 @@ module.exports = function(fm) {
     json.fmid = this._fmid;
     json.module = this._module;
     json.model = this.model.toJSON();
+    json.slot = this.slot;
 
     // Fire a hook to allow third
     // parties to alter the json output
@@ -1408,11 +1410,10 @@ var events = require('event');
  * @return {View}
  */
 exports.on = function(name, module, cb) {
-  var args = arguments;
 
   // cb can be passed as
   // the second or third argument
-  if (args.length === 2) {
+  if (arguments.length === 2) {
     cb = module;
     module = null;
   }
@@ -1424,7 +1425,7 @@ exports.on = function(name, module, cb) {
   if (module) {
     events.prototype.on.call(this, name, function() {
       if (this.event.target.module() === module) {
-        cb.apply(this, args);
+        cb.apply(this, arguments);
       }
     });
   } else {
@@ -1475,6 +1476,6 @@ function propagate(view, args, event) {
 
 exports.fireStatic = events.prototype.fire;
 exports.off = events.prototype.off;
-},{"event":7}]},{},[2])(2)
+},{"event":7}]},{},[1])(1)
 });
 ;
