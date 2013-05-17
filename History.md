@@ -1,3 +1,8 @@
+0.4.1 / 2013-05-17
+==================
+
+  * fix bug with delegate event listeners not being passed correct aguments
+
 0.4.0 / 2013-05-17
 ==================
 
