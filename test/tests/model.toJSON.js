@@ -2,7 +2,7 @@
 buster.testCase('Model#toJSON()', {
 
   "Should return a shallow clone of the data store": function() {
-    var model = new FruitMachine.Model({ foo: 'bar' });
+    var model = new fruitmachine.Model({ foo: 'bar' });
     var json = model.toJSON();
 
 

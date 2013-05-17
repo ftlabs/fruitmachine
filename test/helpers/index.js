@@ -5,8 +5,8 @@ var helpers = {};
  */
 
 var templates = helpers.templates = {
-  'apple': Hogan.compile('{{{my_child_module}}}'),
-  'layout': Hogan.compile('{{{slot_1}}}{{{slot_2}}}{{{slot_3}}}{{{1}}}'),
+  'apple': Hogan.compile('{{{1}}}'),
+  'layout': Hogan.compile('{{{1}}}{{{2}}}{{{3}}}'),
   'list': Hogan.compile('{{#children}}{{{child}}}{{/children}}'),
   'orange': Hogan.compile('{{text}}'),
   'pear': Hogan.compile('{{text}}')
@@ -18,7 +18,7 @@ var templates = helpers.templates = {
 
 helpers.Views = {};
 
-var Layout = helpers.Views.Layout = FruitMachine.define({
+var Layout = helpers.Views.Layout = fruitmachine.define({
   module: 'layout',
   template: templates.layout,
 
@@ -28,7 +28,7 @@ var Layout = helpers.Views.Layout = FruitMachine.define({
   destroy: function() {}
 });
 
-var Apple = helpers.Views.Apple = FruitMachine.define({
+var Apple = helpers.Views.Apple = fruitmachine.define({
   module: 'apple',
   template: templates.apple,
 
@@ -38,7 +38,7 @@ var Apple = helpers.Views.Apple = FruitMachine.define({
   destroy: function() {}
 });
 
-var List = helpers.Views.List = FruitMachine.define({
+var List = helpers.Views.List = fruitmachine.define({
   module: 'list',
   template: templates.list,
 
@@ -48,7 +48,7 @@ var List = helpers.Views.List = FruitMachine.define({
   destroy: function() {}
 });
 
-var Orange = helpers.Views.Orange = FruitMachine.define({
+var Orange = helpers.Views.Orange = fruitmachine.define({
   module: 'orange',
   template: templates.orange,
 
@@ -58,7 +58,7 @@ var Orange = helpers.Views.Orange = FruitMachine.define({
   destroy: function() {}
 });
 
-var Pear = helpers.Views.Pear = FruitMachine.define({
+var Pear = helpers.Views.Pear = fruitmachine.define({
   module: 'pear',
   template: templates.pear,
 
@@ -73,10 +73,10 @@ var Pear = helpers.Views.Pear = FruitMachine.define({
  */
 
 helpers.createView = function() {
-  var layout = new Layout({});
-  var apple = new Apple({ id: 'slot_1' });
-  var orange = new Orange({ id: 'slot_2' });
-  var pear = new Pear({ id: 'slot_3' });
+  var layout = new Layout();
+  var apple = new Apple({ slot: 1 });
+  var orange = new Orange({ slot: 2 });
+  var pear = new Pear({ slot: 3 });
 
   layout
     .add(apple)
@@ -100,13 +100,12 @@ helpers.destroyView = function() {
  */
 
 helpers.createSandbox = function() {
-  document.body.insertAdjacentHTML('beforeend', '<div id="sandbox"></div>');
-  return document.getElementById('sandbox');
+  var el = document.createElement('div');
+  return document.body.appendChild(el);
 };
-
-helpers.sandbox = helpers.createSandbox();
 
 helpers.emptySandbox = function() {
-  helpers.sandbox.innerHTML = '';
+  sandbox.innerHTML = '';
 };
 
+var sandbox = helpers.createSandbox();

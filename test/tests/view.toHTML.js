@@ -31,5 +31,20 @@ buster.testCase('View#toHTML()', {
     assert(~layoutHtml.indexOf(appleHtml));
   },
 
+  "Should fallback to printing children by id if no slot is present": function() {
+    var layout = new Layout({
+      children: [
+        {
+          module: 'apple',
+          id: 1
+        }
+      ]
+    });
+
+    layout.render();
+
+    assert(~layout.el.innerHTML.indexOf('apple'));
+  },
+
   "tearDown": helpers.destroyView
 });

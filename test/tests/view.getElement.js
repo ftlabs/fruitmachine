@@ -15,7 +15,7 @@ buster.testCase('View#getElement()', {
   },
 
   "Should not run querySelector if the view has no parent view": function() {
-    var spy = this.spy(FruitMachine.util, 'querySelectorId');
+    var spy = this.spy(fruitmachine.util, 'querySelectorId');
     var el;
 
     this.view.render();
@@ -23,11 +23,11 @@ buster.testCase('View#getElement()', {
 
     assert.isFalse(spy.called);
 
-    FruitMachine.util.querySelectorId.restore();
+    fruitmachine.util.querySelectorId.restore();
   },
 
   "Should return the view element if the view was rendered indirectly": function() {
-    var spy = this.spy(FruitMachine.util, 'querySelectorId');
+    var spy = this.spy(fruitmachine.util, 'querySelectorId');
     var el;
 
     this.view.render();
@@ -36,12 +36,12 @@ buster.testCase('View#getElement()', {
     assert.defined(el);
     assert.called(spy);
 
-    FruitMachine.util.querySelectorId.restore();
+    fruitmachine.util.querySelectorId.restore();
   },
 
   "Should find element in the DOM if injected": function() {
     var spy1 = this.spy(document, 'getElementById');
-    var spy2 = this.spy(FruitMachine.util, 'querySelectorId');
+    var spy2 = this.spy(fruitmachine.util, 'querySelectorId');
     var el1, el2;
 
     this.view
@@ -63,7 +63,7 @@ buster.testCase('View#getElement()', {
 
     // Restore spys
     document.getElementById.restore();
-    FruitMachine.util.querySelectorId.restore();
+    fruitmachine.util.querySelectorId.restore();
     helpers.emptySandbox();
   },
 

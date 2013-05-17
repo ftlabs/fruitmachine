@@ -33,17 +33,17 @@ buster.testCase('View#remove()', {
   },
 
   "Should remove the child from the DOM by default": function() {
-    var sandbox = document.createElement('div');
+    var sandbox = helpers.createSandbox();
     var list = new helpers.Views.Layout();
     var Apple = helpers.Views.Apple;
-    var apple = new Apple({ id: 'slot_1' });
+    var apple = new Apple({ slot: 1 });
     var inDOM;
 
     list
       .add(apple)
       .render()
-      .setup()
-      .inject(sandbox);
+      .inject(sandbox)
+      .setup();
 
     assert(!!sandbox.querySelector('#' + apple._fmid));
 
@@ -56,11 +56,11 @@ buster.testCase('View#remove()', {
     var sandbox = document.createElement('div');
     var list = new helpers.Views.Layout();
     var Apple = helpers.Views.Apple;
-    var apple = new Apple({ id: 'slot_1' });
+    var apple = new Apple();
     var inDOM;
 
     list
-      .add(apple)
+      .add(apple, 1)
       .render()
       .setup()
       .inject(sandbox);

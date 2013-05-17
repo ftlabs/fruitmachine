@@ -33,7 +33,8 @@
   "dependencies": {
     "event": "git://github.com/wilsonpage/event.git",
     "model": "git://github.com/wilsonpage/model.git",
-    "utils": "git://github.com/wilsonpage/utils.git"
+    "utils": "git://github.com/wilsonpage/utils.git",
+    "extend": "git://github.com/wilsonpage/extend.git"
   },
   "devDependencies": {
     "hogan.js": "*",

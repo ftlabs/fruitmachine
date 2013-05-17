@@ -24,14 +24,13 @@ buster.testCase('View#render()', {
 
   "Child html should be present in the parent.": function() {
     var layout = new helpers.Views.Layout();
-    var apple = new helpers.Views.Apple({ id: 'slot_1' });
+    var apple = new helpers.Views.Apple({ slot: 1 });
 
     layout
       .add(apple)
       .render();
 
     firstChild = layout.el.firstElementChild;
-
     assert.isTrue(firstChild.classList.contains('apple'));
   },
 

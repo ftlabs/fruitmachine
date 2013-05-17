@@ -1,14 +1,14 @@
 
-buster.testCase('FruitMachine.define()', {
+buster.testCase('fruitmachine.define()', {
 	setUp: function() {},
 
-	"Should store the module in FruitMachine.store under module type": function() {
-		FruitMachine.define({ module: 'my-module-1' });
-		assert.defined(FruitMachine.modules['my-module-1']);
+	"Should store the module in fruitmachine.store under module type": function() {
+		fruitmachine.define({ module: 'my-module-1' });
+		assert.defined(fruitmachine.modules['my-module-1']);
 	},
 
 	"Should return an instantiable constructor": function() {
-		var View = FruitMachine.define({ module: 'new-module-1' });
+		var View = fruitmachine.define({ module: 'new-module-1' });
 		var view = new View();
 
 		assert.defined(view._fmid);
@@ -16,7 +16,7 @@ buster.testCase('FruitMachine.define()', {
 	},
 
 	"Should find module from internal module store if a `module` parameter is passed": function() {
-		var apple = new FruitMachine({ module: 'apple' });
+		var apple = new fruitmachine({ module: 'apple' });
 
 		assert.equals('apple', apple.module());
 		assert.defined(apple.template);
@@ -24,7 +24,7 @@ buster.testCase('FruitMachine.define()', {
 
 	"Not defining reserved methods should not rewrite keys with prefixed with '_'": function() {
 		var setup = this.spy();
-		var View = FruitMachine.define({
+		var View = fruitmachine.define({
 			module: 'foobar'
 		});
 
@@ -37,7 +37,7 @@ buster.testCase('FruitMachine.define()', {
 		var setup1 = this.spy();
 		var setup2 = this.spy();
 
-		var View1 = FruitMachine.define({
+		var View1 = fruitmachine.define({
 			module: 'new-module-1',
 			random: 'prop',
 			template: helpers.templates.apple,
@@ -45,7 +45,7 @@ buster.testCase('FruitMachine.define()', {
 			setup: setup1
 		});
 
-		var View2 = FruitMachine.define(View1.extend({
+		var View2 = fruitmachine.define(View1.extend({
 			module: 'new-module-2',
 			random: 'different',
 			initialize: initialize2,
@@ -70,7 +70,7 @@ buster.testCase('FruitMachine.define()', {
 	},
 
 	tearDown: function() {
-		delete FruitMachine.modules['my-module-1'];
-		delete FruitMachine.modules['my-module-2'];
+		delete fruitmachine.modules['my-module-1'];
+		delete fruitmachine.modules['my-module-2'];
 	}
 });

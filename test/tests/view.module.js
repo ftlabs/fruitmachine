@@ -2,9 +2,9 @@
 buster.testCase('View#module()', {
 	setUp: function() {
     var layout = new Layout({});
-    var apple = new Apple({ id: 'slot_1' });
-    var orange = new Orange({ id: 'slot_2' });
-    var pear = new Pear({ id: 'slot_3' });
+    var apple = new Apple({ slot: 1 });
+    var orange = new Orange({ slot: 2 });
+    var pear = new Pear({ slot: 3 });
 
     layout
       .add(apple)
@@ -21,11 +21,10 @@ buster.testCase('View#module()', {
   "Should return the first child module with the specified type.": function() {
     var child = this.view.module('pear');
 
-    assert.equals(child.id(), 'slot_3');
+    assert.equals(child, this.view.children[2]);
   },
 
   "If there is more than one child of this module type, only the first is returned.": function() {
-
     this.view
       .add({ module: 'apple' });
 

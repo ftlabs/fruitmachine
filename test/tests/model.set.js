@@ -2,7 +2,7 @@
 buster.testCase('Model#set()', {
 
   "Should be able to set data by key.": function() {
-    var model = new FruitMachine.Model();
+    var model = new fruitmachine.Model();
     var key = 'myKey';
     var value = 'myValue';
 
@@ -12,7 +12,7 @@ buster.testCase('Model#set()', {
   },
 
   "Should be able to set using object literal": function() {
-    var model = new FruitMachine.Model();
+    var model = new fruitmachine.Model();
     var data = {
       myKey1: 'myValue1',
       myKey2: 'myValue2'
@@ -25,7 +25,7 @@ buster.testCase('Model#set()', {
   },
 
   "Should fire a `change` event when data is set": function() {
-    var model = new FruitMachine.Model();
+    var model = new fruitmachine.Model();
     var callback = this.spy();
 
     model.on('change', callback);
@@ -35,7 +35,7 @@ buster.testCase('Model#set()', {
   },
 
   "Should fire a `datachange:&lt;property&gt;` event": function() {
-    var model = new FruitMachine.Model();
+    var model = new fruitmachine.Model();
     var callback = this.spy();
 
     model.on('change:foo', callback);
@@ -45,7 +45,7 @@ buster.testCase('Model#set()', {
   },
 
   "Should fire a `datachange:&lt;property&gt;` for each key in object mixin": function() {
-    var model = new FruitMachine.Model();
+    var model = new fruitmachine.Model();
     var callback1 = this.spy();
     var callback2 = this.spy();
     var data = { foo: 'foo', bar: 'bar' };
@@ -59,7 +59,7 @@ buster.testCase('Model#set()', {
   },
 
   "Should allow falsey values to be set": function() {
-    var model = new FruitMachine.Model();
+    var model = new fruitmachine.Model();
 
     model.set('foo', false);
     assert.equals(model.get('foo'), false);

@@ -3,7 +3,16 @@ buster.testCase('View#id()', {
   setUp: helpers.createView,
 
   "Should return a child by id.": function() {
-    var child = this.view.id('slot_1');
+    var layout = new Layout({
+      children: {
+        1: {
+          module: 'apple',
+          id: 'some_id'
+        }
+      }
+    });
+
+    var child = layout.id('some_id');
     assert.defined(child);
   },
 

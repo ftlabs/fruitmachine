@@ -2,7 +2,7 @@
 buster.testCase('Model#clear()', {
 
   "Should empty the data store": function() {
-    var model = new FruitMachine.Model({ foo: 'bar' });
+    var model = new fruitmachine.Model({ foo: 'bar' });
 
     assert.equals(model.get('foo'), 'bar');
 
@@ -12,7 +12,7 @@ buster.testCase('Model#clear()', {
   },
 
   "Should fire a `change` event": function() {
-    var model = new FruitMachine.Model({ foo: 'bar' });
+    var model = new fruitmachine.Model({ foo: 'bar' });
     var callback = this.spy();
 
     model.on('change', callback);

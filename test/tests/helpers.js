@@ -1,6 +1,5 @@
-buster.testCase('FruitMachine#helpers()', {
+buster.testCase('fruitmachine#helpers()', {
   setUp: function() {
-
     var helper = this.helper = function(view) {
       view.on('initialize', helper.initialize);
       view.on('setup', helper.setup);
@@ -19,11 +18,10 @@ buster.testCase('FruitMachine#helpers()', {
       teardown: this.spy(this.helper, 'teardown'),
       destroy: this.spy(this.helper, 'destroy')
     };
-
   },
 
   "helper `initialize` should have been called": function() {
-    var view = new FruitMachine({
+    var view = fruitmachine({
       module: 'apple',
       helpers: [this.helper]
     });
@@ -32,7 +30,7 @@ buster.testCase('FruitMachine#helpers()', {
   },
 
   "helper `setup` should have been called": function() {
-    var view = new FruitMachine({
+    var view = fruitmachine({
       module: 'apple',
       helpers: [this.helper]
     });
@@ -46,7 +44,7 @@ buster.testCase('FruitMachine#helpers()', {
   },
 
   "helper `teardown` and `destroy` should have been called": function() {
-    var view = new FruitMachine({
+    var view = fruitmachine({
       module: 'apple',
       helpers: [this.helper]
     });
