@@ -1,5 +1,5 @@
 (function(e){if("function"==typeof bootstrap)bootstrap("fruitmachine",e);else if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else if("undefined"!=typeof ses){if(!ses.ok())return;ses.makeFruitmachine=e}else"undefined"!=typeof window?window.fruitmachine=e():global.fruitmachine=e()})(function(){var define,ses,bootstrap,module,exports;
-return (function(e,t,n){function i(n,s){if(!t[n]){if(!e[n]){var o=typeof require=="function"&&require;if(!s&&o)return o(n,!0);if(r)return r(n,!0);throw new Error("Cannot find module '"+n+"'")}var u=t[n]={exports:{}};e[n][0](function(t){var r=e[n][1][t];return i(r?r:t)},u,u.exports)}return t[n].exports}var r=typeof require=="function"&&require;for(var s=0;s<n.length;s++)i(n[s]);return i})({1:[function(require,module,exports){
+return (function(e,t,n){function i(n,s){if(!t[n]){if(!e[n]){var o=typeof require=="function"&&require;if(!s&&o)return o(n,!0);if(r)return r(n,!0);throw new Error("Cannot find module '"+n+"'")}var u=t[n]={exports:{}};e[n][0].call(u.exports,function(t){var r=e[n][1][t];return i(r?r:t)},u,u.exports)}return t[n].exports}var r=typeof require=="function"&&require;for(var s=0;s<n.length;s++)i(n[s]);return i})({1:[function(require,module,exports){
 
 /*jslint browser:true, node:true*/
 
@@ -124,6 +124,7 @@ module.exports = function(options) {
     templateInstance: 'child'
   };
 
+  // Mixin events and return
   return events(fm);
 };
 },{"./define":4,"./view":5,"utils":6,"event":7}],6:[function(require,module,exports){
@@ -683,13 +684,14 @@ module.exports = function(fm) {
     var fromDOM = options.fromDOM !== false;
     var parent = this.parent;
     var el = this.el;
+    var parentNode = el && el.parentNode;
     var index;
 
     // Unless stated otherwise,
     // remove the view element
     // from its parent node.
-    if (fromDOM && el && el.parentNode) {
-      el.parentNode.removeChild(el);
+    if (fromDOM && parentNode) {
+      parentNode.removeChild(el);
     }
 
     if (parent) {
@@ -1213,10 +1215,9 @@ module.exports = function(fm) {
    */
   proto.setElement = function(el) {
     var existing = this.el;
+    var parentNode = existing && existing.parentNode;
 
-    if (existing && existing.parentNode) {
-      existing.parentNode.replaceChild(el, existing);
-    }
+    if (parentNode) parentNode.replaceChild(el, existing);
 
     // Purge all element caches
     this.purgeElementCaches();
