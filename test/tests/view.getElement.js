@@ -40,6 +40,7 @@ buster.testCase('View#getElement()', {
   },
 
   "Should find element in the DOM if injected": function() {
+    var sandbox = helpers.createSandbox();
     var spy1 = this.spy(document, 'getElementById');
     var spy2 = this.spy(fruitmachine.util, 'querySelectorId');
     var el1, el2;
@@ -64,7 +65,6 @@ buster.testCase('View#getElement()', {
     // Restore spys
     document.getElementById.restore();
     fruitmachine.util.querySelectorId.restore();
-    helpers.emptySandbox();
   },
 
   "Should return a different element if parent is re-rendered in DOM": function() {
