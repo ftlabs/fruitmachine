@@ -3,6 +3,15 @@
 ### View();
 
 View constructor
+\nOptions:
+
+ - `id {String}` a unique id to query by
+ - `model {Object|Model}` the data with which to associate this module
+ - `tag {String}` tagName to use for the root element
+ - `classes {Array}` list of classes to add to the root element
+ - `template {Function}` a template to use for rendering
+ - `helpers {Array}` a list of helper function to use on this module
+ - `children {Object|Array}` list of child modules
 
 ### View#add();
 

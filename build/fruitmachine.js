@@ -92,8 +92,11 @@ var utils = require('utils');
 var events = require('event');
 
 /**
- * Express-style function for
- * creating FruitMachines.
+ * Creates a fruitmachine
+ *
+ * Options:
+ *
+ *  - `Model` A model constructor to use (must have `.toJSON()`)
  *
  * @param {Object} options
  */
@@ -103,8 +106,8 @@ module.exports = function(options) {
    * Shortcut method for
    * creating lazy views.
    *
-   * @param  {[type]} options [description]
-   * @return {[type]}         [description]
+   * @param  {Object} options
+   * @return {View}
    */
   function fm(options) {
     var Module = fm.modules[options.module];
@@ -462,6 +465,16 @@ module.exports = function(fm) {
   /**
    * View constructor
    *
+   * Options:
+   *
+   *  - `id {String}` a unique id to query by
+   *  - `model {Object|Model}` the data with which to associate this module
+   *  - `tag {String}` tagName to use for the root element
+   *  - `classes {Array}` list of classes to add to the root element
+   *  - `template {Function}` a template to use for rendering
+   *  - `helpers {Array}`a list of helper function to use on this module
+   *  - `children {Object|Array}` list of child modules
+   *
    * @constructor
    * @param {Object} options
    * @api public
@@ -500,13 +513,13 @@ module.exports = function(fm) {
     this.helpers = this.helpers || options.helpers || [];
     this.template = this._setTemplate(options.template || this.template);
     this.slot = options.slot || options.slot;
-    this.children = [];
-    this.slots = {};
 
     // Create id and module
     // lookup objects
+    this.children = [];
     this._ids = {};
     this._modules = {};
+    this.slots = {};
 
     // Use the model passed in,
     // or create a model from
@@ -517,6 +530,7 @@ module.exports = function(fm) {
       : model;
 
     // Attach helpers
+    // TODO: Fix this for non-ES5 environments
     this.helpers.forEach(this.attachHelper, this);
 
     // We fire and 'inflation' event here
