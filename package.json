@@ -44,7 +44,7 @@
     "buster": "~0.6.2",
     "grunt-readme": "git://github.com/wilsonpage/grunt-readme.git",
     "grunt-version": "git://github.com/wilsonpage/grunt-version.git",
-    "browserify": "~2.11.0",
+    "grunt-browserify": "*",
     "grunt-buster": "~0.1.2"
   },
   "keywords": [],

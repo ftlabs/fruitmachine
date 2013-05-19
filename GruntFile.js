@@ -14,6 +14,16 @@ module.exports = function(grunt) {
       ]
     },
 
+    browserify: {
+      build: {
+        src: 'lib/index.js',
+        dest: 'build/<%= pkg.name %>.js'
+      },
+      options: {
+        standalone: '<%= pkg.name %>'
+      }
+    },
+
     readme: {
       dest: {
         code: [
@@ -28,9 +38,6 @@ module.exports = function(grunt) {
     },
 
     uglify: {
-      options: {
-        banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
-      },
       build: {
         src: 'build/<%= pkg.name %>.js',
         dest: 'build/<%= pkg.name %>.min.js'
@@ -46,6 +53,7 @@ module.exports = function(grunt) {
   });
 
   grunt.loadNpmTasks('grunt-buster');
+  grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-readme');
