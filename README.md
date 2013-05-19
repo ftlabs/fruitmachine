@@ -1,12 +1,12 @@
 # FruitMachine
 
-A lightweight modular layout engine for client and server. Currently powering the award winning [FT Web App](http://apps.ft.com/ftwebapp/).
+A lightweight component layout engine for client and server. Currently powering the award winning [FT Web App](http://apps.ft.com/ftwebapp/).
 
 FruitMachine was designed to construct nested view layouts from strictly modular components. We wanted it to be as light and unopinionated as possible so that it could be applied to almost any layout problem.
 
 ```js
 // Define a module
-var Apple = FruitMachine.define({
+var Apple = fruitmachine.define({
   module: 'apple',
   template: function(){ return 'hello' }
 });
@@ -52,24 +52,35 @@ Download the [production version][min] (~3k gzipped) or the [development version
 - [Introduction](fruitmachine/blob/master/docs/introduction.md)
 - [Getting started](fruitmachine/blob/master/docs/getting-started.md)
 - [Defining modules](fruitmachine/blob/master/docs/view-defining-modules.md)
+- [Slots](fruitmachine/blob/master/docs/slots.md)
 - [View assembly](fruitmachine/blob/master/docs/view-assembly.md)
 - [Instantiation](fruitmachine/blob/master/docs/view-instantiation.md)
-- [Queries](fruitmachine/blob/master/docs/view-queries.md)
 - [Templates](fruitmachine/blob/master/docs/view-templates.md)
 - [Template markup](fruitmachine/blob/master/docs/view-template-markup.md)
 - [Rendering](fruitmachine/blob/master/docs/view-rendering.md)
-- [El](fruitmachine/blob/master/docs/view-el.md)
-- [Helpers](fruitmachine/blob/master/docs/view-helpers.md)
 - [DOM injection](fruitmachine/blob/master/docs/view-injection.md)
+- [El](fruitmachine/blob/master/docs/view-el.md)
+- [Queries](fruitmachine/blob/master/docs/view-queries.md)
+- [Helpers](fruitmachine/blob/master/docs/view-helpers.md)
 - [Removing & destroying](fruitmachine/blob/master/docs/view-removing-and-destroying.md)
 - [Extending](fruitmachine/blob/master/docs/view-extending.md)
 
 ## Tests
 
+#### With PhantomJS
+
 ```
 $ npm install
 $ npm test
 ```
+
+#### Without PhantomJS
+
+```
+$ node_modules/.bin/buster-static
+```
+
+Visit http://localhost:8282/ in browser
 
 ## Author
 
@@ -79,7 +90,6 @@ $ npm test
 
 - **Wilson Page** - [@wilsonpage](http://github.com/wilsonpage)
 - **Matt Andrews** - [@matthew-andrews](http://github.com/matthew-andrews)
-
 
 ## License
 Copyright (c) 2012 The Financial Times Limited

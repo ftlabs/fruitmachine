@@ -17,11 +17,8 @@ module.exports = function(grunt) {
     readme: {
       dest: {
         code: [
-          'lib/view/index.js',
+          { path: 'lib/view/index.js', cons: 'View' },
           { path: 'lib/view/events.js', cons: 'View' }
-        ],
-        partials: [
-          'docs/templates/intro.hogan'
         ],
         output: {
           'docs/templates/api.hogan': 'docs/api.md',
@@ -58,5 +55,5 @@ module.exports = function(grunt) {
   grunt.loadTasks('tasks');
 
   // Default task.
-  grunt.registerTask('default', ['browserify', 'uglify']);
+  grunt.registerTask('default', ['browserify', 'uglify', 'readme']);
 };
