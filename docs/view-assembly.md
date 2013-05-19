@@ -22,15 +22,15 @@ orange.children.length; //=> 0
 ```js
 var layout = new Layout({
   children: [
-    {
+    1: {
       module: 'apple',
-      children: [
-        {
+      children: {
+        1: {
           module: 'orange'
         }
-      ]
+      }
     }
-  ]
+  }
 });
 
 layout.children.length; //=> 1
@@ -41,20 +41,18 @@ orange.children.length; //=> 0
 #### Super lazy
 
 ```js
-var layout = new FruitMachine.View({
+var layout = fruitmachine({
   module: 'layout',
-  children: [
-    {
-      id: 'layoutChild1',
+  children: {
+    1: {
       module: 'apple',
-      children: [
-        {
-          id: 'appleChild1',
+      children: {
+        1: {
           module: 'orange'
         }
-      ]
+      }
     }
-  ]
+  }
 });
 
 layout.children.length; //=> 1
@@ -67,27 +65,25 @@ orange.children.length; //=> 0
 Sometimes you may wish to add or replace modules before the layout is rendered. This is a good use case for `.remove()`.
 
 ```js
-var layout = new FruitMachine.View({
+var layout = fruitmachine({
   module: 'layout',
   children: [
-    {
-      id: 'layoutChild1',
+    1: {
       module: 'apple',
-      children: [
-        {
-          id: 'appleChild1',
+      children: {
+        1: {
           module: 'orange'
         }
-      ]
+      }
     }
   ]
 });
 
 var apple = layout.module('apple');
 var orange = layout.module('orange');
-var banana = new Banana({ id: 'appleChild1' });
+var banana = new Banana();
 
 apple
   .remove(orange)
-  .add(banana);
+  .add(banana, { slot: 1 });
 ```

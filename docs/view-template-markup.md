@@ -1,35 +1,39 @@
 # Markup
 
-When FruitMachine templates your View modules it passes some important data, on top of any data that you have explicitly declared yourself. This data contains any child View markup, and it's up to you to put it n the right place.
+When FruitMachine templates your View modules it passes some important data, on top of any data that you have explicitly declared yourself. This data contains any child View markup, and it's up to you to put it in the right place.
 
 It gives you the following data:
 
 - An array of child modules in the form of `children`.
-- A variable for each child View in the form of the child's `id`.
+- A variable for each child View in the form of the child's `slot`.
 
 This gives you the ability to print child html eactly where you want it, or to loop and print all children of the current View. If you don't print a module's child View's into the markup then they will not appear in your final view.
 
-### Place child modules by `id`
+### Place child modules by `slot`
 
-The following example demonstrates how you can place child modules by `id`.
+The following example demonstrates how you can place child modules by `slot`.
 
 ##### Create the view
 
 ```js
-var apple = new Apple({ id: 'my_apple' });
+var apple = new Apple();
 var layout = new Layout();
 
 // Add a child view
-layout.add(apple)
+layout.add(apple, { slot: 1 });
 ```
+
+We created an instance of our `Layout` module, then an instance of our `Apple` module. We then added the `apple` module as a child of the `layout` module. In the options object we defined which slot we wanted the `apple` module to sit in.
 
 ##### Template markup
 
 *layout.mustache*
 
 ```html
-{{{my_apple}}}
+{{{1}}}
 ```
+
+In `Layout`'s template we print slots by name. In this case we have named our slot '1' so we have printed `{{{1}}}` into our template.
 
 *apple.mustache*
 
@@ -51,15 +55,15 @@ layout.el.outerHTML;
 
 ### Loop and place all child modules
 
-In some cases the amount of child View modules is not known, we just want to render them all. The list.mustache template uses the special `children` (Array) and `child` (HTML string) keys to interate and print each View module's html. In this example we are using dummy `List`  and `Item` View constructors  
+In some cases the amount of child View modules is not known, we just want to render them all. The list.mustache template uses the special `children` (Array) and `child` (HTML string) keys to interate and print each View module's html. In this example we are using dummy `List`  and `Item` View constructors
 
 ##### Create the view
 
 ```js
 var list = new List();
-var item1 = new Item({ data: { name: 'Wilson' } });
-var item2 = new Item({ data: { name: 'Matt' } });
-var item3 = new Item({ data: { name: 'Jim' } });
+var item1 = new Item({ model: { name: 'Wilson' } });
+var item2 = new Item({ model: { name: 'Matt' } });
+var item3 = new Item({ model: { name: 'Jim' } });
 
 list
   .add(item1)
@@ -77,7 +81,7 @@ list
 {{#children}}
 ```
 
-**Note:** It's worth noting that within the scope of the loop, the current child's `data` is accessible. So `{{name}}`  within the `{{#children}}` loop would work.
+**Note:** It's worth noting that within the scope of the loop, the current child's `model` is accessible. So `{{name}}`  within the `{{#children}}` loop would work.
 
 *item.mustache*
 
@@ -91,9 +95,9 @@ My name is {{name}}
 layout.render();
 layout.el.outerHTML;
 //=> <div class="list">
-//      <div class="item">My name is Wilson</div></div>
-//      <div class="item">My name is Matt</div></div>
-//      <div class="item">My name is Jim</div></div>
+//      <div class="item">My name is Wilson</div>
+//      <div class="item">My name is Matt</div>
+//      <div class="item">My name is Jim</div>
 //   </div>
 ```
 

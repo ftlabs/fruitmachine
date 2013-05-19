@@ -1,4 +1,4 @@
-# DOM injection
+## DOM injection
 
 Once you have [assembled](assembling-views.md) and [rendered](rendering-views.md) your View you'll want to inject it into the DOM at some point. *FruitMachine* has two ways of doing this:
 

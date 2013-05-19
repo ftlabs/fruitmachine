@@ -50,23 +50,33 @@ Download the [production version][min] (~3k gzipped) or the [development version
 - [Introduction](fruitmachine/blob/master/docs/introduction.md)
 - [Getting started](fruitmachine/blob/master/docs/getting-started.md)
 - [Defining modules](fruitmachine/blob/master/docs/view-defining-modules.md)
+- [Slots](fruitmachine/blob/master/docs/slots.md)
 - [View assembly](fruitmachine/blob/master/docs/view-assembly.md)
 - [Instantiation](fruitmachine/blob/master/docs/view-instantiation.md)
-- [Queries](fruitmachine/blob/master/docs/view-queries.md)
 - [Templates](fruitmachine/blob/master/docs/view-templates.md)
 - [Template markup](fruitmachine/blob/master/docs/view-template-markup.md)
 - [Rendering](fruitmachine/blob/master/docs/view-rendering.md)
-- [El](fruitmachine/blob/master/docs/view-el.md)
-- [Helpers](fruitmachine/blob/master/docs/view-helpers.md)
 - [DOM injection](fruitmachine/blob/master/docs/view-injection.md)
+- [El](fruitmachine/blob/master/docs/view-el.md)
+- [Queries](fruitmachine/blob/master/docs/view-queries.md)
+- [Helpers](fruitmachine/blob/master/docs/view-helpers.md)
 - [Removing & destroying](fruitmachine/blob/master/docs/view-removing-and-destroying.md)
 - [Extending](fruitmachine/blob/master/docs/view-extending.md)
 
 ## Tests
 
+With PhantomJS
+
 ```
 $ npm install
 $ npm test
+```
+
+Without PhantomJS
+
+```
+$ node_modules/.bin/buster-static
+... go to localhost:1111 to run tests in browser
 ```
 
 ## Author

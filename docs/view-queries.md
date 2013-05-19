@@ -1,8 +1,8 @@
-#Finding modules
+## Finding modules
 
 When working with a nested (DOM like) view structure, you need a way get to child view instances. FruitMachine has three APIs for this:
 
-### View#module();
+#### View#module();
 
 Returns a single descendent View instance by module type. Similar to `Element.prototype.querySelector`.
 
@@ -11,7 +11,7 @@ apple.module('orange');
 //=> orange
 ```
 
-### View#modules();
+#### View#modules();
 
 Returns a list of descendent View instance by module type. Similar to `Element.prototype.querySelectorAll`.
 
@@ -20,7 +20,7 @@ apple.modules('orange');
 //=> [orange, orange, ...]
 ```
 
-### View#id();
+#### View#id();
 
 Returns a single descendent View instance by id. Similar to `document.getElementById`.
 

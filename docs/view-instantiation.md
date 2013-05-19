@@ -1,4 +1,4 @@
-# Instantiation
+## Instantiation
 
 There are two ways to instantiate a FruitMachine View:
 
