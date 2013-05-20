@@ -10,13 +10,13 @@ Our tabbed container needs some markup, some styling and some basic JavaScript i
 
 #### What is a 'layout'?
 
-As far a FruitMachine is concerned there is no difference between layouts and modules, all modules are the same; they are a piece of the UI that has a template, maybe some interaction logic, and perhaps holds some child modules.
+As far as FruitMachine is concerned there is no difference between layouts and modules, all modules are the same; they are a piece of the UI that has a template, maybe some interaction logic, and perhaps holds some child modules.
 
-When we talk about layout modules we are refering to the core page scafolding; a module that usually fills the page, and defines gaps for other modules to sit in.
+When we talk about layout modules we are refering to the core page scaffolding; a module that usually fills the page, and defines gaps for other modules to sit in.
 
 #### Comparisons with the DOM
 
-A FruitMachine view is like a simplified DOM tree. Like elements, views have properties, methods and can hold children. There is no limit to how deep a view can become. When an event is fired on a view, it will bubble right to top of the structure, just like DOM events.
+A FruitMachine view is like a simplified DOM tree. Like elements, views have properties, methods and can hold children. There is no limit to how deeply nested a set of views can be. When an event is fired on a view, it will bubble right to top of the structure, just like DOM events.
 
 #### What about my data/models?
 
