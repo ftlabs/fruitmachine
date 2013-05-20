@@ -1,13 +1,13 @@
 # Markup
 
-When FruitMachine templates your View modules it passes some important data, on top of any data that you have explicitly declared yourself. This data contains any child View markup, and it's up to you to put it n the right place.
+When FruitMachine renders your View modules by calling the template function, it passes some important data, in addition to any that you have explicitly declared yourself. This data includes the rendered markup from each of the View's child Views.  It's up to your template function to put it in the right place.
 
 It gives you the following data:
 
 - An array of child modules in the form of `children`.
 - A variable for each child View in the form of the child's `id`.
 
-This gives you the ability to print child html eactly where you want it, or to loop and print all children of the current View. If you don't print a module's child View's into the markup then they will not appear in your final view.
+This gives you the ability to print child HTML eactly where you want it, or to loop and print all children of the current View. If you don't print a module's child View's into the markup then they will not appear in your final view.
 
 ### Place child modules by `id`
 
@@ -51,7 +51,7 @@ layout.el.outerHTML;
 
 ### Loop and place all child modules
 
-In some cases the amount of child View modules is not known, we just want to render them all. The list.mustache template uses the special `children` (Array) and `child` (HTML string) keys to interate and print each View module's html. In this example we are using dummy `List`  and `Item` View constructors  
+In some cases the number of child View modules is not known, and we just want to render them all. The list.mustache template uses the special `children` (Array) and `child` (HTML string) keys to iterate and print each View module's HTML. In this example we are using dummy `List`  and `Item` View constructors.
 
 ##### Create the view
 
