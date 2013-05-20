@@ -2,7 +2,7 @@
   "name": "fruitmachine",
   "title": "FruitMachine",
   "description": "A lightweight component layout engine for client and server.",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "homepage": "https://github.com/wilsonpage/fruitmachine",
   "author": {
     "name": "Wilson Page",
