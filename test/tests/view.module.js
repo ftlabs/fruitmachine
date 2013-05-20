@@ -34,5 +34,13 @@ buster.testCase('View#module()', {
 
     assert.equals(child, firstChild);
     refute.equals(child, lastChild);
+  },
+
+  "Should return the module name if defined with the name key": function() {
+    var Henry = fruitmachine.define({ name: 'henry' });
+    var henry = new Henry();
+
+    assert.equals(henry.module(), 'henry');
+    assert.equals(henry.name, 'henry');
   }
 });

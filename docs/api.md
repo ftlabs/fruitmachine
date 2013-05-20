@@ -1,6 +1,21 @@
 # API
 
-### View();
+### fruitmachine.define()
+
+Defines a module.
+\nOptions:
+
+ - `name {String}` the name of the module
+ - `tag {String}` the tagName to use for the root element
+ - `classes {Array}` a list of classes to add to the root element
+ - `template {Function}` the template function to use when rendering
+ - `helpers {Array}` a lsit of helpers to apply to the module
+ - `initialize {Function}` custom logic to run when module instance created
+ - `setup {Function}` custom logic to run when `.setup()` is called (directly or indirectly)
+ - `teardown {Function}` custom logic to unbind/undo anything setup introduced (called on `.destroy()` and sometimes on `.setup()` to avoid double binding events)
+ - `destroy {Function}` logic to permanently destroy all references
+
+### View#View
 
 View constructor
 \nOptions:
@@ -13,7 +28,7 @@ View constructor
  - `helpers {Array}`a list of helper function to use on this module
  - `children {Object|Array}` list of child modules
 
-### View#add();
+### View#add()
 
 Adds a child view(s) to another View.
 \nOptions:
@@ -22,7 +37,7 @@ Adds a child view(s) to another View.
  - `inject` Injects the child's view element into the parent's
  - `slot` The slot at which to insert the child
 
-### View#remove();
+### View#remove()
 
 Removes a child view from
 its current View contexts
@@ -45,7 +60,7 @@ otherwise stated.
     layout.remove(apple, { el: false });
     apple.remove({ el: false });
 
-### View#id();
+### View#id()
 
 Returns a decendent module
 by id, or if called with no
@@ -58,7 +73,7 @@ arguments, returns this view's id.
     myView.id('my_other_views_id');
     //=> View
 
-### View#module();
+### View#module()
 
 Returns the first descendent
 View with the passed module type.
@@ -72,7 +87,7 @@ View's own module type is returned.
     myView.modules('apple');
     //=> View
 
-### View#modules();
+### View#modules()
 
 Returns a list of descendent
 Views that match the module
@@ -86,7 +101,7 @@ Element.querySelectorAll();).
     myView.modules('apple');
     //=> [ View, View, View ]
 
-### View#each();
+### View#each()
 
 Calls the passed function
 for each of the view's
@@ -97,7 +112,7 @@ children.
         // Do stuff with each child view...
     });
 
-### View#toHTML();
+### View#toHTML()
 
 Templates the view, including
 any descendent views returning
@@ -120,14 +135,14 @@ and printed with `{{{child}}}}`.
         {{{child}}}
     {{/children}}
 
-### View#render();
+### View#render()
 
 Renders the view and replaces
 the `view.el` with a freshly
 rendered node.
 \nFires a `render` event on the view.
 
-### View#setup();
+### View#setup()
 
 Sets up a view and all descendent
 views.
@@ -142,7 +157,7 @@ Options:
 
  - `shallow` Does not recurse when `true` (default `false`)
 
-### View#teardown();
+### View#teardown()
 
 Tearsdown a view and all descendent
 views that have been setup.
@@ -153,7 +168,7 @@ Options:
 
  - `shallow` Does not recurse when `true` (default `false`)
 
-### View#destroy();
+### View#destroy()
 
 Completely destroys a view. This means
 a view is torn down, removed from it's
@@ -169,21 +184,21 @@ Options:
 
  - `fromDOM` Whether the view should be removed from DOM (default `true`)
 
-### View#empty();
+### View#empty()
 
 Destroys all children.
 
-### View#inject();
+### View#inject()
 
 Empties the destination element
 and appends the view into it.
 
-### View#appendTo();
+### View#appendTo()
 
 Appends the view element into
 the destination element.
 
-### View#toJSON();
+### View#toJSON()
 
 Returns a JSON represention of
 a FruitMachine View. This can
@@ -192,11 +207,11 @@ passed into new FruitMachine(json)
 to inflate serverside rendered
 views.
 
-### View#on();
+### View#on()
 
 Registers a event listener.
 
-### View#fire();
+### View#fire()
 
 Fires an event on a view.
 

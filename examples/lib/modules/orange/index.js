@@ -1,5 +1,5 @@
 
 var Orange = FruitMachine.define({
-	module: 'orange',
+	name: 'orange',
 	template: templateOrange
 });

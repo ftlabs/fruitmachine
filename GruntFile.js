@@ -27,8 +27,9 @@ module.exports = function(grunt) {
     readme: {
       dest: {
         code: [
-          { path: 'lib/view/index.js', cons: 'View' },
-          { path: 'lib/view/events.js', cons: 'View' }
+          { path: 'lib/define.js', ctx: { receiver: 'fruitmachine', name: 'define', type: 'method' }},
+          { path: 'lib/view/index.js', ctx: { cons: 'View' }},
+          { path: 'lib/view/events.js', ctx: { cons: 'View' }}
         ],
         output: {
           'docs/templates/api.hogan': 'docs/api.md',

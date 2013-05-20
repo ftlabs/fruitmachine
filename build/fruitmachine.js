@@ -35,32 +35,43 @@ module.exports = fruitMachine({ Model: Model });
 
 'use strict';
 
-/**
- * Creates and registers a
- * FruitMachine view constructor
- * and stores an internal reference.
- *
- * The user is able to pass in an already
- * defined View constructor, or an object
- * representing the View's prototype.
- *
- * @param  {Object|View}
- * @return {View}
- */
 module.exports = function(fm) {
+
+  /**
+   * Defines a module.
+   *
+   * Options:
+   *
+   *  - `name {String}` the name of the module
+   *  - `tag {String}` the tagName to use for the root element
+   *  - `classes {Array}` a list of classes to add to the root element
+   *  - `template {Function}` the template function to use when rendering
+   *  - `helpers {Array}` a lsit of helpers to apply to the module
+   *  - `initialize {Function}` custom logic to run when module instance created
+   *  - `setup {Function}` custom logic to run when `.setup()` is called (directly or indirectly)
+   *  - `teardown {Function}` custom logic to unbind/undo anything setup introduced (called on `.destroy()` and sometimes on `.setup()` to avoid double binding events)
+   *  - `destroy {Function}` logic to permanently destroy all references
+   *
+   * @param  {Object|View} props
+   * @return {View}
+   * @public true
+   */
   return function(props) {
-    var view = ('object' === typeof props)
+    var Module = ('object' === typeof props)
       ? fm.View.extend(props)
       : props;
 
-    var module = view.prototype._module;
+    // Allow modules to be named
+    // via 'name:' or 'module:'
+    var proto = Module.prototype;
+    var name = proto.name || proto._module;
 
     // Store the module by module type
     // so that module can be referred to
     // by just a string in layout definitions
-    if (module) fm.modules[module] = view;
+    if (name) fm.modules[name] = Module;
 
-    return view;
+    return Module;
   };
 };
 
@@ -507,13 +518,13 @@ module.exports = function(fm) {
   proto._configure = function(options) {
 
     // Setup static properties
-    this._id = options.id || util.uniqueId('auto_');
+    this._id = options.id || util.uniqueId('id-');
     this._fmid = options.fmid || util.uniqueId('fmid');
     this.tag = options.tag || this.tag || 'div';
     this.classes = this.classes || options.classes || [];
     this.helpers = this.helpers || options.helpers || [];
     this.template = this._setTemplate(options.template || this.template);
-    this.slot = options.slot || options.slot;
+    this.slot = options.slot;
 
     // Create id and module
     // lookup objects
@@ -715,10 +726,10 @@ module.exports = function(fm) {
    * @api private
    */
   proto._addLookup = function(child) {
+    var module = child.module();
 
     // Add a lookup for module
-    this._modules[child._module] = this._modules[child._module] || [];
-    this._modules[child._module].push(child);
+    (this._modules[module] = this._modules[module] || []).push(child);
 
     // Add a lookup for id
     this._ids[child.id()] = child;
@@ -737,10 +748,11 @@ module.exports = function(fm) {
    * @api private
    */
   proto._removeLookup = function(child) {
+    var module = child.module();
 
     // Remove the module lookup
-    var index = this._modules[child._module].indexOf(child);
-    this._modules[child._module].splice(index, 1);
+    var index = this._modules[module].indexOf(child);
+    this._modules[module].splice(index, 1);
 
     // Remove the id and slot lookup
     delete this._ids[child._id];
@@ -820,7 +832,7 @@ module.exports = function(fm) {
    * @return {View}
    */
   proto.module = function(key) {
-    if (!key) return this._module;
+    if (!arguments.length) return this._module || this.name;
 
     var view = this._modules[key];
     if (view) return view[0];
@@ -951,7 +963,7 @@ module.exports = function(fm) {
    * @api private
    */
   proto._wrapHTML = function(html) {
-    return '<' + this.tag + ' class="' + this._module + ' ' + this.classes.join(' ') + '" id="' + this._fmid + '">' + html + '</' + this.tag + '>';
+    return '<' + this.tag + ' class="' + this.module() + ' ' + this.classes.join(' ') + '" id="' + this._fmid + '">' + html + '</' + this.tag + '>';
   };
 
   /**
@@ -1151,7 +1163,7 @@ module.exports = function(fm) {
     this.destroyed = true;
 
     // Clear references
-    this.el = this.model = this.parent = this._modules = this._module = this._ids = this._id = null;
+    this.el = this.model = this.parent = this._modules = this._ids = this._id = null;
   };
 
   /**
@@ -1311,7 +1323,7 @@ module.exports = function(fm) {
 
     json.id = this.id();
     json.fmid = this._fmid;
-    json.module = this._module;
+    json.module = this.module();
     json.model = this.model.toJSON();
     json.slot = this.slot;
 
@@ -1329,7 +1341,7 @@ module.exports = function(fm) {
   proto.fireStatic = events.fireStatic;
 
   // Allow Views to be extended
-  View.extend = extend(util.keys(View.prototype));
+  View.extend = extend(util.keys(proto));
 
   return View;
 };

@@ -1,6 +1,6 @@
 
 var Apple = FruitMachine.define({
-	module: 'apple',
+	name: 'apple',
 	template: templateApple,
 
 	setup: function() {

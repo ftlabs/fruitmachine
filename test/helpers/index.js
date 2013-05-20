@@ -19,7 +19,7 @@ var templates = helpers.templates = {
 helpers.Views = {};
 
 var Layout = helpers.Views.Layout = fruitmachine.define({
-  module: 'layout',
+  name: 'layout',
   template: templates.layout,
 
   initialize: function() {},
@@ -29,7 +29,7 @@ var Layout = helpers.Views.Layout = fruitmachine.define({
 });
 
 var Apple = helpers.Views.Apple = fruitmachine.define({
-  module: 'apple',
+  name: 'apple',
   template: templates.apple,
 
   initialize: function() {},
@@ -39,7 +39,7 @@ var Apple = helpers.Views.Apple = fruitmachine.define({
 });
 
 var List = helpers.Views.List = fruitmachine.define({
-  module: 'list',
+  name: 'list',
   template: templates.list,
 
   initialize: function() {},
@@ -49,7 +49,7 @@ var List = helpers.Views.List = fruitmachine.define({
 });
 
 var Orange = helpers.Views.Orange = fruitmachine.define({
-  module: 'orange',
+  name: 'orange',
   template: templates.orange,
 
   initialize: function() {},
@@ -59,7 +59,7 @@ var Orange = helpers.Views.Orange = fruitmachine.define({
 });
 
 var Pear = helpers.Views.Pear = fruitmachine.define({
-  module: 'pear',
+  name: 'pear',
   template: templates.pear,
 
   initialize: function() {},

@@ -1,6 +1,6 @@
 
 var List2 = FruitMachine.define({
-	module: 'list-2',
+	name: 'list-2',
 	template: templateList2,
 
 	initialize: function(options) {

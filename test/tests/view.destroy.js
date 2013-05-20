@@ -99,7 +99,6 @@ buster.testCase('View#destroy()', {
     assert.equals(this.view.el, null);
     assert.equals(this.view.model, null);
     assert.equals(this.view.parent, null);
-    assert.equals(this.view._module, null);
     assert.equals(this.view._id, null);
   },
 

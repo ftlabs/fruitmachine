@@ -1,5 +1,5 @@
 
 var LayoutB = FruitMachine.define({
-	module: 'layout-b',
+	name: 'layout-b',
 	template: templateLayoutB
 });
