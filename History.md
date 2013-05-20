@@ -1,3 +1,8 @@
+0.4.2 / 2013-05-20
+==================
+
+  * change allow `name` key as an alternative to `module` in module definitions
+
 0.4.1 / 2013-05-17
 ==================
 
