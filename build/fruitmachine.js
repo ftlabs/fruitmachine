@@ -329,39 +329,6 @@ function mixin(a, b) {
   for (var key in b) a[key] = b[key];
   return a;
 }
-},{}],8:[function(require,module,exports){
-
-'use strict';
-
-/**
- * Locals
- */
-
-var has = {}.hasOwnProperty;
-
-/**
- * Exports
- */
-
-module.exports = function(main) {
-  var args = arguments;
-  var l = args.length;
-  var i = 0;
-  var src;
-  var key;
-
-  while (++i < l) {
-    src = args[i];
-    for (key in src) {
-      if (has.call(src, key)) {
-        main[key] = src[key];
-      }
-    }
-  }
-
-  return main;
-};
-
 },{}],3:[function(require,module,exports){
 
 'use strict';
@@ -482,7 +449,40 @@ proto.toJSON = function() {
 // Mixin events
 events(proto);
 
-},{"mixin":8,"event":7}],5:[function(require,module,exports){
+},{"mixin":8,"event":7}],8:[function(require,module,exports){
+
+'use strict';
+
+/**
+ * Locals
+ */
+
+var has = {}.hasOwnProperty;
+
+/**
+ * Exports
+ */
+
+module.exports = function(main) {
+  var args = arguments;
+  var l = args.length;
+  var i = 0;
+  var src;
+  var key;
+
+  while (++i < l) {
+    src = args[i];
+    for (key in src) {
+      if (has.call(src, key)) {
+        main[key] = src[key];
+      }
+    }
+  }
+
+  return main;
+};
+
+},{}],5:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -1384,7 +1384,7 @@ module.exports = function(fm) {
   return Module;
 };
 
-},{"./events":9,"extend":10,"utils":6}],9:[function(require,module,exports){
+},{"./events":9,"utils":6,"extend":10}],9:[function(require,module,exports){
 
 /**
  * Module Dependencies
