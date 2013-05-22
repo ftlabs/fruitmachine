@@ -9,7 +9,7 @@ buster.testCase('View#render()', {
 
   "Data should be present in the generated markup.": function() {
     var text = 'some orange text';
-    var orange = new helpers.Views.Orange({
+    var orange = new Orange({
       model: {
         text: text
       }
@@ -23,11 +23,11 @@ buster.testCase('View#render()', {
   },
 
   "Child html should be present in the parent.": function() {
-    var layout = new helpers.Views.Layout();
-    var apple = new helpers.Views.Apple({ slot: 1 });
+    var layout = new Layout();
+    var apple = new Apple();
 
     layout
-      .add(apple)
+      .add(apple, 1)
       .render();
 
     firstChild = layout.el.firstElementChild;
@@ -35,14 +35,14 @@ buster.testCase('View#render()', {
   },
 
   "Should be of the tag specified": function() {
-    var apple = new helpers.Views.Apple({ tag: 'ul' });
+    var apple = new Apple({ tag: 'ul' });
 
     apple.render();
     assert.equals('UL', apple.el.tagName);
   },
 
   "Should have classes on the element": function() {
-    var apple = new helpers.Views.Apple({
+    var apple = new Apple({
       classes: ['foo', 'bar']
     });
 
@@ -51,13 +51,43 @@ buster.testCase('View#render()', {
   },
 
   "Should have an id attribute with the value of `fmid`": function() {
-    var apple = new helpers.Views.Apple({
+    var apple = new Apple({
       classes: ['foo', 'bar']
     });
 
     apple.render();
 
     assert.equals(apple._fmid, apple.el.id);
+  },
+
+  "Should have populated all child module.el properties": function() {
+    var layout = new Layout({
+      children: {
+        1: {
+          module: 'apple',
+          children: {
+            1: {
+              module: 'apple',
+              children: {
+                1: {
+                  module: 'apple'
+                }
+              }
+            }
+          }
+        }
+      }
+    });
+
+    var apple1 = layout.module('apple');
+    var apple2 = apple1.module('apple');
+    var apple3 = apple2.module('apple');
+
+    layout.render();
+
+    assert(apple1.el);
+    assert(apple2.el);
+    assert(apple3.el);
   },
 
   "tearDown": helpers.destroyView

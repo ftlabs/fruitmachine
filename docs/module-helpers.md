@@ -1,6 +1,6 @@
 ## Helpers
 
-Helpers are small reusable plugins that you can write to add extra features to a View module ([working example](http://wilsonpage.github.io/fruitmachine/examples/helpers)).
+Helpers are small reusable plugins that you can write to add extra features to a View module ([working example](http://ftlabs.github.io/fruitmachine/examples/helpers)).
 
 ### Defining helpers
 

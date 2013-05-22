@@ -1,6 +1,6 @@
 ## Getting started
 
-Let's start with a very simple example to demonstrate how to work with FruitMachine ([working example here](http://wilsonpage.github.io/fruitmachine/examples/getting-started)):
+Let's start with a very simple example to demonstrate how to work with FruitMachine ([working example here](http://ftlabs.github.io/fruitmachine/examples/getting-started)):
 
 #### Define some modules
 
