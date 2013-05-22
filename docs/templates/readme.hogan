@@ -80,7 +80,7 @@ $ npm test
 $ node_modules/.bin/buster-static
 ```
 
-...then isit http://localhost:8282/ in browser
+...then visit http://localhost:8282/ in browser
 
 ## Author
 
