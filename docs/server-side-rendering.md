@@ -12,6 +12,7 @@ module.exports = fruitmachine.define({
     alert("I'm alive!");
   }
 });
+```
 
 ##### Server
 
