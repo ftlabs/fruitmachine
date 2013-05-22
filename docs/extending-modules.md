@@ -5,7 +5,7 @@ It is common in an application to have module's that share behaviour, but are sl
 ```js
 
 var Apple = fruitmachine.define({
-  module: 'apple',
+  name: 'apple',
   template: function(){ return ''; },
   initialize: function() {
     alert('we are similar');
@@ -17,7 +17,7 @@ var Apple = fruitmachine.define({
 
 var Pear = fruitmachine.define(
   Apple.extend({
-    module: 'pear',
+    name: 'pear',
     template: function(){ return ''; },
     setup: function() {
       alert('and i am an pear');

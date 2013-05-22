@@ -6,12 +6,12 @@ Let's start with a very simple example to demonstrate how to work with FruitMach
 
 ```js
 var Apple = fruitmachine.define({
-  module: 'apple',
+  name: 'apple',
   template: function(){ return 'I am an apple'; } /* 1 */
 });
 
 var Layout = fruitmachine.define({
-  module: 'layout',
+  name: 'layout',
   template: function(data){ return data.child1; } /* 1 */
 });
 ```
@@ -54,12 +54,12 @@ FruitMachine was written for flexibility so there is usually more than one way t
 
 ```js
 var Apple = fruitmachine.define({
-  module: 'apple',
+  name: 'apple',
   template: function(){ return 'I am an apple' } /* 1 */
 });
 
 var Layout = fruitmachine.define({
-  module: 'layout',
+  name: 'layout',
   template: function(data){ return data.child1 } /* 1 */
 });
 ```
@@ -70,7 +70,7 @@ var layout = fruitmachine({
   module: 'layout', /* 1 */
   children: [
     {
-      module: 'apple', /* 1 */
+      name: 'apple', /* 1 */
       id: 'child1'
     }
   ]

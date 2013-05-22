@@ -6,7 +6,7 @@ Not all modules need interaction or logic, but when they do FruitMachine has eve
 
 ```js
 var Apple = fruitmachine.define({
-  module: 'apple',
+  name: 'apple',
   template: function(){ return '<button>Click Me</button>'; },
   setup: function() {
     var self = this;
@@ -33,7 +33,7 @@ apple
 
 ```js
 var Apple = fruitmachine.define({
-  module: 'apple',
+  name: 'apple',
   template: function(){ return '<button>Click Me</button>'; },
   setup: function() {
     var self = this;

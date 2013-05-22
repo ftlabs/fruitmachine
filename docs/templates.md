@@ -8,7 +8,7 @@ The following are equivalent:
 var template = function(data) { return '<div>' + data.text + '</div>'; };
 
 var MyModule = fruitmachine.define({
-	module: 'myModule',
+	name: 'myModule',
 	template: template
 });
 ```
@@ -17,7 +17,7 @@ var MyModule = fruitmachine.define({
 var template = Hogan.compile('<div>{{text}}</div>');
 
 var MyModule = fruitmachine.define({
-	module: 'myModule',
+	name: 'myModule',
 	template: template
 });
 ```
