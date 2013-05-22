@@ -1,8 +1,8 @@
 # FruitMachine [![Build Status](https://travis-ci.org/ftlabs/fruitmachine.png?branch=master)](https://travis-ci.org/ftlabs/fruitmachine)
 
-A lightweight component layout engine for client and server. Currently powering the [FT Web App](http://apps.ft.com/ftwebapp/).
+A lightweight component layout engine for client and server.
 
-FruitMachine was designed to build rich interactive layouts from modular, reusable components. We made it light and unopinionated so that it could be applied to almost any layout problem.
+FruitMachine is designed to build rich interactive layouts from modular, reusable components. It's light and unopinionated so that it can be applied to almost any layout problem. FruitMachine is currently powering the [FT Web App](http://apps.ft.com/ftwebapp/).
 
 ```js
 // Define a module
