@@ -2,10 +2,10 @@
 (function(global){global.Hogan = require('hogan.js/lib/template').Template;
 global.app = {};
 
-var FruitMachine = require('../../../../lib/');
+var fruitmachine = require('../../../../lib/');
 var routes = require('../routes');
 
-app.view = new FruitMachine(window.layout).setup();
+app.view = fruitmachine(window.layout).setup();
 })(window)
 },{"../../../../lib/":2,"../routes":3,"hogan.js/lib/template":4}],4:[function(require,module,exports){
 /*
@@ -336,7 +336,7 @@ module.exports = {
 /*jslint browser:true, node:true*/
 
 /**
- * FruitMachine
+ * fruitmachine
  *
  * Renders layouts/modules from a basic layout definition.
  * If views require custom interactions devs can extend
@@ -350,16 +350,16 @@ module.exports = {
 'use strict';
 
 // Version
-FruitMachine.VERSION = '0.2.5';
+fruitmachine.VERSION = '0.2.5';
 
 // Public interface
-FruitMachine.View = require('./view');
-FruitMachine.Model = require('./model');
-FruitMachine.Events = require('event');
-FruitMachine.define = require('./define');
-FruitMachine.util = require('./util');
-FruitMachine.store = require('./store');
-FruitMachine.config = require('./config').set;
+fruitmachine.View = require('./view');
+fruitmachine.Model = require('./model');
+fruitmachine.Events = require('event');
+fruitmachine.define = require('./define');
+fruitmachine.util = require('./util');
+fruitmachine.store = require('./store');
+fruitmachine.config = require('./config').set;
 
 /**
  * The main library namespace doubling
@@ -368,15 +368,15 @@ FruitMachine.config = require('./config').set;
  *
  * @param {Object} options
  */
-function FruitMachine(options) {
-  return new FruitMachine.View(options);
+function fruitmachine(options) {
+  return fruitmachine.View(options);
 }
 
 /**
- * Expose 'FruitMachine'
+ * Expose 'fruitmachine'
  */
 
-module.exports = FruitMachine;
+module.exports = fruitmachine;
 },{"./view":7,"./model":8,"./define":9,"./util":5,"./store":6,"./config":10,"event":11}],9:[function(require,module,exports){
 
 /*jslint browser:true, node:true*/
@@ -399,18 +399,18 @@ var keys = util.keys(View.prototype);
 
 /**
  * Creates and registers a
- * FruitMachine view constructor.
+ * fruitmachine view constructor.
  *
  * @param  {Object|View}
  * @return {View}
  */
 module.exports = function(props) {
 
-  // If an existing FruitMachine.View
+  // If an existing fruitmachine.View
   // has been passed in, use that.
   // If just an object literal has
   // been passed in then we extend the
-  // default FruitMachine.View prototype
+  // default fruitmachine.View prototype
   // with the properties passed in.
   var view = (props.__super__)
     ? props
@@ -1061,7 +1061,7 @@ View.prototype.toHTML = function() {
     ? this.template(mixin(data, toJSON(this.model)))
     : '';
 
-  // Wrap the html in a FruitMachine
+  // Wrap the html in a fruitmachine
   // generated root element and return.
   return this.html = this._wrapHTML(html);
 };
@@ -1260,7 +1260,7 @@ View.prototype.destroy = function(options) {
  * Removes the View's element
  * from the DOM.
  *
- * @return {FruitMachine}
+ * @return {fruitmachine}
  * @api public
  */
 View.prototype.remove = function(options) {
@@ -1425,9 +1425,9 @@ View.prototype.appendTo = function(dest) {
 
 /**
  * Returns a JSON represention of
- * a FruitMachine View. This can
+ * a fruitmachine View. This can
  * be generated serverside and
- * passed into new FruitMachine(json)
+ * passed into fruitmachine(json)
  * to inflate serverside rendered
  * views.
  *
@@ -2051,10 +2051,10 @@ events(Model.prototype);
 })();
 
 },{}],13:[function(require,module,exports){
-var FruitMachine = require('../../../../lib/');
+var fruitmachine = require('../../../../lib/');
 
 // Require these views so that
-// FruitMachine registers them
+// fruitmachine registers them
 var LayoutA = require('../layout-a');
 var ModuleApple = require('../module-apple');
 var ModuleOrange = require('../module-orange');
@@ -2082,13 +2082,13 @@ module.exports = function(data) {
 		]
 	};
 
-	return new FruitMachine(layout);
+	return fruitmachine(layout);
 };
 },{"../../../../lib/":2,"../layout-a":20,"../module-apple":21,"../module-orange":22,"../module-banana":23}],15:[function(require,module,exports){
-var FruitMachine = require('../../../../lib/');
+var fruitmachine = require('../../../../lib/');
 
 // Require these views so that
-// FruitMachine registers them
+// fruitmachine registers them
 var LayoutA = require('../layout-a');
 var ModuleApple = require('../module-apple');
 var ModuleOrange = require('../module-orange');
@@ -2116,13 +2116,13 @@ module.exports = function(data) {
 		]
 	};
 
-	return new FruitMachine(layout);
+	return fruitmachine(layout);
 };
 },{"../../../../lib/":2,"../layout-a":20,"../module-apple":21,"../module-orange":22,"../module-banana":23}],17:[function(require,module,exports){
-var FruitMachine = require('../../../../lib/');
+var fruitmachine = require('../../../../lib/');
 
 // Require these views so that
-// FruitMachine registers them
+// fruitmachine registers them
 var LayoutA = require('../layout-a');
 var ModuleApple = require('../module-apple');
 var ModuleOrange = require('../module-orange');
@@ -2150,7 +2150,7 @@ module.exports = function(data) {
 		]
 	};
 
-	return new FruitMachine(layout);
+	return fruitmachine(layout);
 };
 },{"../../../../lib/":2,"../layout-a":20,"../module-apple":21,"../module-orange":22,"../module-banana":23}],20:[function(require,module,exports){
 

@@ -3,7 +3,7 @@
  * Module Dependencies
  */
 
-var Model = FruitMachine.Model;
+var Model = fruitmachine.Model;
 var items = database.getSync();
 var collection = new Collection(items);
 

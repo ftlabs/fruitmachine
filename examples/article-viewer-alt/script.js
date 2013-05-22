@@ -3,7 +3,7 @@
  * Usage
  */
 
-// Create the FruitMachine View
+// Create the fruitmachine View
 var layout = new LayoutA({ model: { title: 'Example 1b' }});
 var masthead = new Masthead();
 var apple = new Apple();

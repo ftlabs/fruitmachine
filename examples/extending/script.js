@@ -1,4 +1,4 @@
-var Apple = FruitMachine.define({
+var Apple = fruitmachine.define({
   module: 'apple',
   template: function(){ return ''; },
   initialize: function() {
@@ -9,7 +9,7 @@ var Apple = FruitMachine.define({
   }
 });
 
-var Pear = FruitMachine.define(
+var Pear = fruitmachine.define(
   Apple.extend({
     module: 'pear',
     template: function(){ return ''; },

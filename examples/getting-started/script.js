@@ -1,10 +1,10 @@
 
-var Apple = FruitMachine.define({
+var Apple = fruitmachine.define({
   module: 'apple',
   template: function(){ return 'I am an apple'; }
 });
 
-var Layout = FruitMachine.define({
+var Layout = fruitmachine.define({
   module: 'layout',
   template: function(data){ return data.child1; }
 });

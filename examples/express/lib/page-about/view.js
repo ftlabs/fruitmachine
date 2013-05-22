@@ -1,7 +1,7 @@
-var FruitMachine = require('../../../../lib/');
+var fruitmachine = require('../../../../lib/');
 
 // Require these views so that
-// FruitMachine registers them
+// fruitmachine registers them
 var LayoutA = require('../layout-a');
 var ModuleApple = require('../module-apple');
 var ModuleOrange = require('../module-orange');
@@ -29,5 +29,5 @@ module.exports = function(data) {
 		]
 	};
 
-	return new FruitMachine(layout);
+	return fruitmachine(layout);
 };

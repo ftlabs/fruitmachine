@@ -1,11 +1,11 @@
 
-var Model = FruitMachine.Model;
+var Model = fruitmachine.Model;
 
 /**
  * Usage
  */
 
-// Create the FruitMachine View
+// Create the fruitmachine View
 var layout = new LayoutB();
 var masthead = new Masthead({ model: { title: 'Todo' }});
 var strawberry = new Strawberry();

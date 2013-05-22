@@ -14,7 +14,7 @@ var myHelper = function(view) {
   });
 };
 
-var Apple = FruitMachine.define({
+var Apple = fruitmachine.define({
   module: 'apple',
   template: function(){ return ''; },
   helpers: [

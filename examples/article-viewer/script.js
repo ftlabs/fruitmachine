@@ -28,8 +28,8 @@ var layout = {
  * Usage
  */
 
-// Create the FruitMachine View
-var view = new FruitMachine.View(layout);
+// Create the fruitmachine View
+var view = fruitmachine(layout);
 var apple = view.module('apple');
 
 // Get some data from our database.

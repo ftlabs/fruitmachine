@@ -1,4 +1,4 @@
-var Apple = FruitMachine.define({
+var Apple = fruitmachine.define({
   module: 'apple',
   template: function(){ return '<button>Click Me</button>'; },
   setup: function() {

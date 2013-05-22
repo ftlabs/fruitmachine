@@ -3,7 +3,7 @@
  * Module Dependencies
  */
 
-var Model = FruitMachine.Model;
+var Model = fruitmachine.Model;
 var len = 1000;
 var items = [];
 
