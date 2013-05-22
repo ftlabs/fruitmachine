@@ -9,7 +9,7 @@ config["fruitmachine"] = {
 		'node_modules/hogan.js/lib/compiler.js',
 		'node_modules/backbone/node_modules/underscore/underscore.js',
 		'node_modules/backbone/backbone.js',
-		'test/helpers/*.js'
+		'test/helpers.js'
 	],
 	tests: [
 		'test/tests/*.js'
