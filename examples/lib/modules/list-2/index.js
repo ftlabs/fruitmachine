@@ -1,5 +1,5 @@
 
-var List2 = FruitMachine.define({
+var List2 = fruitmachine.define({
 	name: 'list-2',
 	template: templateList2,
 

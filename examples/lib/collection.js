@@ -3,8 +3,8 @@
  * Module Dependencies
  */
 
-var Model = FruitMachine.Model;
-var events = FruitMachine.Events;
+var Model = fruitmachine.Model;
+var events = fruitmachine.Events;
 
 function Collection(items) {
 	this.items = [];

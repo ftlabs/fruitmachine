@@ -1,5 +1,5 @@
 
-var Apple = FruitMachine.define({
+var Apple = fruitmachine.define({
 	name: 'apple',
 	template: templateApple,
 
