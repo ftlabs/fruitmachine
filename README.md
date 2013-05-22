@@ -44,12 +44,12 @@ Download the [production version][min] (~3k gzipped) or the [development version
 
 ## Examples
 
-- [Article viewer](http://wilsonpage.github.io/fruitmachine/examples/1a/)
-- [TODO](http://wilsonpage.github.io/fruitmachine/examples/todo/)
+- [Article viewer](http://ftlabs.github.io/fruitmachine/examples/1a/)
+- [TODO](http://ftlabs.github.io/fruitmachine/examples/todo/)
 
 ## Documentation
 
-- [Introduction](fruitmachine/blob/master/docs/introduction.md)
+- [Introduction](introduction.md)
 - [Getting started](fruitmachine/blob/master/docs/getting-started.md)
 - [Defining modules](fruitmachine/blob/master/docs/view-defining-modules.md)
 - [Slots](fruitmachine/blob/master/docs/slots.md)
