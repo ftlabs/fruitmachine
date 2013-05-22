@@ -40,7 +40,7 @@ apple.module('orange').el
 1.3. Only the module rendered directly has a `.el` set.
 
 ```js
-var apple = new Apple({ children: { module: 'orange' } });
+var apple = new Apple({ children: [{ module: 'orange' }] });
 
 apple.render();
 
@@ -49,13 +49,20 @@ apple.el
 
 apple.module('orange').el
 //=> undefined
+
+apple.setup();
+
+apple.module('orange').el
+//=> "[object HTMLDivElement]"
 ```
+
+**NOTE:** We are looking into methods to make sure all child modules elements are set after render has been called.
 
 #### FAQ
 
 #### When can I rely on myModule.el being set?
 
-As a rule of thumb, you can access `myModule.el` *after* `.render()`, `.inject()` and `myModule.setup()` have been run.
+You can always access `myModule.el` *after* `.render()`, `.inject()` and `myModule.setup()` have been run.
 
 #### Why is my `.el` property undefined after .setup()
 

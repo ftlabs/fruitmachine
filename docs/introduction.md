@@ -22,7 +22,7 @@ A collection of FruitMachine modules is like a simplified DOM tree. Like element
 
 FruitMachine tries to stay as far away from your data as possible, but of course each module must have data associated with it, and FruitMachine must be able to drop this data into the module's template.
 
-FruitMachine comes with it's own Model class (`FruitMachine.Model`) out of the box, just in case you don't have you own; but we have built FruitMachine such that you can use your own types of Model should you wish. FruitMachine just requires you model to have a .`toJSON()` method so that it send its data into the module's template.
+FruitMachine comes with it's own Model class (`fruitmachine.Model`) out of the box, just in case you don't have you own; but we have built FruitMachine such that you can use your own types of Model should you wish. FruitMachine just requires you model to have a .`toJSON()` method so that it send its data into the module's template.
 
 #### What templating language does it use?
 

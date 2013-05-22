@@ -9,18 +9,18 @@ A helper is simply a function accepting the View module instance as the first ar
 Helpers should clear up after themselves. For example if they create variables or bind to events on `setup`, they should be unset and unbound on `teardown`.
 
 ```js
-var myHelper = function(view) {
+var myHelper = function(module) {
 
   // Add functionality
-  view.on('before setup', function() { /* 1 */
-    view.sayName = function() {
-      return 'My name is ' + view.module();
+  module.on('before setup', function() { /* 1 */
+    module.sayName = function() {
+      return 'My name is ' + module.name;
     };
   });
 
   // Tidy up
-  view.on('teardown', function() {
-    delete view.sayName;
+  module.on('teardown', function() {
+    delete module.sayName;
   });
 };
 ```
@@ -32,8 +32,8 @@ var myHelper = function(view) {
 At definition:
 
 ```js
-var Apple = FruitMachine.define({
-  module: 'apple',
+var Apple = fruitmachine.define({
+  name: 'apple',
   helpers: [ myHelper ]
 });
 ```

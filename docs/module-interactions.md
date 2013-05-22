@@ -5,7 +5,7 @@ Not all modules need interaction or logic, but when they do FruitMachine has eve
 #### Setting up
 
 ```js
-var Apple = FruitMachine.define({
+var Apple = fruitmachine.define({
   module: 'apple',
   template: function(){ return '<button>Click Me</button>'; },
   setup: function() {
@@ -32,7 +32,7 @@ apple
 #### Tearing down ([example](http://wilsonpage.github.io/fruitmachine/example/interactions))
 
 ```js
-var Apple = FruitMachine.define({
+var Apple = fruitmachine.define({
   module: 'apple',
   template: function(){ return '<button>Click Me</button>'; },
   setup: function() {

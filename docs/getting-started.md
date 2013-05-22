@@ -5,12 +5,12 @@ Let's start with a very simple example to demonstrate how to work with FruitMach
 #### Define some modules
 
 ```js
-var Apple = FruitMachine.define({
+var Apple = fruitmachine.define({
   module: 'apple',
   template: function(){ return 'I am an apple'; } /* 1 */
 });
 
-var Layout = FruitMachine.define({
+var Layout = fruitmachine.define({
   module: 'layout',
   template: function(data){ return data.child1; } /* 1 */
 });

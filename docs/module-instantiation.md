@@ -1,22 +1,22 @@
 ## Instantiation
 
-There are two ways to instantiate a FruitMachine View:
+There are two ways to instantiate a FruitMachine module:
 
 ##### Explicit
 
 ```js
-var view = new Apple();
+var apple = new Apple();
 ```
 
 ##### Lazy
 
 ```js
-var view = new FruitMachine.View({ module: 'apple' });
+var apple = fruitmachine({ module: 'apple' });
 ```
 
-Use *Explicit* instantiation over *Lazy* instantiation whenever possible. The *Lazy* instantiation option exists so that you are able to predefine page layouts in JSON form and pass them into the `FruitMachine.View()` constructor.
+Use *Explicit* instantiation over *Lazy* instantiation whenever possible. The *Lazy* instantiation option exists so that you are able to predefine page layouts in JSON form and pass them into the `fruitmachine()` factory method.
 
-When instantiating 'lazily' *FruitMachine* looks at the `module` property and attempts to map it to a module you have defined using [FruitMachine.define()](defining-modules.md). If a match is found, it will `Explictly` instantiate that module with the options you originally passed.
+When instantiating 'lazily' *FruitMachine* looks at the `module` property and attempts to map it to a module you have defined using [fruitmachine.define()](defining-modules.md). If a match is found, it will `Explictly` instantiate that module with the options you originally passed.
 
 ### Options
 
