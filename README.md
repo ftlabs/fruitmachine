@@ -39,8 +39,8 @@ or
 
 Download the [production version][min] (~3k gzipped) or the [development version][max].
 
-[min]: fruitmachine/raw/master/build/fruitmachine.min.js
-[max]: fruitmachine/raw/master/build/fruitmachine.js
+[min]: build/fruitmachine.min.js
+[max]: build/fruitmachine.js
 
 ## Examples
 
@@ -80,7 +80,7 @@ $ npm test
 $ node_modules/.bin/buster-static
 ```
 
-...then isit http://localhost:8282/ in browser
+...then visit http://localhost:8282/ in browser
 
 ## Author
 
@@ -97,4 +97,4 @@ Licensed under the MIT license.
 
 ## Credits and collaboration
 
-The lead developer of FTEllipsis is [Wilson Page](http://github.com/wilsonpage) at FT Labs. All open source code released by FT Labs is licenced under the MIT licence. We welcome comments, feedback and suggestions. Please feel free to raise an issue or pull request. Enjoy...
+The lead developer of FruitMachine is [Wilson Page](http://github.com/wilsonpage) at FT Labs. All open source code released by FT Labs is licenced under the MIT licence. We welcome comments, feedback and suggestions. Please feel free to raise an issue or pull request. Enjoy...
