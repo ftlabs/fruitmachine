@@ -34,7 +34,11 @@ var layout = new LayoutB({
   }
 });
 
+console.profile('big-collection');
+
 layout
   .render()
   .inject(app)
   .setup();
+
+console.profileEnd('big-collection');
