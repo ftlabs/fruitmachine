@@ -1,8 +1,9 @@
 0.5.0 / 2013-05-20
 ==================
 
-  * change `fruitmachine.View` => `fruitmachine.Module`
   * add support for third party models
+  * change `fruitmachine.View` => `fruitmachine.Module`
+  * change component.json to bower.json
 
 0.4.2 / 2013-05-20
 ==================
