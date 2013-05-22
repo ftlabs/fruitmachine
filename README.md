@@ -1,4 +1,4 @@
-# FruitMachine
+# FruitMachine [![Build Status](https://travis-ci.org/ftlabs/fruitmachine.png?branch=master)](https://travis-ci.org/ftlabs/fruitmachine)
 
 A lightweight component layout engine for client and server. Currently powering the [FT Web App](http://apps.ft.com/ftwebapp/).
 

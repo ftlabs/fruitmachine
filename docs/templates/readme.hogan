@@ -1,4 +1,4 @@
-# {{pkg.title}}
+# {{pkg.title}} [![Build Status](https://travis-ci.org/ftlabs/fruitmachine.png?branch=master)](https://travis-ci.org/ftlabs/fruitmachine)
 
 {{pkg.description}} Currently powering the [FT Web App](http://apps.ft.com/ftwebapp/).
 
