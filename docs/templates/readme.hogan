@@ -49,21 +49,21 @@ Download the [production version][min] (~3k gzipped) or the [development version
 
 ## Documentation
 
-- [Introduction](introduction.md)
-- [Getting started](fruitmachine/blob/master/docs/getting-started.md)
-- [Defining modules](fruitmachine/blob/master/docs/view-defining-modules.md)
-- [Slots](fruitmachine/blob/master/docs/slots.md)
-- [View assembly](fruitmachine/blob/master/docs/view-assembly.md)
-- [Instantiation](fruitmachine/blob/master/docs/view-instantiation.md)
-- [Templates](fruitmachine/blob/master/docs/view-templates.md)
-- [Template markup](fruitmachine/blob/master/docs/view-template-markup.md)
-- [Rendering](fruitmachine/blob/master/docs/view-rendering.md)
-- [DOM injection](fruitmachine/blob/master/docs/view-injection.md)
-- [El](fruitmachine/blob/master/docs/view-el.md)
-- [Queries](fruitmachine/blob/master/docs/view-queries.md)
-- [Helpers](fruitmachine/blob/master/docs/view-helpers.md)
-- [Removing & destroying](fruitmachine/blob/master/docs/view-removing-and-destroying.md)
-- [Extending](fruitmachine/blob/master/docs/view-extending.md)
+- [Introduction](docs/introduction.md)
+- [Getting started](docs/getting-started.md)
+- [Defining modules](docs/view-defining-modules.md)
+- [Slots](docs/slots.md)
+- [View assembly](docs/view-assembly.md)
+- [Instantiation](docs/view-instantiation.md)
+- [Templates](docs/view-templates.md)
+- [Template markup](docs/view-template-markup.md)
+- [Rendering](docs/view-rendering.md)
+- [DOM injection](docs/view-injection.md)
+- [El](docs/view-el.md)
+- [Queries](docs/view-queries.md)
+- [Helpers](docs/view-helpers.md)
+- [Removing & destroying](docs/view-removing-and-destroying.md)
+- [Extending](docs/view-extending.md)
 
 ## Tests
 
