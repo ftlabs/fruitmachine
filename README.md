@@ -39,8 +39,8 @@ or
 
 Download the [production version][min] (~3k gzipped) or the [development version][max].
 
-[min]: build/fruitmachine.min.js
-[max]: build/fruitmachine.js
+[min]: http://github.com/ftlabs/fruitmachine/raw/master/build/fruitmachine.min.js
+[max]: http://github.com/ftlabs/fruitmachine/raw/master/build/fruitmachine.js
 
 ## Examples
 
