@@ -49,7 +49,7 @@ Download the [production version][min] (~3k gzipped) or the [development version
 
 ## Documentation
 
-- [Introduction](docs/introduction.md)
+- [Introduction](introduction.md)
 - [Getting started](fruitmachine/blob/master/docs/getting-started.md)
 - [Defining modules](fruitmachine/blob/master/docs/view-defining-modules.md)
 - [Slots](fruitmachine/blob/master/docs/slots.md)
