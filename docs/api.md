@@ -187,6 +187,7 @@ Options:
 ### Module#empty()
 
 Destroys all children.
+\nIs this needed?
 
 ### Module#inject()
 

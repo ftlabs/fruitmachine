@@ -153,19 +153,13 @@ exports.isArray = function(arg) {
   return arg instanceof Array;
 },
 
-exports.mixin = function(original) {
-  // Loop over every argument after the first.
-  [].slice.call(arguments, 1).forEach(function(source) {
-    for (var prop in source) {
-      original[prop] = source[prop];
-    }
-  });
+exports.mixin = function(original, source) {
+  for (var key in source) original[key] = source[key];
   return original;
 },
 
-exports.querySelectorId = function(id, el) {
-  if (!el) return;
-  return el.querySelector('#' + id);
+exports.byId = function(id, el) {
+  if (el) return el.querySelector('#' + id);
 },
 
 /**
@@ -194,7 +188,7 @@ exports.toNode = function(html) {
 // Determine if we have a DOM
 // in the current environment.
 exports.hasDom = function() {
-	return typeof document !== 'undefined';
+  return typeof document !== 'undefined';
 };
 
 var i = 0;
@@ -329,6 +323,39 @@ function mixin(a, b) {
   for (var key in b) a[key] = b[key];
   return a;
 }
+},{}],8:[function(require,module,exports){
+
+'use strict';
+
+/**
+ * Locals
+ */
+
+var has = {}.hasOwnProperty;
+
+/**
+ * Exports
+ */
+
+module.exports = function(main) {
+  var args = arguments;
+  var l = args.length;
+  var i = 0;
+  var src;
+  var key;
+
+  while (++i < l) {
+    src = args[i];
+    for (key in src) {
+      if (has.call(src, key)) {
+        main[key] = src[key];
+      }
+    }
+  }
+
+  return main;
+};
+
 },{}],3:[function(require,module,exports){
 
 'use strict';
@@ -449,40 +476,7 @@ proto.toJSON = function() {
 // Mixin events
 events(proto);
 
-},{"mixin":8,"event":7}],8:[function(require,module,exports){
-
-'use strict';
-
-/**
- * Locals
- */
-
-var has = {}.hasOwnProperty;
-
-/**
- * Exports
- */
-
-module.exports = function(main) {
-  var args = arguments;
-  var l = args.length;
-  var i = 0;
-  var src;
-  var key;
-
-  while (++i < l) {
-    src = args[i];
-    for (key in src) {
-      if (has.call(src, key)) {
-        main[key] = src[key];
-      }
-    }
-  }
-
-  return main;
-};
-
-},{}],5:[function(require,module,exports){
+},{"mixin":8,"event":7}],5:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -679,7 +673,7 @@ module.exports = function(fm) {
 
     // We append the child to the parent view if there is a view
     // element and the users hasn't flagged `append` false.
-    if (inject) this.injectElement(child.el, options);
+    if (inject) this._injectEl(child.el, options);
 
     // Allow chaining
     return this;
@@ -807,7 +801,7 @@ module.exports = function(fm) {
    * @param  {Object} options
    * @api private
    */
-  proto.injectElement = function(el, options) {
+  proto._injectEl = function(el, options) {
     var at = options && options.at;
     var parent = this.el;
     if (!el || !parent) return;
@@ -1015,7 +1009,10 @@ module.exports = function(fm) {
     // Sets a new element as a view's
     // root element (purging descendent
     // element caches).
-    this.setElement(el);
+    this._setEl(el);
+
+    // Fetch all child module elements
+    this._fetchEls(this.el);
 
     // Handy hook
     this.fireStatic('render');
@@ -1047,7 +1044,7 @@ module.exports = function(fm) {
     // Attempt to fetch the view's
     // root element. Don't continue
     // if no route element is found.
-    if (!this.getElement()) return this;
+    if (!this._getEl()) return this;
 
     // If this is already setup, call
     // `teardown` first so that we don't
@@ -1106,11 +1103,9 @@ module.exports = function(fm) {
     // will likely run into undefined
     // variables if setup hasn't run.
     if (this.isSetup) {
-
       this.fireStatic('before teardown');
       if (this._teardown) this._teardown();
       this.fireStatic('teardown');
-
       this.isSetup = false;
     }
 
@@ -1202,6 +1197,8 @@ module.exports = function(fm) {
   /**
    * Destroys all children.
    *
+   * Is this needed?
+   *
    * @return {Module}
    * @api public
    */
@@ -1212,17 +1209,19 @@ module.exports = function(fm) {
   };
 
   /**
-   * Returns the closest root view
-   * element, walking up the chain
-   * until it finds one.
+   * Fetches all descendant elements
+   * from the given root element.
    *
-   * @return {Element}
+   * @param  {Element} root
+   * @return {undefined}
    * @api private
    */
-  proto.closestElement = function() {
-    var view = this.parent;
-    while (view && !view.el && view.parent) view = view.parent;
-    return view && view.el;
+  proto._fetchEls = function(root) {
+    if (!root) return;
+    this.each(function(child) {
+      child.el = util.byId(child._fmid, root);
+      child._fetchEls(child.el || root);
+    });
   };
 
   /**
@@ -1237,11 +1236,9 @@ module.exports = function(fm) {
    * @return {Element|undefined}
    * @api private
    */
-  proto.getElement = function() {
+  proto._getEl = function() {
     if (!util.hasDom()) return;
-    return this.el = this.el
-      || document.getElementById(this._fmid)
-      || this.parent && util.querySelectorId(this._fmid, this.closestElement()); // Needed?
+    return this.el = this.el || document.getElementById(this._fmid);
   };
 
   /**
@@ -1258,45 +1255,17 @@ module.exports = function(fm) {
    * @return {Module}
    * @api private
    */
-  proto.setElement = function(el) {
+  proto._setEl = function(el) {
     var existing = this.el;
     var parentNode = existing && existing.parentNode;
 
+    // If the existing element has a context, replace it
     if (parentNode) parentNode.replaceChild(el, existing);
-
-    // Purge all element caches
-    this.purgeElementCaches();
 
     // Update cache
     this.el = el;
 
     return this;
-  };
-
-  /**
-   * Recursively purges the
-   * element cache.
-   *
-   * @return void
-   * @api private
-   */
-  proto.purgeElementCaches = function() {
-    this.el = null;
-    this.each(function(child) {
-      child.purgeElementCaches();
-    });
-  };
-
-  /**
-   * Detects whether a view is in
-   * the DOM (useful for debugging).
-   *
-   * @return {Boolean}
-   * @api private
-   */
-  proto.inDOM = function() {
-    if (this.parent) return this.parent.inDOM();
-    return !!(this.el && this.el.parentNode);
   };
 
   /**
