@@ -127,5 +127,42 @@ buster.testCase('View', {
 
     var layout = new fruitmachine(options);
     assert.equals(spy.args[0][1], options);
+  },
+
+  "Should be able to use Backbone models": function() {
+    var orange = new Orange({
+      model: new Backbone.Model({ text: 'orange text' })
+    });
+
+    orange.render();
+    assert(~orange.el.innerHTML.indexOf('orange text'));
+  },
+
+  "Should define a global default model": function() {
+    var previous = fruitmachine.Module.prototype.Model;
+
+    fruitmachine.Module.prototype.Model = Backbone.Model;
+
+    var orange = new Orange({
+      model: { text: 'orange text' }
+    });
+
+    orange.render();
+    assert(orange.model instanceof Backbone.Model);
+    assert(~orange.el.innerHTML.indexOf('orange text'));
+
+    // Restore
+    fruitmachine.Module.prototype.Model = previous;
+  },
+
+  "Should define a module default model": function() {
+    var Berry = fruitmachine.define({
+      name: 'berry',
+      Model: Backbone.Model
+    });
+
+    var berry = new Berry({ model: { foo: 'bar' }});
+
+    assert(berry.model instanceof Backbone.Model);
   }
 });
