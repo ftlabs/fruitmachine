@@ -12,15 +12,15 @@
   "organization": "The Financial Times Limited",
   "repository": {
     "type": "git",
-    "url": "git://github.com/wilsonpage/fruitmachine.git"
+    "url": "git://github.com/ftlabs/fruitmachine.git"
   },
   "bugs": {
-    "url": "https://github.com/wilsonpage/fruitmachine/issues"
+    "url": "https://github.com/ftlabs/fruitmachine/issues"
   },
   "licenses": [
     {
       "type": "MIT",
-      "url": "https://github.com/wilsonpage/fruitmachine/blob/master/LICENSE-MIT"
+      "url": "https://github.com/ftlabs/fruitmachine/blob/master/LICENSE-MIT"
     }
   ],
   "main": "lib/index",
