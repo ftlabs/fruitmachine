@@ -36,7 +36,6 @@ buster.testCase('View#empty()', {
 
     list.empty();
 
-    assert.isFalse(apple1.inDOM());
-    assert.isFalse(apple2.inDOM());
+    refute(list.el.querySelector('apple'));
   }
 });
