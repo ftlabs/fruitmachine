@@ -29,7 +29,7 @@ apple
 
 1. *The button is now active*
 
-#### Tearing down ([example](http://wilsonpage.github.io/fruitmachine/example/interactions))
+#### Tearing down ([example](http://ftlabs.github.io/fruitmachine/example/interactions))
 
 ```js
 var Apple = fruitmachine.define({
