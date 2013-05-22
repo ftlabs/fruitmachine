@@ -2,7 +2,7 @@
 
 FruitMachine is able to work in exactly the same way on a Node server as on the client. Our [Express example](../examples/express) demonstrates this very simply. There are two items we must send down from the server: the rendered HTML embedded in the page, and a JSON representation of the module. Once we have those two parts we are able to 'inflate' the view, just as though it was rendered on the client. Here's how I might work with a fruitmachine layout on the server:
 
-##### Define a module
+#### Define a module
 
 ```js
 module.exports = fruitmachine.define({
@@ -14,7 +14,7 @@ module.exports = fruitmachine.define({
 });
 ```
 
-##### Server
+#### Server
 
 We create an instance of our Apple view, turn it to HTML and extract a json representation of it. We then send a string as the response that contains both parts.
 
@@ -36,7 +36,7 @@ app.get('/', function(req, res) {
 });
 ```
 
-##### Client
+#### Client
 
 Once on the client we can pass the JSON part directly into the `fruitmachine()` method to return a FruitMachine module. Calling setup fetches the module's element from the DOM and runs any custom setup logic (in this case our `alert` message).
 
