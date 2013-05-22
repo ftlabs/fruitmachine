@@ -1,3 +1,10 @@
+0.5.1 / 2013-05-20
+==================
+
+  * change all descendant `model.el` properties set at `Module#render()`
+  * change expose `fruitmachine.Events`
+  * remove `Module#inDOM()`
+
 0.5.0 / 2013-05-20
 ==================
 
