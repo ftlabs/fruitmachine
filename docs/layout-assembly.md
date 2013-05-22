@@ -1,6 +1,6 @@
 ## View Assembly
 
-When View modules are nested, a heiracical view structure is formed. For flexbibily, *FruitMachine* allows nested views to be assembled in a variety of ways.
+When View modules are nested, a heiracical view structure is formed. For flexibility, *FruitMachine* allows nested views to be assembled in a variety of ways.
 
 #### Manual
 
