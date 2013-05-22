@@ -1,3 +1,9 @@
+0.5.0 / 2013-05-20
+==================
+
+  * change `fruitmachine.View` => `fruitmachine.Module`
+  * add support for third party models
+
 0.4.2 / 2013-05-20
 ==================
 
