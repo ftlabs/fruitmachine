@@ -11,13 +11,11 @@ var Apple = fruitmachine.define({
   template: function(){ return 'hello' }
 });
 
-// Create an instance
+// Create a module
 var apple = new Apple();
 
-// Render & inject into DOM
-apple
-  .render()
-  .inject(document.body);
+// Render it
+apple.render();
 
 apple.el.outerHTML;
 //=> <div class="apple">hello</div>
@@ -37,7 +35,7 @@ $ bower install fruitmachine
 
 or
 
-Download the [production version][min] (~3k gzipped) or the [development version][max].
+Download the [production version][min] (~2k gzipped) or the [development version][max].
 
 [min]: http://github.com/ftlabs/fruitmachine/raw/master/build/fruitmachine.min.js
 [max]: http://github.com/ftlabs/fruitmachine/raw/master/build/fruitmachine.js

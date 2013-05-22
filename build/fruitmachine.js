@@ -127,6 +127,7 @@ module.exports = function(options) {
 
   fm.create = module.exports;
   fm.Model = options.Model;
+  fm.Events = events;
   fm.Module = mod(fm);
   fm.define = define(fm);
   fm.util = utils;
