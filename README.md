@@ -62,6 +62,7 @@ Download the [production version][min] (~2k gzipped) or the [development version
 - [Helpers](docs/module-helpers.md)
 - [Removing & destroying](docs/removing-and-destroying.md)
 - [Extending](docs/extending-modules.md)
+- [Server-side rendering](docs/server-side-rendering.md)
 
 ## Tests
 
