@@ -28,8 +28,8 @@ module.exports = function(grunt) {
       dest: {
         code: [
           { path: 'lib/define.js', ctx: { receiver: 'fruitmachine', name: 'define', type: 'method' }},
-          { path: 'lib/view/index.js', ctx: { cons: 'View' }},
-          { path: 'lib/view/events.js', ctx: { cons: 'View' }}
+          { path: 'lib/module/index.js', ctx: { cons: 'Module' }},
+          { path: 'lib/module/events.js', ctx: { cons: 'Module' }}
         ],
         output: {
           'docs/templates/api.hogan': 'docs/api.md',
@@ -59,9 +59,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-readme');
   grunt.loadNpmTasks('grunt-version');
-
-  // Load local tasks
-  grunt.loadTasks('tasks');
 
   // Default task.
   grunt.registerTask('default', ['browserify', 'uglify', 'readme']);

@@ -7,7 +7,7 @@ The following are equivalent:
 ```js
 var template = function(data) { return '<div>' + data.text + '</div>'; };
 
-var MyModule = FruitMachine.define({
+var MyModule = fruitmachine.define({
 	module: 'myModule',
 	template: template
 });
@@ -16,10 +16,10 @@ var MyModule = FruitMachine.define({
 ```js
 var template = Hogan.compile('<div>{{text}}</div>');
 
-var MyModule = FruitMachine.define({
+var MyModule = fruitmachine.define({
 	module: 'myModule',
 	template: template
 });
 ```
 
-**Note:** If the object passed has a render function (somewhat templating convention), then that will be used.
+**Note:** If the object passed has a render function (somewhat templating convention), then that will be used as the module's template function.

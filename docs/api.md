@@ -15,9 +15,9 @@ Defines a module.
  - `teardown {Function}` custom logic to unbind/undo anything setup introduced (called on `.destroy()` and sometimes on `.setup()` to avoid double binding events)
  - `destroy {Function}` logic to permanently destroy all references
 
-### View#View
+### Module#Module
 
-View constructor
+Module constructor
 \nOptions:
 
  - `id {String}` a unique id to query by
@@ -28,19 +28,19 @@ View constructor
  - `helpers {Array}`a list of helper function to use on this module
  - `children {Object|Array}` list of child modules
 
-### View#add()
+### Module#add()
 
-Adds a child view(s) to another View.
+Adds a child view(s) to another Module.
 \nOptions:
 
  - `at` The child index at which to insert
  - `inject` Injects the child's view element into the parent's
  - `slot` The slot at which to insert the child
 
-### View#remove()
+### Module#remove()
 
 Removes a child view from
-its current View contexts
+its current Module contexts
 and also from the DOM unless
 otherwise stated.
 \nOptions:
@@ -60,59 +60,59 @@ otherwise stated.
     layout.remove(apple, { el: false });
     apple.remove({ el: false });
 
-### View#id()
+### Module#id()
 
 Returns a decendent module
 by id, or if called with no
 arguments, returns this view's id.
 \n*Example:*
 
-    myView.id();
+    myModule.id();
     //=> 'my_view_id'
 
-    myView.id('my_other_views_id');
-    //=> View
+    myModule.id('my_other_views_id');
+    //=> Module
 
-### View#module()
+### Module#module()
 
 Returns the first descendent
-View with the passed module type.
+Module with the passed module type.
 If called with no arguments the
-View's own module type is returned.
+Module's own module type is returned.
 \n*Example:*
 
-    // Assuming 'myView' has 3 descendent
+    // Assuming 'myModule' has 3 descendent
     // views with the module type 'apple'
 
-    myView.modules('apple');
-    //=> View
+    myModule.modules('apple');
+    //=> Module
 
-### View#modules()
+### Module#modules()
 
 Returns a list of descendent
-Views that match the module
+Modules that match the module
 type given (Similar to
 Element.querySelectorAll();).
 \n*Example:*
 
-    // Assuming 'myView' has 3 descendent
+    // Assuming 'myModule' has 3 descendent
     // views with the module type 'apple'
 
-    myView.modules('apple');
-    //=> [ View, View, View ]
+    myModule.modules('apple');
+    //=> [ Module, Module, Module ]
 
-### View#each()
+### Module#each()
 
 Calls the passed function
 for each of the view's
 children.
 \n*Example:*
 
-    myView.each(function(child) {
+    myModule.each(function(child) {
         // Do stuff with each child view...
     });
 
-### View#toHTML()
+### Module#toHTML()
 
 Templates the view, including
 any descendent views returning
@@ -135,14 +135,14 @@ and printed with `{{{child}}}}`.
         {{{child}}}
     {{/children}}
 
-### View#render()
+### Module#render()
 
 Renders the view and replaces
 the `view.el` with a freshly
 rendered node.
 \nFires a `render` event on the view.
 
-### View#setup()
+### Module#setup()
 
 Sets up a view and all descendent
 views.
@@ -157,7 +157,7 @@ Options:
 
  - `shallow` Does not recurse when `true` (default `false`)
 
-### View#teardown()
+### Module#teardown()
 
 Tearsdown a view and all descendent
 views that have been setup.
@@ -168,7 +168,7 @@ Options:
 
  - `shallow` Does not recurse when `true` (default `false`)
 
-### View#destroy()
+### Module#destroy()
 
 Completely destroys a view. This means
 a view is torn down, removed from it's
@@ -184,34 +184,34 @@ Options:
 
  - `fromDOM` Whether the view should be removed from DOM (default `true`)
 
-### View#empty()
+### Module#empty()
 
 Destroys all children.
 
-### View#inject()
+### Module#inject()
 
 Empties the destination element
 and appends the view into it.
 
-### View#appendTo()
+### Module#appendTo()
 
 Appends the view element into
 the destination element.
 
-### View#toJSON()
+### Module#toJSON()
 
 Returns a JSON represention of
-a FruitMachine View. This can
+a FruitMachine Module. This can
 be generated serverside and
 passed into new FruitMachine(json)
 to inflate serverside rendered
 views.
 
-### View#on()
+### Module#on()
 
 Registers a event listener.
 
-### View#fire()
+### Module#fire()
 
 Fires an event on a view.
 

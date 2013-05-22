@@ -58,7 +58,7 @@ module.exports = function(fm) {
    */
   return function(props) {
     var Module = ('object' === typeof props)
-      ? fm.View.extend(props)
+      ? fm.Module.extend(props)
       : props;
 
     // Allow modules to be named
@@ -97,7 +97,7 @@ module.exports = function(fm) {
  * Module Dependencies
  */
 
-var view = require('./view');
+var mod = require('./module');
 var define = require('./define');
 var utils = require('utils');
 var events = require('event');
@@ -125,8 +125,9 @@ module.exports = function(options) {
     if (Module) return new Module(options);
   }
 
+  fm.create = module.exports;
   fm.Model = options.Model;
-  fm.View = view(fm);
+  fm.Module = mod(fm);
   fm.define = define(fm);
   fm.util = utils;
   fm.modules = {};
@@ -138,7 +139,7 @@ module.exports = function(options) {
   // Mixin events and return
   return events(fm);
 };
-},{"./define":4,"./view":5,"utils":6,"event":7}],6:[function(require,module,exports){
+},{"./define":4,"./module":5,"utils":6,"event":7}],6:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -328,9 +329,40 @@ function mixin(a, b) {
   for (var key in b) a[key] = b[key];
   return a;
 }
-},{}],3:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 
-/*jshint browser:true, node:true*/
+'use strict';
+
+/**
+ * Locals
+ */
+
+var has = {}.hasOwnProperty;
+
+/**
+ * Exports
+ */
+
+module.exports = function(main) {
+  var args = arguments;
+  var l = args.length;
+  var i = 0;
+  var src;
+  var key;
+
+  while (++i < l) {
+    src = args[i];
+    for (key in src) {
+      if (has.call(src, key)) {
+        main[key] = src[key];
+      }
+    }
+  }
+
+  return main;
+};
+
+},{}],3:[function(require,module,exports){
 
 'use strict';
 
@@ -339,7 +371,7 @@ function mixin(a, b) {
  */
 
 var events = require('event');
-var mixin = require('utils').mixin;
+var mixin = require('mixin');
 
 /**
  * Exports
@@ -449,7 +481,8 @@ proto.toJSON = function() {
 
 // Mixin events
 events(proto);
-},{"event":7,"utils":6}],5:[function(require,module,exports){
+
+},{"mixin":8,"event":7}],5:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -472,10 +505,10 @@ module.exports = function(fm) {
 
   // Alias prototype for optimum
   // compression via uglifyjs
-  var proto = View.prototype;
+  var proto = Module.prototype;
 
   /**
-   * View constructor
+   * Module constructor
    *
    * Options:
    *
@@ -491,7 +524,7 @@ module.exports = function(fm) {
    * @param {Object} options
    * @api public
    */
-  function View(options) {
+  function Module(options) {
 
     // Shallow clone the options
     options = mixin({}, options);
@@ -508,7 +541,7 @@ module.exports = function(fm) {
   }
 
   /**
-   * Configures the new View
+   * Configures the new Module
    * with the options passed
    * to the constructor.
    *
@@ -538,7 +571,7 @@ module.exports = function(fm) {
     // the data passed in.
     var model = options.model || options.data || {};
     this.model = util.isPlainObject(model)
-      ? new fm.Model(model)
+      ? new this.Model(model)
       : model;
 
     // Attach helpers
@@ -577,10 +610,10 @@ module.exports = function(fm) {
 
   /**
    * Instantiates the given
-   * helper on the View.
+   * helper on the Module.
    *
    * @param  {Function} helper
-   * @return {View}
+   * @return {Module}
    * @api private
    */
   proto.attachHelper = function(helper) {
@@ -607,7 +640,7 @@ module.exports = function(fm) {
   };
 
   /**
-   * Adds a child view(s) to another View.
+   * Adds a child view(s) to another Module.
    *
    * Options:
    *
@@ -615,7 +648,7 @@ module.exports = function(fm) {
    *  - `inject` Injects the child's view element into the parent's
    *  - `slot` The slot at which to insert the child
    *
-   * @param {View|Object} children
+   * @param {Module|Object} children
    * @param {Object|String|Number} options|slot
    */
   proto.add = function(child, options) {
@@ -638,8 +671,8 @@ module.exports = function(fm) {
     var resident = this.slots[slot];
     if (resident) resident.remove({ fromDOM: false });
 
-    // If it's not a View, make it one.
-    if (!(child instanceof View)) child = fm(child);
+    // If it's not a Module, make it one.
+    if (!(child instanceof Module)) child = fm(child);
 
     util.insert(child, this.children, at);
     this._addLookup(child);
@@ -654,7 +687,7 @@ module.exports = function(fm) {
 
   /**
    * Removes a child view from
-   * its current View contexts
+   * its current Module contexts
    * and also from the DOM unless
    * otherwise stated.
    *
@@ -685,7 +718,7 @@ module.exports = function(fm) {
 
     // Allow view.remove(child[, options])
     // and view.remove([options]);
-    if (param1 instanceof View) {
+    if (param1 instanceof Module) {
       param1.remove(param2 || {});
       return this;
     }
@@ -722,7 +755,7 @@ module.exports = function(fm) {
    * Creates a lookup reference for
    * the child view passed.
    *
-   * @param {View} child
+   * @param {Module} child
    * @api private
    */
   proto._addLookup = function(child) {
@@ -744,7 +777,7 @@ module.exports = function(fm) {
    * Removes the lookup for the
    * the child view passed.
    *
-   * @param {View} child
+   * @param {Module} child
    * @api private
    */
   proto._removeLookup = function(child) {
@@ -762,7 +795,7 @@ module.exports = function(fm) {
 
   /**
    * Injects an element into the
-   * View's root element.
+   * Module's root element.
    *
    * By default the element is appended.
    *
@@ -793,14 +826,14 @@ module.exports = function(fm) {
    *
    * Example:
    *
-   *   myView.id();
+   *   myModule.id();
    *   //=> 'my_view_id'
    *
-   *   myView.id('my_other_views_id');
-   *   //=> View
+   *   myModule.id('my_other_views_id');
+   *   //=> Module
    *
    * @param  {String|undefined} id
-   * @return {View|String}
+   * @return {Module|String}
    * @api public
    */
   proto.id = function(id) {
@@ -816,20 +849,20 @@ module.exports = function(fm) {
 
   /**
    * Returns the first descendent
-   * View with the passed module type.
+   * Module with the passed module type.
    * If called with no arguments the
-   * View's own module type is returned.
+   * Module's own module type is returned.
    *
    * Example:
    *
-   *   // Assuming 'myView' has 3 descendent
+   *   // Assuming 'myModule' has 3 descendent
    *   // views with the module type 'apple'
    *
-   *   myView.modules('apple');
-   *   //=> View
+   *   myModule.modules('apple');
+   *   //=> Module
    *
    * @param  {String} key
-   * @return {View}
+   * @return {Module}
    */
   proto.module = function(key) {
     if (!arguments.length) return this._module || this.name;
@@ -844,17 +877,17 @@ module.exports = function(fm) {
 
   /**
    * Returns a list of descendent
-   * Views that match the module
+   * Modules that match the module
    * type given (Similar to
    * Element.querySelectorAll();).
    *
    * Example:
    *
-   *   // Assuming 'myView' has 3 descendent
+   *   // Assuming 'myModule' has 3 descendent
    *   // views with the module type 'apple'
    *
-   *   myView.modules('apple');
-   *   //=> [ View, View, View ]
+   *   myModule.modules('apple');
+   *   //=> [ Module, Module, Module ]
    *
    * @param  {String} key
    * @return {Array}
@@ -880,7 +913,7 @@ module.exports = function(fm) {
    *
    * Example:
    *
-   *   myView.each(function(child) {
+   *   myModule.each(function(child) {
    *     // Do stuff with each child view...
    *   });
    *
@@ -973,7 +1006,7 @@ module.exports = function(fm) {
    *
    * Fires a `render` event on the view.
    *
-   * @return {View}
+   * @return {Module}
    */
   proto.render = function() {
     var html = this.toHTML();
@@ -1006,7 +1039,7 @@ module.exports = function(fm) {
    *  - `shallow` Does not recurse when `true` (default `false`)
    *
    * @param  {Object} options
-   * @return {View}
+   * @return {Module}
    */
   proto.setup = function(options) {
     var shallow = options && options.shallow;
@@ -1053,7 +1086,7 @@ module.exports = function(fm) {
    *  - `shallow` Does not recurse when `true` (default `false`)
    *
    * @param  {Object} options
-   * @return {View}
+   * @return {Module}
    */
   proto.teardown = function(options) {
     var shallow = options && options.shallow;
@@ -1115,7 +1148,7 @@ module.exports = function(fm) {
     // get removed when the parent
     // element is removed.
     //
-    // We can't use the standard View#each()
+    // We can't use the standard Module#each()
     // as the array length gets altered
     // with each iteration, hense the
     // reverse while loop.
@@ -1149,7 +1182,7 @@ module.exports = function(fm) {
     if (this._destroy) this._destroy();
 
     // Trigger a `destroy` event
-    // for custom Views to bind to.
+    // for custom Modules to bind to.
     this.fireStatic('destroy');
 
     // Unbind any old event listeners
@@ -1169,7 +1202,7 @@ module.exports = function(fm) {
   /**
    * Destroys all children.
    *
-   * @return {View}
+   * @return {Module}
    * @api public
    */
   proto.empty = function() {
@@ -1193,7 +1226,7 @@ module.exports = function(fm) {
   };
 
   /**
-   * Returns the View's root element.
+   * Returns the Module's root element.
    *
    * If a cache is present it is used,
    * else we search the DOM, else we
@@ -1219,10 +1252,10 @@ module.exports = function(fm) {
    * IMPORTANT: All descendent root
    * element caches are purged so that
    * the new correct elements are retrieved
-   * next time View#getElement is called.
+   * next time Module#getElement is called.
    *
    * @param {Element} el
-   * @return {View}
+   * @return {Module}
    * @api private
    */
   proto.setElement = function(el) {
@@ -1271,7 +1304,7 @@ module.exports = function(fm) {
    * and appends the view into it.
    *
    * @param  {Element} dest
-   * @return {View}
+   * @return {Module}
    * @api public
    */
   proto.inject = function(dest) {
@@ -1289,7 +1322,7 @@ module.exports = function(fm) {
    * the destination element.
    *
    * @param  {Element} dest
-   * @return {View}
+   * @return {Module}
    * @api public
    */
   proto.appendTo = function(dest) {
@@ -1303,7 +1336,7 @@ module.exports = function(fm) {
 
   /**
    * Returns a JSON represention of
-   * a FruitMachine View. This can
+   * a FruitMachine Module. This can
    * be generated serverside and
    * passed into new FruitMachine(json)
    * to inflate serverside rendered
@@ -1340,13 +1373,18 @@ module.exports = function(fm) {
   proto.fire = events.fire;
   proto.fireStatic = events.fireStatic;
 
-  // Allow Views to be extended
-  View.extend = extend(util.keys(proto));
+  // Allow Modules to be extended
+  Module.extend = extend(util.keys(proto));
 
-  return View;
+  // Adding proto.Model after
+  // Module.extend means this
+  // key can be overwritten.
+  proto.Model = fm.Model;
+
+  return Module;
 };
 
-},{"./events":8,"utils":6,"extend":9}],8:[function(require,module,exports){
+},{"./events":9,"extend":10,"utils":6}],9:[function(require,module,exports){
 
 /**
  * Module Dependencies
@@ -1433,7 +1471,7 @@ function propagate(view, args, event) {
 
 exports.fireStatic = events.prototype.fire;
 exports.off = events.prototype.off;
-},{"event":7}],9:[function(require,module,exports){
+},{"event":7}],10:[function(require,module,exports){
 /*jshint browser:true, node:true*/
 
 'use strict';

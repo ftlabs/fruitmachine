@@ -1,6 +1,6 @@
 # {{pkg.title}}
 
-{{pkg.description}} Currently powering the award winning [FT Web App](http://apps.ft.com/ftwebapp/).
+{{pkg.description}} Currently powering the [FT Web App](http://apps.ft.com/ftwebapp/).
 
 FruitMachine was designed to construct nested view layouts from strictly modular components. We wanted it to be as light and unopinionated as possible so that it could be applied to almost any layout problem.
 
@@ -80,7 +80,7 @@ $ npm test
 $ node_modules/.bin/buster-static
 ```
 
-Visit http://localhost:8282/ in browser
+...then isit http://localhost:8282/ in browser
 
 ## Author
 
@@ -97,3 +97,7 @@ Visit http://localhost:8282/ in browser
 ## License
 Copyright (c) 2012 {{pkg.organization}}
 Licensed under the MIT license.
+
+## Credits and collaboration
+
+The lead developer of FTEllipsis is [Wilson Page](http://github.com/wilsonpage) at FT Labs. All open source code released by FT Labs is licenced under the MIT licence. We welcome comments, feedback and suggestions. Please feel free to raise an issue or pull request. Enjoy...

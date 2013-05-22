@@ -53,12 +53,12 @@ document.body.innerHTML; //=> <div class="layout" id="fmid-195834-a"><div class=
 FruitMachine was written for flexibility so there is usually more than one way to do something. In this case the above code could also be written like this:
 
 ```js
-var Apple = FruitMachine.define({
+var Apple = fruitmachine.define({
   module: 'apple',
   template: function(){ return 'I am an apple' } /* 1 */
 });
 
-var Layout = FruitMachine.define({
+var Layout = fruitmachine.define({
   module: 'layout',
   template: function(data){ return data.child1 } /* 1 */
 });
@@ -66,7 +66,7 @@ var Layout = FruitMachine.define({
 
 
 ```js
-var layout = new FruitMachine.View({
+var layout = fruitmachine({
   module: 'layout', /* 1 */
   children: [
     {
@@ -83,4 +83,4 @@ layout
 
 1. *Because we have defined modules under these names, FruitMachine is able to instantiate them internally.*
 
-It is useful to be able to assemble views in this way as it means that you can predefine your layouts as simple JSON, letting FruitMachine do the hard work. For some parts of your application this may not be preferable. In the FT Web App we use a combination of the two techniques. Sometimes it's nicer to have more control :)
+It is useful to be able to assemble views in this way as it means that you can predefine your layouts as simple JSON, letting FruitMachine do the hard work. For some parts of your application this may not be preferable. In the FT Web App we use a combination of the two techniques.
