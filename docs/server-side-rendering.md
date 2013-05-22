@@ -6,11 +6,11 @@ FruitMachine is able to work in exactly the same way on a Node server as on the 
 
 ```js
 module.exports = fruitmachine.define({
-	name: 'apple',
-	template: appleTemplateFunction,
-	setup: function() {
-	  alert("I'm alive!");
-	}
+  name: 'apple',
+  template: appleTemplateFunction,
+  setup: function() {
+    alert("I'm alive!");
+  }
 });
 
 ##### Server
@@ -22,16 +22,16 @@ var Apple = require('./apple');
 
 // Express style route handler
 app.get('/', function(req, res) {
-	var apple = new Apple();
-	var html = apple.toHTML();
-	var json = apple.toJSON();
+  var apple = new Apple();
+  var html = apple.toHTML();
+  var json = apple.toJSON();
 
-	json = JSON.stringify(json);
+  json = JSON.stringify(json);
 
-	// Imagine this response is also
-	// wrapped in usual document boilerplate
-	// with FruitMachine on the page :)
-	res.send('<script>window.json = ' + json + ';</script>' + html);
+  // Imagine this response is also
+  // wrapped in usual document boilerplate
+  // with FruitMachine on the page :)
+  res.send('<script>window.json = ' + json + ';</script>' + html);
 });
 ```
 
