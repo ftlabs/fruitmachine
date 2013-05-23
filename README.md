@@ -1,4 +1,5 @@
-# FruitMachine [![Build Status](https://travis-ci.org/ftlabs/fruitmachine.png?branch=master)](https://travis-ci.org/ftlabs/fruitmachine)
+# FruitMachine
+<!--[![Build Status](https://travis-ci.org/ftlabs/fruitmachine.png?branch=master)](https://travis-ci.org/ftlabs/fruitmachine)-->
 
 A lightweight component layout engine for client and server.
 
