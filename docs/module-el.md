@@ -44,7 +44,7 @@ orange.el
 
 #### Why is my module.el property undefined after .render()?
 
-The child module markup has failed to template into the parent module corrently. Check your child ids and parent markup to check they match up. See [template markup](view-template-markup.md).
+The child module markup has failed to template into the parent module correctly. Check your child ids and parent markup to check they match up. See [template markup](view-template-markup.md).
 
 #### How are module root elements found?
 
