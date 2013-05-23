@@ -57,7 +57,7 @@ Download the [production version][min] (~2k gzipped) or the [development version
 - [Template markup](docs/template-markup.md)
 - [Rendering](docs/rendering.md)
 - [DOM injection](docs/injection.md)
-- [El](docs/module-el.md)
+- [The module element](docs/module-el.md)
 - [Queries](docs/queries.md)
 - [Helpers](docs/module-helpers.md)
 - [Removing & destroying](docs/removing-and-destroying.md)
