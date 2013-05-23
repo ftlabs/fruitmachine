@@ -40,7 +40,7 @@ orange.el
 //=> undefined
 ```
 
-#### FAQ
+### FAQ
 
 #### Why is my module.el property undefined after .render()?
 
