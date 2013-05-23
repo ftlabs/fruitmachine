@@ -8,7 +8,7 @@ var Apple = fruitmachine.define({
   classes: ['class-1', 'class-2'],
 
   // Event callbacks (optional)
-  intitalize: function(options){},
+  initialize: function(options){},
   setup: function(){},
   teardown: function(){},
   destroy: function(){}

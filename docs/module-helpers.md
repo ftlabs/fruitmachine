@@ -1,6 +1,6 @@
 ## Helpers
 
-Helpers are small reusable plugins that you can write to add extra features to a View module ([working example](http://ftlabs.github.io/fruitmachine/examples/helpers)).
+Helpers are small reusable plug-ins that you can write to add extra features to a View module ([working example](http://ftlabs.github.io/fruitmachine/examples/helpers)).
 
 ### Defining helpers
 
@@ -25,7 +25,7 @@ var myHelper = function(module) {
 };
 ```
 
-1. *It is often useful to hook into the `before setup` event so that added functionality is availble inside the module's `setup` function.*
+1. *It is often useful to hook into the `before setup` event so that added functionality is available inside the module's `setup` function.*
 
 ### Attaching helpers
 
@@ -38,7 +38,7 @@ var Apple = fruitmachine.define({
 });
 ```
 
-...or instantitation:
+...or instantiation:
 
 ```js
 var apple = new Apple({

@@ -1,13 +1,13 @@
 ## Markup
 
-When FruitMachine renders your modules by calling the template function, it passes some important data, in addition to any that you have explicitly declared yourself. This data includes the rendered markup from each of the modules's child modules. It's up to your template function to put it in the right place.
+When FruitMachine renders your modules by calling the template function, it passes some important data, in addition to any that you have explicitly declared yourself. This data includes the rendered markup from each of the module's child modules. It's up to your template function to put it in the right place.
 
 It gives you the following data:
 
 - An array of child modules in the form of `children`.
 - A variable for each child View in the form of the child's `slot`.
 
-This gives you the ability to print child HTML exactly where you want it, or to loop and print all children of the current View. If you don't print a module's child modules's into the markup then they will not appear in the final HTML markup.
+This gives you the ability to print child HTML exactly where you want it, or to loop and print all children of the current View. If you don't print a module's child module's into the markup then they will not appear in the final HTML markup.
 
 ### Place child modules by `slot`
 
@@ -115,4 +115,4 @@ layout.el.outerHTML;
 //   </div>
 ```
 
-*NB: id attributes have been ommitted from markup examples for clarity*
+*NB: id attributes have been omitted from markup examples for clarity*

@@ -26,5 +26,5 @@ When instantiating 'lazily' *FruitMachine* looks at the `module` property and at
 - `data {Object}` A data object that will be accessible in your template
 - `helpers {Array}` An array of helper functions to be called on instantiation
 - `classes {Array}` Classes to be added to the root element
-- `template {Function}` A template function that will return html (will any existing template)
+- `template {Function}` A template function that will return HTML (will any existing template)
 - `tag {String}` The tag to use for the root element (defaults to 'div')

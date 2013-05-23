@@ -1,6 +1,6 @@
 ## Extending
 
-It is common in an application to have module's that share behaviour, but are slightly different. In this case you can extend from modules you have already defined ([working example](http://ftlabs.github.io/fruitmachine/examples/extending)).
+It is common in an application to have module's that share behavior, but are slightly different. In this case you can extend from modules you have already defined ([working example](http://ftlabs.github.io/fruitmachine/examples/extending)).
 
 ```js
 

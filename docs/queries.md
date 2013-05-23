@@ -4,7 +4,7 @@ When working with a nested (DOM like) view structure, you need a way get to chil
 
 #### View#module();
 
-Returns a single descendent View instance by module type. Similar to `Element.prototype.querySelector`.
+Returns a single descendant View instance by module type. Similar to `Element.prototype.querySelector`.
 
 ```js
 apple.module('orange');
@@ -13,7 +13,7 @@ apple.module('orange');
 
 #### View#modules();
 
-Returns a list of descendent View instance by module type. Similar to `Element.prototype.querySelectorAll`.
+Returns a list of descendant View instance by module type. Similar to `Element.prototype.querySelectorAll`.
 
 ```js
 apple.modules('orange');
@@ -22,7 +22,7 @@ apple.modules('orange');
 
 #### View#id();
 
-Returns a single descendent View instance by id. Similar to `document.getElementById`.
+Returns a single descendant View instance by id. Similar to `document.getElementById`.
 
 ```js
 apple.id('my_orange_1');

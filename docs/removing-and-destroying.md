@@ -1,6 +1,6 @@
 ## Destroying and removing
 
-Eventually a module has to be destroyed. To do this you simply call `mymodule.destroy()`. This does more than just run your modules's defined `destroy` logic. When destroy is called on a module it recursively calls `.destroy()` on any descendant modules (from the bottom up).
+Eventually a module has to be destroyed. To do this you simply call `mymodule.destroy()`. This does more than just run your module's defined `destroy` logic. When destroy is called on a module it recursively calls `.destroy()` on any descendant modules (from the bottom up).
 
 **Destroy does the following:**
 

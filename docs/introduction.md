@@ -4,7 +4,7 @@ FruitMachine is used to assemble nested views from defined modules. It can be us
 
 #### What is a 'module'?
 
-When refering to a module we mean a reusable UI component. For example let's use the common 'tabbed container' component as an example module.
+When referring to a module we mean a reusable UI component. For example let's use the common 'tabbed container' component as an example module.
 
 Our tabbed container needs some markup, some styling and some basic JavaScript interactions. We might want to use this module in two different places within our app, but we don't want to have to write the markup, the styling or the interaction logic twice. When writing modular components we only have to write things once!
 
@@ -12,7 +12,7 @@ Our tabbed container needs some markup, some styling and some basic JavaScript i
 
 As far as FruitMachine is concerned there is no difference between layouts and modules, all modules are the same; they are a piece of the UI that has a template, maybe some interaction logic, and perhaps holds some child modules.
 
-When we talk about layout modules we are refering to the core page scaffolding; a module that usually fills the page, and defines gaps for other modules to sit in.
+When we talk about layout modules we are referring to the core page scaffolding; a module that usually fills the page, and defines gaps for other modules to sit in.
 
 #### Comparisons with the DOM
 
