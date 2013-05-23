@@ -140,127 +140,7 @@ module.exports = function(options) {
   // Mixin events and return
   return events(fm);
 };
-},{"./define":4,"./module":5,"utils":6,"event":7}],3:[function(require,module,exports){
-
-'use strict';
-
-/**
- * Module Dependencies
- */
-
-var events = require('event');
-var mixin = require('mixin');
-
-/**
- * Exports
- */
-
-module.exports = Model;
-
-/**
- * Locals
- */
-
-var proto = Model.prototype;
-
-/**
- * Model constructor.
- *
- * @constructor
- * @param {Object} data
- * @api public
- */
-function Model(data) {
-  this._data = mixin({}, data);
-}
-
-/**
- * Gets a value by key
- *
- * If no key is given, the
- * whole model is returned.
- *
- * @param  {String} key
- * @return {*}
- * @api public
- */
-proto.get = function(key) {
-  return key
-    ? this._data[key]
-    : this._data;
-};
-
-/**
- * Sets data on the model.
- *
- * Accepts either a key and
- * value, or an object literal.
- *
- * @param {String|Object} key
- * @param {*|undefined} value
- */
-proto.set = function(data, value) {
-
-  // If a string key is passed
-  // with a value. Set the value
-  // on the key in the data store.
-  if ('string' === typeof data && typeof value !== 'undefined') {
-    this._data[data] = value;
-    this.fire('change:' + data, value);
-  }
-
-  // Merge the object into the data store
-  if ('object' === typeof data) {
-    mixin(this._data, data);
-    for (var prop in data) this.fire('change:' + prop, data[prop]);
-  }
-
-  // Always fire a
-  // generic change event
-  this.fire('change');
-
-  // Allow chaining
-  return this;
-};
-
-/**
- * CLears the data store.
- *
- * @return {Model}
- */
-proto.clear = function() {
-  this._data = {};
-  this.fire('change');
-
-  // Allow chaining
-  return this;
-};
-
-/**
- * Deletes the data store.
- *
- * @return {undefined}
- */
-proto.destroy = function() {
-  for (var key in this._data) this._data[key] = null;
-  delete this._data;
-  this.fire('destroy');
-};
-
-/**
- * Returns a shallow
- * clone of the data store.
- *
- * @return {Object}
- */
-proto.toJSON = function() {
-  return mixin({}, this._data);
-};
-
-// Mixin events
-events(proto);
-
-},{"mixin":8,"event":7}],6:[function(require,module,exports){
+},{"./define":4,"./module":5,"utils":6,"event":7}],6:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -313,10 +193,8 @@ exports.hasDom = function() {
 };
 
 var i = 0;
-exports.uniqueId = function(prefix, suffix) {
-  prefix = prefix || 'id';
-  suffix = suffix || 'a';
-  return [prefix, (++i) * Math.round(Math.random() * 100000), suffix].join('-');
+exports.uniqueId = function(prefix) {
+  return (prefix || 'id') + ((++i) * Math.round(Math.random() * 100000));
 };
 
 exports.keys = function(object) {
@@ -444,7 +322,127 @@ function mixin(a, b) {
   for (var key in b) a[key] = b[key];
   return a;
 }
-},{}],8:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
+
+'use strict';
+
+/**
+ * Module Dependencies
+ */
+
+var events = require('event');
+var mixin = require('mixin');
+
+/**
+ * Exports
+ */
+
+module.exports = Model;
+
+/**
+ * Locals
+ */
+
+var proto = Model.prototype;
+
+/**
+ * Model constructor.
+ *
+ * @constructor
+ * @param {Object} data
+ * @api public
+ */
+function Model(data) {
+  this._data = mixin({}, data);
+}
+
+/**
+ * Gets a value by key
+ *
+ * If no key is given, the
+ * whole model is returned.
+ *
+ * @param  {String} key
+ * @return {*}
+ * @api public
+ */
+proto.get = function(key) {
+  return key
+    ? this._data[key]
+    : this._data;
+};
+
+/**
+ * Sets data on the model.
+ *
+ * Accepts either a key and
+ * value, or an object literal.
+ *
+ * @param {String|Object} key
+ * @param {*|undefined} value
+ */
+proto.set = function(data, value) {
+
+  // If a string key is passed
+  // with a value. Set the value
+  // on the key in the data store.
+  if ('string' === typeof data && typeof value !== 'undefined') {
+    this._data[data] = value;
+    this.fire('change:' + data, value);
+  }
+
+  // Merge the object into the data store
+  if ('object' === typeof data) {
+    mixin(this._data, data);
+    for (var prop in data) this.fire('change:' + prop, data[prop]);
+  }
+
+  // Always fire a
+  // generic change event
+  this.fire('change');
+
+  // Allow chaining
+  return this;
+};
+
+/**
+ * CLears the data store.
+ *
+ * @return {Model}
+ */
+proto.clear = function() {
+  this._data = {};
+  this.fire('change');
+
+  // Allow chaining
+  return this;
+};
+
+/**
+ * Deletes the data store.
+ *
+ * @return {undefined}
+ */
+proto.destroy = function() {
+  for (var key in this._data) this._data[key] = null;
+  delete this._data;
+  this.fire('destroy');
+};
+
+/**
+ * Returns a shallow
+ * clone of the data store.
+ *
+ * @return {Object}
+ */
+proto.toJSON = function() {
+  return mixin({}, this._data);
+};
+
+// Mixin events
+events(proto);
+
+},{"mixin":8,"event":7}],8:[function(require,module,exports){
 
 'use strict';
 
@@ -546,7 +544,7 @@ module.exports = function(fm) {
   proto._configure = function(options) {
 
     // Setup static properties
-    this._id = options.id || util.uniqueId('id-');
+    this._id = options.id || util.uniqueId();
     this._fmid = options.fmid || util.uniqueId('fmid');
     this.tag = options.tag || this.tag || 'div';
     this.classes = this.classes || options.classes || [];
@@ -1407,7 +1405,6 @@ exports.on = function(name, module, cb) {
  * @return {View}
  */
 exports.fire = function(name) {
-  var parent = this.parent;
   var _event = this.event;
   var event = {
     target: this,
