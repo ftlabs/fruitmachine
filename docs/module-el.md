@@ -8,7 +8,7 @@ In FruitMachine the `.el` property of a module is populated when `view.render()`
 
 #### Some examples
 
-1.1. With DOM context all Module elements can be found
+1.1. After render `module.el` will be defined
 
 ```js
 var apple = new Apple();
@@ -16,14 +16,12 @@ var orange = new Orange();
 
 apple
   .add(orange)
-  .render()
-  .inject(document.body)
-  .setup();
+  .render();
 
 apple.el
 //=> "[object HTMLDivElement]"
 
-apple.module('orange').el
+orange.el
 //=> "[object HTMLDivElement]"
 ```
 
@@ -33,40 +31,14 @@ apple.module('orange').el
 var apple = new Apple();
 var orange = new Orange();
 
-apple
-  .add(orange)
-  .render();
+apple.add(orange);
 
 apple.el
 //=> undefined
 
-apple.module('orange').el
+orange.el
 //=> undefined
 ```
-
-1.3. Only the module rendered directly has a `.el` set.
-
-```js
-var apple = new Apple();
-var orange = new Orange();
-
-apple
-  .add(orange)
-  .render();
-
-apple.el
-//=> "[object HTMLDivElement]"
-
-apple.module('orange').el
-//=> undefined
-
-apple.setup();
-
-apple.module('orange').el
-//=> "[object HTMLDivElement]"
-```
-
-**NOTE:** We are working to make sure all child modules elements are set after render has been called. So hopefully this edge case wont exist.
 
 #### FAQ
 
