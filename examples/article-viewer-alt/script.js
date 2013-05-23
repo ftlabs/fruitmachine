@@ -4,8 +4,8 @@
  */
 
 // Create the fruitmachine View
-var layout = new LayoutA({ model: { title: 'Example 1b' }});
-var masthead = new Masthead();
+var layout = new LayoutA();
+var masthead = new Masthead({ model: { title: 'Article Viewer Alt' }});
 var apple = new Apple();
 var orange = new Orange();
 var articles = database.getSync();

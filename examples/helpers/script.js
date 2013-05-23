@@ -1,21 +1,21 @@
 
-var myHelper = function(view) {
+var myHelper = function(module) {
 
   // Add functionality
-  view.on('before setup', function() { /* 1 */
-    view.sayName = function() {
-      alert ('My name is ' + view.module());
+  module.on('before setup', function() { /* 1 */
+    module.sayName = function() {
+      alert ('My name is ' + module.name);
     };
   });
 
   // Tidy up
-  view.on('teardown', function() {
-    delete view.sayName;
+  module.on('teardown', function() {
+    delete module.sayName;
   });
 };
 
 var Apple = fruitmachine.define({
-  module: 'apple',
+  name: 'apple',
   template: function(){ return ''; },
   helpers: [
     myHelper

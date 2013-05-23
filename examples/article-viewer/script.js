@@ -4,24 +4,21 @@
  */
 
 var layout = {
-	module: 'layout-a',
-	children: [
-		{
-			slot: 1,
-			module: 'masthead',
-			model: {
-				title: 'Article viewer'
-			}
-		},
-		{
-			slot: 2,
-			module: 'apple'
-		},
-		{
-			slot: 3,
-			module: 'orange'
-		}
-	]
+  module: 'layout-a',
+  children: {
+    1: {
+      module: 'masthead',
+      model: {
+        title: 'Article viewer'
+      }
+    },
+    2: {
+      module: 'apple'
+    },
+    3: {
+      module: 'orange'
+    }
+  }
 };
 
 /**
@@ -43,28 +40,26 @@ apple.model.set({ items: articles });
 // inject it into the
 // DOM and call setup.
 view
-	.render()
-	.inject(document.getElementById('app'))
-	.setup();
+  .render()
+  .inject(document.getElementById('app'))
+  .setup()
+  .on('itemclick', setArticle);
 
 // Make an async call for the first article data
 setArticle(articles[0].id);
-
-// Setup a listener on the 'apple' view.
-apple.on('itemclick', setArticle);
 
 /**
  * Methods
  */
 
 function setArticle(id) {
-	database.getAsync(id, function(article) {
-		var orange = view.module('orange');
+  database.getAsync(id, function(article) {
+    var orange = view.module('orange');
 
-		orange.model.set(article);
+    orange.model.set(article);
 
-		orange
-			.render()
-			.setup();
-	});
+    orange
+      .render()
+      .setup();
+  });
 }
