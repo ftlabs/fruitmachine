@@ -55,6 +55,6 @@ apple.sayName();
 
 ### Community Helpers ("Plugins")
 
-These helpers can be released as plugins, if you would like to submit your helper to this list, [please raise an issue](https://github.com/ftlabs/fruitmachine/issues).
+Helpers can be released as plugins, if you would like to submit your helper to this list, [please raise an issue](https://github.com/ftlabs/fruitmachine/issues).
 
 - [fruitmachine-ftdomdelegate](https://github.com/ftlabs/fruitmachine-ftdomdelegate) provides [ftdomdelegate](https://github.com/ftlabs/ftdomdelegate) functionality within fruitmachine modules.
