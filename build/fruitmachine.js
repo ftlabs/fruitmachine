@@ -76,7 +76,6 @@ module.exports = function(fm) {
 };
 
 },{}],2:[function(require,module,exports){
-
 /*jslint browser:true, node:true*/
 
 /**
@@ -118,7 +117,7 @@ module.exports = function(options) {
    * creating lazy views.
    *
    * @param  {Object} options
-   * @return {View}
+   * @return {Module}
    */
   function fm(options) {
     var Module = fm.modules[options.module];
@@ -140,6 +139,7 @@ module.exports = function(options) {
   // Mixin events and return
   return events(fm);
 };
+
 },{"./define":4,"./module":5,"utils":6,"event":7}],6:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
@@ -322,6 +322,39 @@ function mixin(a, b) {
   for (var key in b) a[key] = b[key];
   return a;
 }
+},{}],8:[function(require,module,exports){
+
+'use strict';
+
+/**
+ * Locals
+ */
+
+var has = {}.hasOwnProperty;
+
+/**
+ * Exports
+ */
+
+module.exports = function(main) {
+  var args = arguments;
+  var l = args.length;
+  var i = 0;
+  var src;
+  var key;
+
+  while (++i < l) {
+    src = args[i];
+    for (key in src) {
+      if (has.call(src, key)) {
+        main[key] = src[key];
+      }
+    }
+  }
+
+  return main;
+};
+
 },{}],3:[function(require,module,exports){
 
 'use strict';
@@ -442,40 +475,7 @@ proto.toJSON = function() {
 // Mixin events
 events(proto);
 
-},{"mixin":8,"event":7}],8:[function(require,module,exports){
-
-'use strict';
-
-/**
- * Locals
- */
-
-var has = {}.hasOwnProperty;
-
-/**
- * Exports
- */
-
-module.exports = function(main) {
-  var args = arguments;
-  var l = args.length;
-  var i = 0;
-  var src;
-  var key;
-
-  while (++i < l) {
-    src = args[i];
-    for (key in src) {
-      if (has.call(src, key)) {
-        main[key] = src[key];
-      }
-    }
-  }
-
-  return main;
-};
-
-},{}],5:[function(require,module,exports){
+},{"mixin":8,"event":7}],5:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
