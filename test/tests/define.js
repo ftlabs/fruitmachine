@@ -31,7 +31,7 @@ buster.testCase('fruitmachine.define()', {
 		refute.defined(View.prototype._setup);
 	},
 
-	"Should be able to accept a View class, so that a View can be defined from extended views": function() {
+	"Should be able to accept a Module class, so that a Module can be defined from extended modules": function() {
 		var initialize1 = this.spy();
 		var initialize2 = this.spy();
 		var setup1 = this.spy();
