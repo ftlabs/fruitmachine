@@ -6,7 +6,7 @@ var database = {
       {
         id: 'slot_1',
         module: 'apple',
-        data: {
+        model: {
           title: 'Home'
         }
       }

@@ -14,7 +14,7 @@ module.exports = function(data) {
 			{
 				id: 'slot_1',
 				module: 'apple',
-				data: {
+				model: {
 					title: data.title
 				}
 			},

@@ -23,7 +23,7 @@ When instantiating 'lazily' *FruitMachine* looks at the `module` property and at
 - `id {String}` Your unique id for this View module
 - `module {String}` The module type (only use if using 'Lazy' instantiation)
 - `children {Array}` An array of child views to instantiate (can be lazy JSON or view instances)
-- `data {Object}` A data object that will be accessible in your template
+- `model {Object}` A data model object that will be accessible in your template
 - `helpers {Array}` An array of helper functions to be called on instantiation
 - `classes {Array}` Classes to be added to the root element
 - `template {Function}` A template function that will return HTML (will any existing template)
