@@ -1079,7 +1079,7 @@ module.exports = function(data) {
 			{
 				id: 'slot_1',
 				module: 'apple',
-				data: {
+				model: {
 					title: data.title
 				}
 			},
@@ -1113,7 +1113,7 @@ module.exports = function(data) {
 			{
 				id: 'slot_1',
 				module: 'apple',
-				data: {
+				model: {
 					title: data.title
 				}
 			},
@@ -1151,7 +1151,7 @@ module.exports = function(data) {
 			{
 				id: 'slot_2',
 				module: 'apple',
-				data: {
+				model: {
 					title: data.title
 				}
 			},

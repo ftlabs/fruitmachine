@@ -23,7 +23,7 @@ var layout = new LayoutB({
   children: {
     1: {
       module: 'masthead',
-      data: {
+      model: {
         title: 'Big Collection'
       }
     },
