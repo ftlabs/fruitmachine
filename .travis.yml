@@ -1,6 +1,6 @@
 script:
   - "npm test"
-  - "npm coveralls"
+  - "npm run coveralls"
 
 language: node_js
 
