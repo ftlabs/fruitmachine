@@ -28,7 +28,7 @@
     "node": "*"
   },
   "scripts": {
-    "test": "./node_modules/.bin/grunt buster"
+    "test": "./node_modules/.bin/grunt test"
   },
   "dependencies": {
     "event": "git://github.com/wilsonpage/event.git",
@@ -38,7 +38,7 @@
   },
   "devDependencies": {
     "hogan.js": "*",
-    "buster": "~0.6.2",
+    "buster": "~0.6.6",
     "grunt": "~0.4.1",
     "grunt-cli": "~0.1.8",
     "grunt-contrib-watch": "~0.3.1",
@@ -46,8 +46,12 @@
     "grunt-readme": "git://github.com/wilsonpage/grunt-readme.git",
     "grunt-version": "git://github.com/wilsonpage/grunt-version.git",
     "grunt-browserify": "1.0.2",
-    "grunt-buster": "~0.1.2",
-    "backbone": "~1.0.0"
+    "grunt-buster": "~0.2.1",
+    "backbone": "~1.0.0",
+    "express": "~3.3.4",
+    "grunt-istanbul": "~0.2.1",
+    "buster-istanbul": "~0.1.7",
+	"buster-coverage-istanbul": "git://github.com/matthew-andrews/buster-coverage-istanbul.git"
   },
   "keywords": [],
   "contributors": [

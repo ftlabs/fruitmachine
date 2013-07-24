@@ -4,7 +4,9 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
 
-    buster: {},
+    buster: {
+      test: {}
+    },
 
     version: {
       src: [
@@ -16,8 +18,12 @@ module.exports = function(grunt) {
 
     browserify: {
       build: {
-        src: 'lib/index.js',
+        src: ['lib/index.js'],
         dest: 'build/<%= pkg.name %>.js'
+      },
+      test: {
+        src: ['coverage/lib/index.js'],
+        dest: 'coverage/build/<%= pkg.name %>.js'
       },
       options: {
         standalone: '<%= pkg.name %>'
@@ -50,6 +56,21 @@ module.exports = function(grunt) {
         files: ['lib/**/*.js'],
         tasks: ['browserify']
       }
+    },
+
+    instrument: {
+      files: 'lib/**/*.js',
+      options: {
+        basePath: 'coverage/'
+      }
+    },
+
+    makeReport: {
+      src: 'coverage/*.json',
+      options: {
+        type: 'html',
+        dir: 'coverage/reports'
+      }
     }
   });
 
@@ -59,7 +80,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-readme');
   grunt.loadNpmTasks('grunt-version');
+  grunt.loadNpmTasks('grunt-istanbul');
 
   // Default task.
-  grunt.registerTask('default', ['browserify', 'uglify', 'readme']);
+  grunt.registerTask('default', ['browserify:build', 'uglify', 'readme']);
+  grunt.registerTask('test', ['instrument', 'browserify:test', 'buster:test', 'makeReport']);
 };

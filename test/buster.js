@@ -4,7 +4,7 @@ config["fruitmachine"] = {
 	rootPath: '../',
 	environment: "browser",
 	sources: [
-		'build/fruitmachine.js',
+		'coverage/build/fruitmachine.js',
 		'node_modules/hogan.js/lib/template.js',
 		'node_modules/hogan.js/lib/compiler.js',
 		'node_modules/backbone/node_modules/underscore/underscore.js',
@@ -13,5 +13,11 @@ config["fruitmachine"] = {
 	],
 	tests: [
 		'test/tests/*.js'
-	]
+	],
+	extensions: [
+		require('buster-coverage-istanbul')
+	],
+	"buster-coverage-istanbul": {
+		dir: "coverage"
+	}	
 };
