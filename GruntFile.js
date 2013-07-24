@@ -18,11 +18,11 @@ module.exports = function(grunt) {
 
     browserify: {
       build: {
-        src: ['lib/index.js'],
+        src: 'lib/index.js',
         dest: 'build/<%= pkg.name %>.js'
       },
       test: {
-        src: ['coverage/lib/index.js'],
+        src: 'coverage/lib/index.js',
         dest: 'coverage/build/<%= pkg.name %>.js'
       },
       options: {
