@@ -1,7 +1,9 @@
 script:
   - "npm test"
+  - "npm coveralls"
 
 language: node_js
 
 node_js:
-  - 0.10.2
+  - 0.10
+  - 0.11

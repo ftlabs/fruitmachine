@@ -64,14 +64,6 @@ module.exports = function(grunt) {
         basePath: 'coverage/'
       }
     },
-
-    makeReport: {
-      src: 'coverage/*.json',
-      options: {
-        type: 'html',
-        dir: 'coverage/reports'
-      }
-    }
   });
 
   grunt.loadNpmTasks('grunt-buster');
@@ -84,5 +76,5 @@ module.exports = function(grunt) {
 
   // Default task.
   grunt.registerTask('default', ['browserify:build', 'uglify', 'readme']);
-  grunt.registerTask('test', ['instrument', 'browserify:test', 'buster:test', 'makeReport']);
+  grunt.registerTask('test', ['instrument', 'browserify:test', 'buster:test']);
 };

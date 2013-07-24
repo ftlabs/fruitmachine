@@ -15,9 +15,10 @@ config["fruitmachine"] = {
 		'test/tests/*.js'
 	],
 	extensions: [
-		require('buster-coverage-istanbul')
+		require('buster-istanbul')
 	],
-	"buster-coverage-istanbul": {
-		dir: "coverage"
+	"buster-istanbul": {
+		instrument: false,
+		outputDirectory: "coverage"
 	}	
 };
