@@ -1,6 +1,5 @@
-
 buster.testCase('View#module()', {
-	setUp: function() {
+  setUp: function() {
     var layout = new Layout({});
     var apple = new Apple({ slot: 1 });
     var orange = new Orange({ slot: 2 });
@@ -14,7 +13,7 @@ buster.testCase('View#module()', {
     this.view = layout;
   },
 
-	"Should return module type if no arguments given": function() {
+  "Should return module type if no arguments given": function() {
     assert.equals(this.view.module(), 'layout');
   },
 
