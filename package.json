@@ -51,7 +51,7 @@
     "backbone": "~1.0.0",
     "express": "~3.3.4",
     "grunt-istanbul": "~0.2.1",
-    "buster-istanbul": "git://github.com/matthew-andrews/buster-istanbul.git#optional-instrument",
+    "buster-istanbul": "~0.1.8",
     "coveralls": "~2.0.16",
     "phantomjs": "~1.9.1-0"
   },
