@@ -1,4 +1,3 @@
-
 buster.testCase('View#add()', {
   "setUp": function() {
     this.view = new helpers.Views.List();
@@ -24,7 +23,7 @@ buster.testCase('View#add()', {
     assert.equals(this.view.children.length, 1);
   },
 
-  "Should the second parameter should define the slot": function() {
+  "Should allow the second parameter to define the slot": function() {
     var apple = new Apple();
     var layout = new Layout();
 
