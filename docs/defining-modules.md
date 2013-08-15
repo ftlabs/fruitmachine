@@ -17,8 +17,8 @@ var Apple = fruitmachine.define({
 
 Define does two things:
 
-- It registers a module internally for [Lazy](module-instantition.md#lazy) module instantiation
-- It returns a constructor that can be [Explicitly](module-instantition.md#explicit) instantiated.
+- It registers a module internally for [Lazy](module-instantiation.md#lazy) module instantiation
+- It returns a constructor that can be [Explicitly](module-instantiation.md#explicit) instantiated.
 
 Internally `define` extends the default `fruitmachine.Module.prototype` with the parameters you define. Many of these parameters can be overwritten in the options passed to the constructor on a per instance basis. It is important you don't declare any parameters that conflict with `fruitmachine.Module.prototype` core API (check the [source]() if you are unsure).
 
