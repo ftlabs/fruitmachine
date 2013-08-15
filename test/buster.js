@@ -19,6 +19,7 @@ config["fruitmachine"] = {
 	],
 	"buster-istanbul": {
 		instrument: false,
-		outputDirectory: "coverage"
-	}	
+		outputDirectory: "coverage",
+		format: "lcov"
+	}
 };
