@@ -1,56 +1,56 @@
 
-buster.testCase('View#toJSON()', {
+buster.testCase('View#serialize()', {
 
   setUp: helpers.createView,
 
   "Should return an object": function() {
     var apple = new Apple();
-    var json = apple.toJSON();
+    var json = apple.serialize();
 
     assert(json instanceof Object);
   },
 
-  "Should call toJSON of child": function() {
+  "Should call serialize of child": function() {
     var apple = new Apple();
     var orange = new Orange();
-    var spy = this.spy(orange, 'toJSON');
+    var spy = this.spy(orange, 'serialize');
 
     apple.add(orange);
 
-    apple.toJSON();
+    apple.serialize();
     assert(spy.called);
   },
 
   "Should add the id": function() {
     var apple = new Apple();
-    var json = apple.toJSON();
+    var json = apple.serialize();
 
     assert(json.id);
   },
 
   "Should add the fmid by default": function() {
     var apple = new Apple();
-    var json = apple.toJSON();
+    var json = apple.serialize();
 
     assert(json.fmid);
   },
 
   "Should omit the fmid if inflatable is false": function() {
     var apple = new Apple();
-    var json = apple.toJSON({inflatable: false});
+    var json = apple.serialize({inflatable: false});
 
     refute.defined(json.fmid);
   },
 
   "Should add the module name": function() {
     var apple = new Apple();
-    var json = apple.toJSON();
+    var json = apple.serialize();
 
     assert.equals(json.module, 'apple');
   },
 
   "Should add the slot": function() {
-    var json = this.view.toJSON();
+    var json = this.view.serialize();
 
     refute.defined(json.slot);
     assert.same(1, json.children[0].slot);
@@ -67,28 +67,28 @@ buster.testCase('View#toJSON()', {
 
     apple.model = model;
 
-    apple.toJSON();
+    apple.serialize();
     assert(spy.called);
   },
 
-  "Should fire `tojson` event": function() {
+  "Should fire `serialize` event": function() {
     var apple = new Apple();
     var spy = this.spy();
 
-    apple.on('tojson', spy);
-    apple.toJSON();
+    apple.on('serialize', spy);
+    apple.serialize();
 
     assert(spy.called);
   },
 
-  "Should be able to manipulate json output via `tojson` event": function() {
+  "Should be able to manipulate json output via `serialize` event": function() {
     var apple = new Apple();
 
-    apple.on('tojson', function(json) {
+    apple.on('serialize', function(json) {
       json.test = 'data';
     });
 
-    var json = apple.toJSON();
+    var json = apple.serialize();
 
     assert.equals(json.test, 'data');
   },
@@ -108,7 +108,7 @@ buster.testCase('View#toJSON()', {
 
     var layoutEl = layout.el;
     var appleEl = layout.module('apple').el;
-    var json = layout.toJSON();
+    var json = layout.serialize();
     var inflated = fruitmachine(json);
 
     inflated.setup();
