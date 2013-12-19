@@ -28,11 +28,18 @@ buster.testCase('View#toJSON()', {
     assert(json.id);
   },
 
-  "Should add the fmid": function() {
+  "Should add the fmid by default": function() {
     var apple = new Apple();
     var json = apple.toJSON();
 
     assert(json.fmid);
+  },
+
+  "Should omit the fmid if inflatable is false": function() {
+    var apple = new Apple();
+    var json = apple.toJSON({inflatable: false});
+
+    refute.defined(json.fmid);
   },
 
   "Should add the module name": function() {
