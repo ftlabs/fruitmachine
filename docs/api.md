@@ -3,7 +3,7 @@
 ### fruitmachine.define()
 
 Defines a module.
-\nOptions:
+Options:
 
  - `name {String}` the name of the module
  - `tag {String}` the tagName to use for the root element
@@ -18,7 +18,7 @@ Defines a module.
 ### Module#Module
 
 Module constructor
-\nOptions:
+Options:
 
  - `id {String}` a unique id to query by
  - `model {Object|Model}` the data with which to associate this module
@@ -31,7 +31,7 @@ Module constructor
 ### Module#add()
 
 Adds a child view(s) to another Module.
-\nOptions:
+Options:
 
  - `at` The child index at which to insert
  - `inject` Injects the child's view element into the parent's
@@ -43,7 +43,7 @@ Removes a child view from
 its current Module contexts
 and also from the DOM unless
 otherwise stated.
-\nOptions:
+Options:
 
  - `fromDOM` Whether the element should be removed from the DOM (default `true`)
 
@@ -65,7 +65,7 @@ otherwise stated.
 Returns a decendent module
 by id, or if called with no
 arguments, returns this view's id.
-\n*Example:*
+*Example:*
 
     myModule.id();
     //=> 'my_view_id'
@@ -79,7 +79,7 @@ Returns the first descendent
 Module with the passed module type.
 If called with no arguments the
 Module's own module type is returned.
-\n*Example:*
+*Example:*
 
     // Assuming 'myModule' has 3 descendent
     // views with the module type 'apple'
@@ -93,7 +93,7 @@ Returns a list of descendent
 Modules that match the module
 type given (Similar to
 Element.querySelectorAll();).
-\n*Example:*
+*Example:*
 
     // Assuming 'myModule' has 3 descendent
     // views with the module type 'apple'
@@ -106,7 +106,7 @@ Element.querySelectorAll();).
 Calls the passed function
 for each of the view's
 children.
-\n*Example:*
+*Example:*
 
     myModule.each(function(child) {
         // Do stuff with each child view...
@@ -119,7 +119,7 @@ any descendent views returning
 an html string. All data in the
 views model is made accessible
 to the template.
-\nChild views are printed into the
+Child views are printed into the
 parent template by `id`. Alternatively
 children can be iterated over a a list
 and printed with `{{{child}}}}`.
@@ -140,13 +140,13 @@ and printed with `{{{child}}}}`.
 Renders the view and replaces
 the `view.el` with a freshly
 rendered node.
-\nFires a `render` event on the view.
+Fires a `render` event on the view.
 
 ### Module#setup()
 
 Sets up a view and all descendent
 views.
-\nSetup will be aborted if no `view.el`
+Setup will be aborted if no `view.el`
 is found. If a view is already setup,
 teardown is run first to prevent a
 view being setup twice.
@@ -161,7 +161,7 @@ Options:
 
 Tearsdown a view and all descendent
 views that have been setup.
-\nYour custom `teardown` method is
+Your custom `teardown` method is
 called and a `teardown` event is fired.
 
 Options:
@@ -174,7 +174,7 @@ Completely destroys a view. This means
 a view is torn down, removed from it's
 current layout context and removed
 from the DOM.
-\nYour custom `destroy` method is
+Your custom `destroy` method is
 called and a `destroy` event is fired.
 
 NOTE: `.remove()` is only run on the view
@@ -187,7 +187,7 @@ Options:
 ### Module#empty()
 
 Destroys all children.
-\nIs this needed?
+Is this needed?
 
 ### Module#inject()
 
@@ -207,7 +207,7 @@ be generated serverside and
 passed into new FruitMachine(serialized)
 to inflate serverside rendered
 views.
-\nOptions:
+Options:
 
  - `inflatable` Whether the returned object should retain references to DOM ids for use with client-side inflation of views
 

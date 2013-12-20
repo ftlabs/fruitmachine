@@ -5,6 +5,6 @@
 
 {{{description.summary}}}
 {{#description.body}}
-\n{{{description.body}}}
+{{{description.body}}}
 {{/description.body}}
 {{/jsdoc}}
