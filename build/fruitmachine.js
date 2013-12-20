@@ -547,8 +547,8 @@ module.exports = function(fm) {
     this._id = options.id || util.uniqueId();
     this._fmid = options.fmid || util.uniqueId('fmid');
     this.tag = options.tag || this.tag || 'div';
-    this.classes = this.classes || options.classes || [];
-    this.helpers = this.helpers || options.helpers || [];
+    this.classes = options.classes || this.classes || [];
+    this.helpers = options.helpers || this.helpers || [];
     this.template = this._setTemplate(options.template || this.template);
     this.slot = options.slot;
 
@@ -1303,36 +1303,56 @@ module.exports = function(fm) {
   };
 
   /**
-   * Returns a JSON represention of
+   * @deprecated
+   */
+  proto.toJSON = function(options) {
+    return this.serialize(options);
+  };
+
+  /**
+   * Returns a serialized represention of
    * a FruitMachine Module. This can
    * be generated serverside and
-   * passed into new FruitMachine(json)
+   * passed into new FruitMachine(serialized)
    * to inflate serverside rendered
    * views.
    *
+   * Options:
+   *
+   *  - `inflatable` Whether the returned object should retain references to DOM ids for use with client-side inflation of views
+   *
+   * @param {Object} options
    * @return {Object}
    * @api public
    */
-  proto.toJSON = function() {
-    var json = {};
-    json.children = [];
+  proto.serialize = function(options) {
+    var serialized = {};
+
+    // Shallow clone the options
+    options = mixin({
+      inflatable: true
+    }, options);
+
+    serialized.children = [];
 
     // Recurse
     this.each(function(child) {
-      json.children.push(child.toJSON());
+      serialized.children.push(child.serialize());
     });
 
-    json.id = this.id();
-    json.fmid = this._fmid;
-    json.module = this.module();
-    json.model = this.model.toJSON();
-    json.slot = this.slot;
+    serialized.id = this.id();
+    serialized.module = this.module();
+    serialized.model = this.model.toJSON();
+    serialized.slot = this.slot;
+
+    if (options.inflatable) serialized.fmid = this._fmid;
 
     // Fire a hook to allow third
-    // parties to alter the json output
-    this.fireStatic('tojson', json);
+    // parties to alter the output
+    this.fireStatic('tojson', serialized); // @deprecated
+    this.fireStatic('serialize', serialized);
 
-    return json;
+    return serialized;
   };
 
   // Events

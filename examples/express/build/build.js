@@ -1,13 +1,246 @@
-;(function(e,t,n){function i(n,s){if(!t[n]){if(!e[n]){var o=typeof require=="function"&&require;if(!s&&o)return o(n,!0);if(r)return r(n,!0);throw new Error("Cannot find module '"+n+"'")}var u=t[n]={exports:{}};e[n][0](function(t){var r=e[n][1][t];return i(r?r:t)},u,u.exports)}return t[n].exports}var r=typeof require=="function"&&require;for(var s=0;s<n.length;s++)i(n[s]);return i})({1:[function(require,module,exports){
-(function(global){global.Hogan = require('hogan.js/lib/template').Template;
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};global.Hogan = require('hogan.js/lib/template').Template;
 global.app = {};
 
 var fruitmachine = require('../../../../lib/');
 var routes = require('../routes');
 
 app.view = fruitmachine(window.layout).setup();
-})(window)
-},{"../../../../lib/":2,"../routes":3,"hogan.js/lib/template":4}],4:[function(require,module,exports){
+},{"../../../../lib/":21,"../routes":16,"hogan.js/lib/template":17}],2:[function(require,module,exports){
+
+/**
+ * Module Dependencies
+ */
+
+var fm = require('../../../../lib/');
+var template = require('./template');
+
+/**
+ * Exports
+ */
+
+module.exports = fm.define({
+	module: 'layout-a',
+	template: template
+});
+},{"../../../../lib/":21,"./template":3}],3:[function(require,module,exports){
+module.exports = new Hogan(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div class='layout-a' ");_.b(_.t(_.f("fm_attrs",c,p,0)));_.b(">");_.b("\n" + i);_.b("	<div class='layout-a_slot-1'>");_.b(_.t(_.f("slot_1",c,p,0)));_.b("</div>");_.b("\n" + i);_.b("	<div class='layout-a_region-1'>");_.b("\n" + i);_.b("		<div class='layout-a_slot-2'>");_.b(_.t(_.f("slot_2",c,p,0)));_.b("</div>");_.b("\n" + i);_.b("		<div class='layout-a_slot-3'>");_.b(_.t(_.f("slot_3",c,p,0)));_.b("</div>");_.b("\n" + i);_.b("	</div>");_.b("\n" + i);_.b("</div>");return _.fl();;});
+},{}],4:[function(require,module,exports){
+
+/**
+ * Module Dependencies
+ */
+
+var fm = require('../../../../lib/');
+var template = require('./template');
+
+/**
+ * Exports
+ */
+
+module.exports = fm.define({
+	module: 'apple',
+	template: template
+});
+},{"../../../../lib/":21,"./template":5}],5:[function(require,module,exports){
+module.exports = new Hogan(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div class=\"module-apple\" ");_.b(_.t(_.f("fm_attrs",c,p,0)));_.b(">");_.b("\n" + i);_.b("	<div class=\"module-apple_title\">");_.b(_.v(_.f("title",c,p,0)));_.b("</div>");_.b("\n" + i);_.b("</div>");return _.fl();;});
+},{}],6:[function(require,module,exports){
+
+/**
+ * Module Dependencies
+ */
+
+var fm = require('../../../../lib/');
+var template = require('./template');
+
+/**
+ * Exports
+ */
+
+module.exports = fm.define({
+	module: 'banana',
+	template: template
+});
+},{"../../../../lib/":21,"./template":7}],7:[function(require,module,exports){
+module.exports = new Hogan(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div class='module-banana' ");_.b(_.t(_.f("fm_attrs",c,p,0)));_.b(">Module Banana</div>");return _.fl();;});
+},{}],8:[function(require,module,exports){
+
+/**
+ * Module Dependencies
+ */
+
+var fm = require('../../../../lib/');
+var template = require('./template');
+
+/**
+ * Exports
+ */
+
+module.exports = fm.define({
+	module: 'orange',
+	template: template
+});
+},{"../../../../lib/":21,"./template":9}],9:[function(require,module,exports){
+module.exports = new Hogan(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div class='module-orange' ");_.b(_.t(_.f("fm_attrs",c,p,0)));_.b(">Module Orange</div>");return _.fl();;});
+},{}],10:[function(require,module,exports){
+var content = document.querySelector('.js-app_content');
+var View = require('./view');
+
+var database = {
+	title: 'This is the About page'
+};
+
+module.exports = function() {
+	app.view = View(database);
+
+	app.view
+		.render()
+		.inject(content);
+};
+},{"./view":11}],11:[function(require,module,exports){
+var fruitmachine = require('../../../../lib/');
+
+// Require these views so that
+// fruitmachine registers them
+var LayoutA = require('../layout-a');
+var ModuleApple = require('../module-apple');
+var ModuleOrange = require('../module-orange');
+var ModuleBanana = require('../module-banana');
+
+module.exports = function(data) {
+	var layout = {
+		module: 'layout-a',
+		children: [
+			{
+				id: 'slot_1',
+				module: 'apple',
+				model: {
+					title: data.title
+				}
+			},
+			{
+				id: 'slot_2',
+				module: 'banana'
+			},
+			{
+				id: 'slot_3',
+				module: 'orange'
+			}
+		]
+	};
+
+	return fruitmachine(layout);
+};
+},{"../../../../lib/":21,"../layout-a":2,"../module-apple":4,"../module-banana":6,"../module-orange":8}],12:[function(require,module,exports){
+var content = document.querySelector('.js-app_content');
+var View = require('./view');
+
+var database = {
+	title: 'This is the Home page'
+};
+
+module.exports = function() {
+	app.view = View(database);
+
+	app.view
+		.render()
+		.inject(content);
+};
+},{"./view":13}],13:[function(require,module,exports){
+var fruitmachine = require('../../../../lib/');
+
+// Require these views so that
+// fruitmachine registers them
+var LayoutA = require('../layout-a');
+var ModuleApple = require('../module-apple');
+var ModuleOrange = require('../module-orange');
+var ModuleBanana = require('../module-banana');
+
+module.exports = function(data) {
+	var layout = {
+		module: 'layout-a',
+		children: [
+			{
+				id: 'slot_1',
+				module: 'apple',
+				model: {
+					title: data.title
+				}
+			},
+			{
+				id: 'slot_2',
+				module: 'orange'
+			},
+			{
+				id: 'slot_3',
+				module: 'banana'
+			}
+		]
+	};
+
+	return fruitmachine(layout);
+};
+},{"../../../../lib/":21,"../layout-a":2,"../module-apple":4,"../module-banana":6,"../module-orange":8}],14:[function(require,module,exports){
+var content = document.querySelector('.js-app_content');
+var View = require('./view');
+
+var database = {
+	title: 'This is the Links page'
+};
+
+module.exports = function() {
+	app.view = View(database);
+
+	app.view
+		.render()
+		.inject(content);
+};
+},{"./view":15}],15:[function(require,module,exports){
+var fruitmachine = require('../../../../lib/');
+
+// Require these views so that
+// fruitmachine registers them
+var LayoutA = require('../layout-a');
+var ModuleApple = require('../module-apple');
+var ModuleOrange = require('../module-orange');
+var ModuleBanana = require('../module-banana');
+
+module.exports = function(data) {
+	var layout = {
+		module: 'layout-a',
+		children: [
+			{
+				id: 'slot_1',
+				module: 'orange'
+			},
+			{
+				id: 'slot_2',
+				module: 'apple',
+				model: {
+					title: data.title
+				}
+			},
+			{
+				id: 'slot_3',
+				module: 'banana'
+			}
+		]
+	};
+
+	return fruitmachine(layout);
+};
+},{"../../../../lib/":21,"../layout-a":2,"../module-apple":4,"../module-banana":6,"../module-orange":8}],16:[function(require,module,exports){
+var page = require('page');
+var home = require('../page-home/client');
+var about = require('../page-about/client');
+var links = require('../page-links/client');
+
+page('/', home);
+page('/about', about);
+page('/links', links);
+
+page({ dispatch: false });
+},{"../page-about/client":10,"../page-home/client":12,"../page-links/client":14,"page":18}],17:[function(require,module,exports){
 /*
  *  Copyright 2011 Twitter, Inc.
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -250,204 +483,7 @@ var Hogan = {};
 })(typeof exports !== 'undefined' ? exports : Hogan);
 
 
-},{}],2:[function(require,module,exports){
-
-/*jslint browser:true, node:true*/
-
-/**
- * FruitMachine Singleton
- *
- * Renders layouts/modules from a basic layout definition.
- * If views require custom interactions devs can extend
- * the basic functionality.
- *
- * @version 0.3.3
- * @copyright The Financial Times Limited [All Rights Reserved]
- * @author Wilson Page <wilson.page@ft.com>
- */
-
-'use strict';
-
-/**
- * Module Dependencies
- */
-
-var fruitMachine = require('./fruitmachine');
-var Model = require('model');
-
-/**
- * Exports
- */
-
-module.exports = fruitMachine({ Model: Model });
-},{"./fruitmachine":5,"model":6}],7:[function(require,module,exports){
-
-/*jslint browser:true, node:true, laxbreak:true*/
-
-'use strict';
-
-module.exports = function(fm) {
-
-  /**
-   * Defines a module.
-   *
-   * Options:
-   *
-   *  - `name {String}` the name of the module
-   *  - `tag {String}` the tagName to use for the root element
-   *  - `classes {Array}` a list of classes to add to the root element
-   *  - `template {Function}` the template function to use when rendering
-   *  - `helpers {Array}` a lsit of helpers to apply to the module
-   *  - `initialize {Function}` custom logic to run when module instance created
-   *  - `setup {Function}` custom logic to run when `.setup()` is called (directly or indirectly)
-   *  - `teardown {Function}` custom logic to unbind/undo anything setup introduced (called on `.destroy()` and sometimes on `.setup()` to avoid double binding events)
-   *  - `destroy {Function}` logic to permanently destroy all references
-   *
-   * @param  {Object|View} props
-   * @return {View}
-   * @public true
-   */
-  return function(props) {
-    var Module = ('object' === typeof props)
-      ? fm.Module.extend(props)
-      : props;
-
-    // Allow modules to be named
-    // via 'name:' or 'module:'
-    var proto = Module.prototype;
-    var name = proto.name || proto._module;
-
-    // Store the module by module type
-    // so that module can be referred to
-    // by just a string in layout definitions
-    if (name) fm.modules[name] = Module;
-
-    return Module;
-  };
-};
-
-},{}],8:[function(require,module,exports){
-var content = document.querySelector('.js-app_content');
-var View = require('./view');
-
-var database = {
-	title: 'This is the Home page'
-};
-
-module.exports = function() {
-	app.view = View(database);
-
-	app.view
-		.render()
-		.inject(content);
-};
-},{"./view":9}],10:[function(require,module,exports){
-var content = document.querySelector('.js-app_content');
-var View = require('./view');
-
-var database = {
-	title: 'This is the About page'
-};
-
-module.exports = function() {
-	app.view = View(database);
-
-	app.view
-		.render()
-		.inject(content);
-};
-},{"./view":11}],12:[function(require,module,exports){
-var content = document.querySelector('.js-app_content');
-var View = require('./view');
-
-var database = {
-	title: 'This is the Links page'
-};
-
-module.exports = function() {
-	app.view = View(database);
-
-	app.view
-		.render()
-		.inject(content);
-};
-},{"./view":13}],3:[function(require,module,exports){
-var page = require('page');
-var home = require('../page-home/client');
-var about = require('../page-about/client');
-var links = require('../page-links/client');
-
-page('/', home);
-page('/about', about);
-page('/links', links);
-
-page({ dispatch: false });
-},{"../page-home/client":8,"../page-about/client":10,"../page-links/client":12,"page":14}],5:[function(require,module,exports){
-
-/*jslint browser:true, node:true*/
-
-/**
- * FruitMachine
- *
- * Renders layouts/modules from a basic layout definition.
- * If views require custom interactions devs can extend
- * the basic functionality.
- *
- * @version 0.3.3
- * @copyright The Financial Times Limited [All Rights Reserved]
- * @author Wilson Page <wilson.page@ft.com>
- */
-
-'use strict';
-
-/**
- * Module Dependencies
- */
-
-var mod = require('./module');
-var define = require('./define');
-var utils = require('utils');
-var events = require('event');
-
-/**
- * Creates a fruitmachine
- *
- * Options:
- *
- *  - `Model` A model constructor to use (must have `.toJSON()`)
- *
- * @param {Object} options
- */
-module.exports = function(options) {
-
-  /**
-   * Shortcut method for
-   * creating lazy views.
-   *
-   * @param  {Object} options
-   * @return {View}
-   */
-  function fm(options) {
-    var Module = fm.modules[options.module];
-    if (Module) return new Module(options);
-  }
-
-  fm.create = module.exports;
-  fm.Model = options.Model;
-  fm.Events = events;
-  fm.Module = mod(fm);
-  fm.define = define(fm);
-  fm.util = utils;
-  fm.modules = {};
-  fm.config = {
-    templateIterator: 'children',
-    templateInstance: 'child'
-  };
-
-  // Mixin events and return
-  return events(fm);
-};
-},{"./define":7,"./module":15,"utils":16,"event":17}],14:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 
 ;(function(){
 
@@ -545,7 +581,8 @@ module.exports = function(options) {
     if (false !== options.popstate) window.addEventListener('popstate', onpopstate, false);
     if (false !== options.click) window.addEventListener('click', onclick, false);
     if (!dispatch) return;
-    page.replace(location.pathname + location.search, null, true, dispatch);
+    var url = location.pathname + location.search + location.hash;
+    page.replace(url, null, true, dispatch);
   };
 
   /**
@@ -624,7 +661,8 @@ module.exports = function(options) {
    */
 
   function unhandled(ctx) {
-    if (window.location.pathname + window.location.search == ctx.canonicalPath) return;
+    var current = window.location.pathname + window.location.search;
+    if (current == ctx.canonicalPath) return;
     page.stop();
     ctx.unhandled = true;
     window.location = ctx.canonicalPath;
@@ -642,14 +680,24 @@ module.exports = function(options) {
   function Context(path, state) {
     if ('/' == path[0] && 0 != path.indexOf(base)) path = base + path;
     var i = path.indexOf('?');
+
     this.canonicalPath = path;
     this.path = path.replace(base, '') || '/';
+
     this.title = document.title;
     this.state = state || {};
     this.state.path = path;
     this.querystring = ~i ? path.slice(i + 1) : '';
     this.pathname = ~i ? path.slice(0, i) : path;
     this.params = [];
+
+    // fragment
+    this.hash = '';
+    if (!~this.path.indexOf('#')) return;
+    var parts = this.path.split('#');
+    this.path = parts[0];
+    this.hash = parts[1] || '';
+    this.querystring = this.querystring.split('#')[0];
   }
 
   /**
@@ -722,7 +770,7 @@ module.exports = function(options) {
     return function(ctx, next){
       if (self.match(ctx.path, ctx.params)) return fn(ctx, next);
       next();
-    }
+    };
   };
 
   /**
@@ -798,7 +846,7 @@ module.exports = function(options) {
       .replace(/([\/.])/g, '\\$1')
       .replace(/\*/g, '(.*)');
     return new RegExp('^' + path + '$', sensitive ? '' : 'i');
-  };
+  }
 
   /**
    * Handle "populate" events.
@@ -825,19 +873,22 @@ module.exports = function(options) {
     while (el && 'A' != el.nodeName) el = el.parentNode;
     if (!el || 'A' != el.nodeName) return;
 
-    // ensure non-hash
-    var href = el.href;
-    var path = el.pathname + el.search;
-    if (el.hash || '#' == el.getAttribute('href')) return;
+    // ensure non-hash for the same path
+    var link = el.getAttribute('href');
+    if (el.pathname == location.pathname && (el.hash || '#' == link)) return;
 
     // check target
     if (el.target) return;
 
     // x-origin
-    if (!sameOrigin(href)) return;
+    if (!sameOrigin(el.href)) return;
+
+    // rebuild path
+    var path = el.pathname + el.search + (el.hash || '');
 
     // same page
-    var orig = path;
+    var orig = path + el.hash;
+
     path = path.replace(base, '');
     if (base && orig == path) return;
 
@@ -878,326 +929,66 @@ module.exports = function(options) {
 
 })();
 
-},{}],16:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 
-/*jshint browser:true, node:true*/
-
-'use strict';
-
-exports.bind = function(method, context) {
-  return function() { return method.apply(context, arguments); };
-};
-
-exports.isArray = function(arg) {
-  return arg instanceof Array;
-},
-
-exports.mixin = function(original, source) {
-  for (var key in source) original[key] = source[key];
-  return original;
-},
-
-exports.byId = function(id, el) {
-  if (el) return el.querySelector('#' + id);
-},
-
-/**
- * Inserts an item into an array.
- * Has the option to state an index.
- *
- * @param  {*} item
- * @param  {Array} array
- * @param  {Number} index
- * @return void
- */
-exports.insert = function(item, array, index) {
-  if (typeof index !== 'undefined') {
-    array.splice(index, 0, item);
-  } else {
-    array.push(item);
-  }
-},
-
-exports.toNode = function(html) {
-  var el = document.createElement('div');
-  el.innerHTML = html;
-  return el.removeChild(el.firstElementChild);
-},
-
-// Determine if we have a DOM
-// in the current environment.
-exports.hasDom = function() {
-  return typeof document !== 'undefined';
-};
-
-var i = 0;
-exports.uniqueId = function(prefix, suffix) {
-  prefix = prefix || 'id';
-  suffix = suffix || 'a';
-  return [prefix, (++i) * Math.round(Math.random() * 100000), suffix].join('-');
-};
-
-exports.keys = function(object) {
-  var keys = [];
-  for (var key in object) keys.push(key);
-  return keys;
-};
-
-exports.isPlainObject = function(ob) {
-  if (!ob) return false;
-  var c = (ob.constructor || '').toString();
-  return !!~c.indexOf('Object');
-};
-},{}],17:[function(require,module,exports){
-
-/**
- * Event
- *
- * A super lightweight
- * event emitter library.
- *
- * @version 0.1.4
- * @author Wilson Page <wilson.page@me.com>
- */
-
-/**
- * Locals
- */
-
-var proto = Event.prototype;
-
-/**
- * Expose `Event`
- */
-
-module.exports = Event;
-
-/**
- * Creates a new event emitter
- * instance, or if passed an
- * object, mixes the event logic
- * into it.
- *
- * @param  {Object} obj
- * @return {Object}
- */
-function Event(obj) {
-  if (!(this instanceof Event)) return new Event(obj);
-  if (obj) return mixin(obj, proto);
-}
-
-/**
- * Registers a callback
- * with an event name.
- *
- * @param  {String}   name
- * @param  {Function} cb
- * @return {Event}
- */
-proto.on = function(name, cb) {
-  this._cbs = this._cbs || {};
-  (this._cbs[name] || (this._cbs[name] = [])).unshift(cb);
-  return this;
-};
-
-/**
- * Removes a single callback,
- * or all callbacks associated
- * with the passed event name.
- *
- * @param  {String}   name
- * @param  {Function} cb
- * @return {Event}
- */
-proto.off = function(name, cb) {
-  this._cbs = this._cbs || {};
-
-  if (!name) return this._cbs = {};
-  if (!cb) return delete this._cbs[name];
-
-  var cbs = this._cbs[name] || [];
-  var i;
-
-  while (cbs && ~(i = cbs.indexOf(cb))) cbs.splice(i, 1);
-  return this;
-};
-
-/**
- * Fires an event. Which triggers
- * all callbacks registered on this
- * event name.
- *
- * @param  {String} name
- * @return {Event}
- */
-proto.fire = function(options) {
-  this._cbs = this._cbs || {};
-  var name = options.name || options;
-  var ctx = options.ctx || this;
-  var cbs = this._cbs[name];
-
-  if (cbs) {
-    var args = [].slice.call(arguments, 1);
-    var l = cbs.length;
-    while (l--) cbs[l].apply(ctx, args);
-  }
-
-  return this;
-};
-
-/**
- * Util
- */
-
-/**
- * Mixes in the properties
- * of the second object into
- * the first.
- *
- * @param  {Object} a
- * @param  {Object} b
- * @return {Object}
- */
-function mixin(a, b) {
-  for (var key in b) a[key] = b[key];
-  return a;
-}
-},{}],9:[function(require,module,exports){
-var fruitmachine = require('../../../../lib/');
-
-// Require these views so that
-// fruitmachine registers them
-var LayoutA = require('../layout-a');
-var ModuleApple = require('../module-apple');
-var ModuleOrange = require('../module-orange');
-var ModuleBanana = require('../module-banana');
-
-module.exports = function(data) {
-	var layout = {
-		module: 'layout-a',
-		children: [
-			{
-				id: 'slot_1',
-				module: 'apple',
-				model: {
-					title: data.title
-				}
-			},
-			{
-				id: 'slot_2',
-				module: 'orange'
-			},
-			{
-				id: 'slot_3',
-				module: 'banana'
-			}
-		]
-	};
-
-	return fruitmachine(layout);
-};
-},{"../../../../lib/":2,"../layout-a":18,"../module-apple":19,"../module-orange":20,"../module-banana":21}],11:[function(require,module,exports){
-var fruitmachine = require('../../../../lib/');
-
-// Require these views so that
-// fruitmachine registers them
-var LayoutA = require('../layout-a');
-var ModuleApple = require('../module-apple');
-var ModuleOrange = require('../module-orange');
-var ModuleBanana = require('../module-banana');
-
-module.exports = function(data) {
-	var layout = {
-		module: 'layout-a',
-		children: [
-			{
-				id: 'slot_1',
-				module: 'apple',
-				model: {
-					title: data.title
-				}
-			},
-			{
-				id: 'slot_2',
-				module: 'banana'
-			},
-			{
-				id: 'slot_3',
-				module: 'orange'
-			}
-		]
-	};
-
-	return fruitmachine(layout);
-};
-},{"../../../../lib/":2,"../layout-a":18,"../module-apple":19,"../module-orange":20,"../module-banana":21}],13:[function(require,module,exports){
-var fruitmachine = require('../../../../lib/');
-
-// Require these views so that
-// fruitmachine registers them
-var LayoutA = require('../layout-a');
-var ModuleApple = require('../module-apple');
-var ModuleOrange = require('../module-orange');
-var ModuleBanana = require('../module-banana');
-
-module.exports = function(data) {
-	var layout = {
-		module: 'layout-a',
-		children: [
-			{
-				id: 'slot_1',
-				module: 'orange'
-			},
-			{
-				id: 'slot_2',
-				module: 'apple',
-				model: {
-					title: data.title
-				}
-			},
-			{
-				id: 'slot_3',
-				module: 'banana'
-			}
-		]
-	};
-
-	return fruitmachine(layout);
-};
-},{"../../../../lib/":2,"../layout-a":18,"../module-apple":19,"../module-orange":20,"../module-banana":21}],22:[function(require,module,exports){
+/*jslint browser:true, node:true, laxbreak:true*/
 
 'use strict';
 
-/**
- * Locals
- */
+module.exports = function(fm) {
 
-var has = {}.hasOwnProperty;
+  /**
+   * Defines a module.
+   *
+   * Options:
+   *
+   *  - `name {String}` the name of the module
+   *  - `tag {String}` the tagName to use for the root element
+   *  - `classes {Array}` a list of classes to add to the root element
+   *  - `template {Function}` the template function to use when rendering
+   *  - `helpers {Array}` a list of helpers to apply to the module
+   *  - `initialize {Function}` custom logic to run when module instance created
+   *  - `setup {Function}` custom logic to run when `.setup()` is called (directly or indirectly)
+   *  - `teardown {Function}` custom logic to unbind/undo anything setup introduced (called on `.destroy()` and sometimes on `.setup()` to avoid double binding events)
+   *  - `destroy {Function}` logic to permanently destroy all references
+   *
+   * @param  {Object|View} props
+   * @return {View}
+   * @public true
+   */
+  return function(props) {
+    var Module = ('object' === typeof props)
+      ? fm.Module.extend(props)
+      : props;
 
-/**
- * Exports
- */
+    // Allow modules to be named
+    // via 'name:' or 'module:'
+    var proto = Module.prototype;
+    var name = proto.name || proto._module;
 
-module.exports = function(main) {
-  var args = arguments;
-  var l = args.length;
-  var i = 0;
-  var src;
-  var key;
+    // Store the module by module type
+    // so that module can be referred to
+    // by just a string in layout definitions
+    if (name) fm.modules[name] = Module;
 
-  while (++i < l) {
-    src = args[i];
-    for (key in src) {
-      if (has.call(src, key)) {
-        main[key] = src[key];
-      }
-    }
-  }
-
-  return main;
+    return Module;
+  };
 };
 
-},{}],6:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
+/*jslint browser:true, node:true*/
+
+/**
+ * FruitMachine
+ *
+ * Renders layouts/modules from a basic layout definition.
+ * If views require custom interactions devs can extend
+ * the basic functionality.
+ *
+ * @version 0.3.3
+ * @copyright The Financial Times Limited [All Rights Reserved]
+ * @author Wilson Page <wilson.page@ft.com>
+ */
 
 'use strict';
 
@@ -1205,119 +996,167 @@ module.exports = function(main) {
  * Module Dependencies
  */
 
+var mod = require('./module');
+var define = require('./define');
+var utils = require('utils');
 var events = require('event');
-var mixin = require('mixin');
+
+/**
+ * Creates a fruitmachine
+ *
+ * Options:
+ *
+ *  - `Model` A model constructor to use (must have `.toJSON()`)
+ *
+ * @param {Object} options
+ */
+module.exports = function(options) {
+
+  /**
+   * Shortcut method for
+   * creating lazy views.
+   *
+   * @param  {Object} options
+   * @return {Module}
+   */
+  function fm(options) {
+    var Module = fm.modules[options.module];
+    if (Module) return new Module(options);
+  }
+
+  fm.create = module.exports;
+  fm.Model = options.Model;
+  fm.Events = events;
+  fm.Module = mod(fm);
+  fm.define = define(fm);
+  fm.util = utils;
+  fm.modules = {};
+  fm.config = {
+    templateIterator: 'children',
+    templateInstance: 'child'
+  };
+
+  // Mixin events and return
+  return events(fm);
+};
+
+},{"./define":19,"./module":23,"event":24,"utils":28}],21:[function(require,module,exports){
+
+/*jslint browser:true, node:true*/
+
+/**
+ * FruitMachine Singleton
+ *
+ * Renders layouts/modules from a basic layout definition.
+ * If views require custom interactions devs can extend
+ * the basic functionality.
+ *
+ * @version 0.3.3
+ * @copyright The Financial Times Limited [All Rights Reserved]
+ * @author Wilson Page <wilson.page@ft.com>
+ */
+
+'use strict';
+
+/**
+ * Module Dependencies
+ */
+
+var fruitMachine = require('./fruitmachine');
+var Model = require('model');
 
 /**
  * Exports
  */
 
-module.exports = Model;
+module.exports = fruitMachine({ Model: Model });
+},{"./fruitmachine":20,"model":26}],22:[function(require,module,exports){
 
 /**
- * Locals
+ * Module Dependencies
  */
 
-var proto = Model.prototype;
+var events = require('event');
 
 /**
- * Model constructor.
+ * Exports
+ */
+
+/**
+ * Registers a event listener.
  *
- * @constructor
- * @param {Object} data
- * @api public
+ * @param  {String}   name
+ * @param  {String}   module
+ * @param  {Function} cb
+ * @return {View}
  */
-function Model(data) {
-  this._data = mixin({}, data);
+exports.on = function(name, module, cb) {
+
+  // cb can be passed as
+  // the second or third argument
+  if (arguments.length === 2) {
+    cb = module;
+    module = null;
+  }
+
+  // if a module is provided
+  // pass in a special callback
+  // function that checks the
+  // module
+  if (module) {
+    events.prototype.on.call(this, name, function() {
+      if (this.event.target.module() === module) {
+        cb.apply(this, arguments);
+      }
+    });
+  } else {
+    events.prototype.on.call(this, name, cb);
+  }
+
+  return this;
+};
+
+/**
+ * Fires an event on a view.
+ *
+ * @param  {String} name
+ * @return {View}
+ */
+exports.fire = function(name) {
+  var _event = this.event;
+  var event = {
+    target: this,
+    propagate: true,
+    stopPropagation: function(){ this.propagate = false; }
+  };
+
+  propagate(this, arguments, event);
+
+  // COMPLEX:
+  // If an earlier event object was
+  // cached, restore the the event
+  // back onto the view. If there
+  // wasn't an earlier event, make
+  // sure the `event` key has been
+  // deleted off the view.
+  if (_event) this.event = _event;
+  else delete this.event;
+
+  // Allow chaining
+  return this;
+};
+
+function propagate(view, args, event) {
+  if (!view || !event.propagate) return;
+
+  view.event = event;
+  events.prototype.fire.apply(view, args);
+  propagate(view.parent, args, event);
 }
 
-/**
- * Gets a value by key
- *
- * If no key is given, the
- * whole model is returned.
- *
- * @param  {String} key
- * @return {*}
- * @api public
- */
-proto.get = function(key) {
-  return key
-    ? this._data[key]
-    : this._data;
-};
-
-/**
- * Sets data on the model.
- *
- * Accepts either a key and
- * value, or an object literal.
- *
- * @param {String|Object} key
- * @param {*|undefined} value
- */
-proto.set = function(data, value) {
-
-  // If a string key is passed
-  // with a value. Set the value
-  // on the key in the data store.
-  if ('string' === typeof data && typeof value !== 'undefined') {
-    this._data[data] = value;
-    this.fire('change:' + data, value);
-  }
-
-  // Merge the object into the data store
-  if ('object' === typeof data) {
-    mixin(this._data, data);
-    for (var prop in data) this.fire('change:' + prop, data[prop]);
-  }
-
-  // Always fire a
-  // generic change event
-  this.fire('change');
-
-  // Allow chaining
-  return this;
-};
-
-/**
- * CLears the data store.
- *
- * @return {Model}
- */
-proto.clear = function() {
-  this._data = {};
-  this.fire('change');
-
-  // Allow chaining
-  return this;
-};
-
-/**
- * Deletes the data store.
- *
- * @return {undefined}
- */
-proto.destroy = function() {
-  for (var key in this._data) this._data[key] = null;
-  delete this._data;
-  this.fire('destroy');
-};
-
-/**
- * Returns a shallow
- * clone of the data store.
- *
- * @return {Object}
- */
-proto.toJSON = function() {
-  return mixin({}, this._data);
-};
-
-// Mixin events
-events(proto);
-
-},{"mixin":22,"event":17}],15:[function(require,module,exports){
+exports.fireStatic = events.prototype.fire;
+exports.off = events.prototype.off;
+},{"event":24}],23:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -1386,11 +1225,11 @@ module.exports = function(fm) {
   proto._configure = function(options) {
 
     // Setup static properties
-    this._id = options.id || util.uniqueId('id-');
+    this._id = options.id || util.uniqueId();
     this._fmid = options.fmid || util.uniqueId('fmid');
     this.tag = options.tag || this.tag || 'div';
-    this.classes = this.classes || options.classes || [];
-    this.helpers = this.helpers || options.helpers || [];
+    this.classes = options.classes || this.classes || [];
+    this.helpers = options.helpers || this.helpers || [];
     this.template = this._setTemplate(options.template || this.template);
     this.slot = options.slot;
 
@@ -2145,36 +1984,56 @@ module.exports = function(fm) {
   };
 
   /**
-   * Returns a JSON represention of
+   * @deprecated
+   */
+  proto.toJSON = function(options) {
+    return this.serialize(options);
+  };
+
+  /**
+   * Returns a serialized represention of
    * a FruitMachine Module. This can
    * be generated serverside and
-   * passed into new FruitMachine(json)
+   * passed into new FruitMachine(serialized)
    * to inflate serverside rendered
    * views.
    *
+   * Options:
+   *
+   *  - `inflatable` Whether the returned object should retain references to DOM ids for use with client-side inflation of views
+   *
+   * @param {Object} options
    * @return {Object}
    * @api public
    */
-  proto.toJSON = function() {
-    var json = {};
-    json.children = [];
+  proto.serialize = function(options) {
+    var serialized = {};
+
+    // Shallow clone the options
+    options = mixin({
+      inflatable: true
+    }, options);
+
+    serialized.children = [];
 
     // Recurse
     this.each(function(child) {
-      json.children.push(child.toJSON());
+      serialized.children.push(child.serialize());
     });
 
-    json.id = this.id();
-    json.fmid = this._fmid;
-    json.module = this.module();
-    json.model = this.model.toJSON();
-    json.slot = this.slot;
+    serialized.id = this.id();
+    serialized.module = this.module();
+    serialized.model = this.model.toJSON();
+    serialized.slot = this.slot;
+
+    if (options.inflatable) serialized.fmid = this._fmid;
 
     // Fire a hook to allow third
-    // parties to alter the json output
-    this.fireStatic('tojson', json);
+    // parties to alter the output
+    this.fireStatic('tojson', serialized); // @deprecated
+    this.fireStatic('serialize', serialized);
 
-    return json;
+    return serialized;
   };
 
   // Events
@@ -2194,170 +2053,121 @@ module.exports = function(fm) {
   return Module;
 };
 
-},{"./events":23,"utils":16,"extend":24}],18:[function(require,module,exports){
+},{"./events":22,"extend":25,"utils":28}],24:[function(require,module,exports){
 
 /**
- * Module Dependencies
- */
-
-var fm = require('../../../../lib/');
-var template = require('./template');
-
-/**
- * Exports
- */
-
-module.exports = fm.define({
-	module: 'layout-a',
-	template: template
-});
-},{"./template":25,"../../../../lib/":2}],19:[function(require,module,exports){
-
-/**
- * Module Dependencies
- */
-
-var fm = require('../../../../lib/');
-var template = require('./template');
-
-/**
- * Exports
- */
-
-module.exports = fm.define({
-	module: 'apple',
-	template: template
-});
-},{"./template":26,"../../../../lib/":2}],20:[function(require,module,exports){
-
-/**
- * Module Dependencies
- */
-
-var fm = require('../../../../lib/');
-var template = require('./template');
-
-/**
- * Exports
- */
-
-module.exports = fm.define({
-	module: 'orange',
-	template: template
-});
-},{"./template":27,"../../../../lib/":2}],21:[function(require,module,exports){
-
-/**
- * Module Dependencies
- */
-
-var fm = require('../../../../lib/');
-var template = require('./template');
-
-/**
- * Exports
- */
-
-module.exports = fm.define({
-	module: 'banana',
-	template: template
-});
-},{"./template":28,"../../../../lib/":2}],25:[function(require,module,exports){
-module.exports = new Hogan(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div class='layout-a' ");_.b(_.t(_.f("fm_attrs",c,p,0)));_.b(">");_.b("\n" + i);_.b("	<div class='layout-a_slot-1'>");_.b(_.t(_.f("slot_1",c,p,0)));_.b("</div>");_.b("\n" + i);_.b("	<div class='layout-a_region-1'>");_.b("\n" + i);_.b("		<div class='layout-a_slot-2'>");_.b(_.t(_.f("slot_2",c,p,0)));_.b("</div>");_.b("\n" + i);_.b("		<div class='layout-a_slot-3'>");_.b(_.t(_.f("slot_3",c,p,0)));_.b("</div>");_.b("\n" + i);_.b("	</div>");_.b("\n" + i);_.b("</div>");return _.fl();;});
-},{}],26:[function(require,module,exports){
-module.exports = new Hogan(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div class=\"module-apple\" ");_.b(_.t(_.f("fm_attrs",c,p,0)));_.b(">");_.b("\n" + i);_.b("	<div class=\"module-apple_title\">");_.b(_.v(_.f("title",c,p,0)));_.b("</div>");_.b("\n" + i);_.b("</div>");return _.fl();;});
-},{}],27:[function(require,module,exports){
-module.exports = new Hogan(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div class='module-orange' ");_.b(_.t(_.f("fm_attrs",c,p,0)));_.b(">Module Orange</div>");return _.fl();;});
-},{}],28:[function(require,module,exports){
-module.exports = new Hogan(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div class='module-banana' ");_.b(_.t(_.f("fm_attrs",c,p,0)));_.b(">Module Banana</div>");return _.fl();;});
-},{}],23:[function(require,module,exports){
-
-/**
- * Module Dependencies
- */
-
-var events = require('event');
-
-/**
- * Exports
- */
-
-/**
- * Registers a event listener.
+ * Event
  *
- * @param  {String}   name
- * @param  {String}   module
- * @param  {Function} cb
- * @return {View}
+ * A super lightweight
+ * event emitter library.
+ *
+ * @version 0.1.4
+ * @author Wilson Page <wilson.page@me.com>
  */
-exports.on = function(name, module, cb) {
-
-  // cb can be passed as
-  // the second or third argument
-  if (arguments.length === 2) {
-    cb = module;
-    module = null;
-  }
-
-  // if a module is provided
-  // pass in a special callback
-  // function that checks the
-  // module
-  if (module) {
-    events.prototype.on.call(this, name, function() {
-      if (this.event.target.module() === module) {
-        cb.apply(this, arguments);
-      }
-    });
-  } else {
-    events.prototype.on.call(this, name, cb);
-  }
-
-  return this;
-};
 
 /**
- * Fires an event on a view.
- *
- * @param  {String} name
- * @return {View}
+ * Locals
  */
-exports.fire = function(name) {
-  var parent = this.parent;
-  var _event = this.event;
-  var event = {
-    target: this,
-    propagate: true,
-    stopPropagation: function(){ this.propagate = false; }
-  };
 
-  propagate(this, arguments, event);
+var proto = Event.prototype;
 
-  // COMPLEX:
-  // If an earlier event object was
-  // cached, restore the the event
-  // back onto the view. If there
-  // wasn't an earlier event, make
-  // sure the `event` key has been
-  // deleted off the view.
-  if (_event) this.event = _event;
-  else delete this.event;
+/**
+ * Expose `Event`
+ */
 
-  // Allow chaining
-  return this;
-};
+module.exports = Event;
 
-function propagate(view, args, event) {
-  if (!view || !event.propagate) return;
-
-  view.event = event;
-  events.prototype.fire.apply(view, args);
-  propagate(view.parent, args, event);
+/**
+ * Creates a new event emitter
+ * instance, or if passed an
+ * object, mixes the event logic
+ * into it.
+ *
+ * @param  {Object} obj
+ * @return {Object}
+ */
+function Event(obj) {
+  if (!(this instanceof Event)) return new Event(obj);
+  if (obj) return mixin(obj, proto);
 }
 
-exports.fireStatic = events.prototype.fire;
-exports.off = events.prototype.off;
-},{"event":17}],24:[function(require,module,exports){
+/**
+ * Registers a callback
+ * with an event name.
+ *
+ * @param  {String}   name
+ * @param  {Function} cb
+ * @return {Event}
+ */
+proto.on = function(name, cb) {
+  this._cbs = this._cbs || {};
+  (this._cbs[name] || (this._cbs[name] = [])).unshift(cb);
+  return this;
+};
+
+/**
+ * Removes a single callback,
+ * or all callbacks associated
+ * with the passed event name.
+ *
+ * @param  {String}   name
+ * @param  {Function} cb
+ * @return {Event}
+ */
+proto.off = function(name, cb) {
+  this._cbs = this._cbs || {};
+
+  if (!name) return this._cbs = {};
+  if (!cb) return delete this._cbs[name];
+
+  var cbs = this._cbs[name] || [];
+  var i;
+
+  while (cbs && ~(i = cbs.indexOf(cb))) cbs.splice(i, 1);
+  return this;
+};
+
+/**
+ * Fires an event. Which triggers
+ * all callbacks registered on this
+ * event name.
+ *
+ * @param  {String} name
+ * @return {Event}
+ */
+proto.fire = function(options) {
+  this._cbs = this._cbs || {};
+  var name = options.name || options;
+  var ctx = options.ctx || this;
+  var cbs = this._cbs[name];
+
+  if (cbs) {
+    var args = [].slice.call(arguments, 1);
+    var l = cbs.length;
+    while (l--) cbs[l].apply(ctx, args);
+  }
+
+  return this;
+};
+
+/**
+ * Util
+ */
+
+/**
+ * Mixes in the properties
+ * of the second object into
+ * the first.
+ *
+ * @param  {Object} a
+ * @param  {Object} b
+ * @return {Object}
+ */
+function mixin(a, b) {
+  for (var key in b) a[key] = b[key];
+  return a;
+}
+},{}],25:[function(require,module,exports){
 /*jshint browser:true, node:true*/
 
 'use strict';
@@ -2427,5 +2237,225 @@ function protect(keys, ob) {
     }
   }
 }
-},{"utils":16}]},{},[1])
-;
+},{"utils":28}],26:[function(require,module,exports){
+
+'use strict';
+
+/**
+ * Module Dependencies
+ */
+
+var events = require('event');
+var mixin = require('mixin');
+
+/**
+ * Exports
+ */
+
+module.exports = Model;
+
+/**
+ * Locals
+ */
+
+var proto = Model.prototype;
+
+/**
+ * Model constructor.
+ *
+ * @constructor
+ * @param {Object} data
+ * @api public
+ */
+function Model(data) {
+  this._data = mixin({}, data);
+}
+
+/**
+ * Gets a value by key
+ *
+ * If no key is given, the
+ * whole model is returned.
+ *
+ * @param  {String} key
+ * @return {*}
+ * @api public
+ */
+proto.get = function(key) {
+  return key
+    ? this._data[key]
+    : this._data;
+};
+
+/**
+ * Sets data on the model.
+ *
+ * Accepts either a key and
+ * value, or an object literal.
+ *
+ * @param {String|Object} key
+ * @param {*|undefined} value
+ */
+proto.set = function(data, value) {
+
+  // If a string key is passed
+  // with a value. Set the value
+  // on the key in the data store.
+  if ('string' === typeof data && typeof value !== 'undefined') {
+    this._data[data] = value;
+    this.fire('change:' + data, value);
+  }
+
+  // Merge the object into the data store
+  if ('object' === typeof data) {
+    mixin(this._data, data);
+    for (var prop in data) this.fire('change:' + prop, data[prop]);
+  }
+
+  // Always fire a
+  // generic change event
+  this.fire('change');
+
+  // Allow chaining
+  return this;
+};
+
+/**
+ * CLears the data store.
+ *
+ * @return {Model}
+ */
+proto.clear = function() {
+  this._data = {};
+  this.fire('change');
+
+  // Allow chaining
+  return this;
+};
+
+/**
+ * Deletes the data store.
+ *
+ * @return {undefined}
+ */
+proto.destroy = function() {
+  for (var key in this._data) this._data[key] = null;
+  delete this._data;
+  this.fire('destroy');
+};
+
+/**
+ * Returns a shallow
+ * clone of the data store.
+ *
+ * @return {Object}
+ */
+proto.toJSON = function() {
+  return mixin({}, this._data);
+};
+
+// Mixin events
+events(proto);
+
+},{"event":24,"mixin":27}],27:[function(require,module,exports){
+
+'use strict';
+
+/**
+ * Locals
+ */
+
+var has = {}.hasOwnProperty;
+
+/**
+ * Exports
+ */
+
+module.exports = function(main) {
+  var args = arguments;
+  var l = args.length;
+  var i = 0;
+  var src;
+  var key;
+
+  while (++i < l) {
+    src = args[i];
+    for (key in src) {
+      if (has.call(src, key)) {
+        main[key] = src[key];
+      }
+    }
+  }
+
+  return main;
+};
+
+},{}],28:[function(require,module,exports){
+
+/*jshint browser:true, node:true*/
+
+'use strict';
+
+exports.bind = function(method, context) {
+  return function() { return method.apply(context, arguments); };
+};
+
+exports.isArray = function(arg) {
+  return arg instanceof Array;
+},
+
+exports.mixin = function(original, source) {
+  for (var key in source) original[key] = source[key];
+  return original;
+},
+
+exports.byId = function(id, el) {
+  if (el) return el.querySelector('#' + id);
+},
+
+/**
+ * Inserts an item into an array.
+ * Has the option to state an index.
+ *
+ * @param  {*} item
+ * @param  {Array} array
+ * @param  {Number} index
+ * @return void
+ */
+exports.insert = function(item, array, index) {
+  if (typeof index !== 'undefined') {
+    array.splice(index, 0, item);
+  } else {
+    array.push(item);
+  }
+},
+
+exports.toNode = function(html) {
+  var el = document.createElement('div');
+  el.innerHTML = html;
+  return el.removeChild(el.firstElementChild);
+},
+
+// Determine if we have a DOM
+// in the current environment.
+exports.hasDom = function() {
+  return typeof document !== 'undefined';
+};
+
+var i = 0;
+exports.uniqueId = function(prefix) {
+  return (prefix || 'id') + ((++i) * Math.round(Math.random() * 100000));
+};
+
+exports.keys = function(object) {
+  var keys = [];
+  for (var key in object) keys.push(key);
+  return keys;
+};
+
+exports.isPlainObject = function(ob) {
+  if (!ob) return false;
+  var c = (ob.constructor || '').toString();
+  return !!~c.indexOf('Object');
+};
+},{}]},{},[1])

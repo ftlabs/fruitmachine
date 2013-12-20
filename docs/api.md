@@ -199,14 +199,17 @@ and appends the view into it.
 Appends the view element into
 the destination element.
 
-### Module#toJSON()
+### Module#serialize()
 
-Returns a JSON represention of
+Returns a serialized represention of
 a FruitMachine Module. This can
 be generated serverside and
-passed into new FruitMachine(json)
+passed into new FruitMachine(serialized)
 to inflate serverside rendered
 views.
+\nOptions:
+
+ - `inflatable` Whether the returned object should retain references to DOM ids for use with client-side inflation of views
 
 ### Module#on()
 

@@ -25,9 +25,8 @@ var Apple = require('./apple');
 app.get('/', function(req, res) {
   var apple = new Apple();
   var html = apple.toHTML();
-  var json = apple.toJSON();
-
-  json = JSON.stringify(json);
+  var serialized = apple.serialize();
+  var json = JSON.stringify(serialized);
 
   // Imagine this response is also
   // wrapped in usual document boilerplate
