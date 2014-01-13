@@ -35,7 +35,7 @@ $ bower install fruitmachine
 
 or
 
-Download the [pre-build version][built] (~2k gzipped).
+Download the [pre-built version][built] (~2k gzipped).
 
 [built]: http://wzrd.in/standalone/fruitmachine@latest
 
