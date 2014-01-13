@@ -35,10 +35,9 @@ $ bower install fruitmachine
 
 or
 
-Download the [production version][min] (~2k gzipped) or the [development version][max].
+Download the [pre-build version][built] (~2k gzipped).
 
-[min]: http://github.com/ftlabs/fruitmachine/raw/master/build/fruitmachine.min.js
-[max]: http://github.com/ftlabs/fruitmachine/raw/master/build/fruitmachine.js
+[built]: http://wzrd.in/standalone/fruitmachine@latest
 
 ## Examples
 
