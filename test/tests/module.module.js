@@ -1,3 +1,6 @@
+var assert = buster.assertions.assert;
+var refute = buster.assertions.refute;
+
 buster.testCase('View#module()', {
   setUp: function() {
     var layout = new Layout({});

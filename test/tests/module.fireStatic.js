@@ -1,3 +1,5 @@
+var assert = buster.assertions.assert;
+var refute = buster.assertions.refute;
 
 buster.testCase('View#fireStatic()', {
 	setUp: helpers.createView,
@@ -7,7 +9,7 @@ buster.testCase('View#fireStatic()', {
 
 		this.view.on('testevent', spy);
 		this.view.fireStatic('testevent');
-	  assert.called(spy);
+		assert.called(spy);
 	},
 
 	"Events should not bubble up to parent views": function() {
@@ -16,7 +18,7 @@ buster.testCase('View#fireStatic()', {
 
 		this.view.on('childtestevent', spy);
 		child.fireStatic('childtestevent');
-	  refute.called(spy);
+		refute.called(spy);
 	},
 
 	"Should pass arguments to the callback": function() {
@@ -28,9 +30,9 @@ buster.testCase('View#fireStatic()', {
 		this.view.on('childtestevent', spy);
 		this.view.fireStatic('childtestevent', arg1, arg2, arg3);
 
-	  assert.equals(spy.args[0][0], arg1);
-	  assert.equals(spy.args[0][1], arg2);
-	  assert.equals(spy.args[0][2], arg3);
+		assert.equals(spy.args[0][0], arg1);
+		assert.equals(spy.args[0][1], arg2);
+		assert.equals(spy.args[0][2], arg3);
 	},
 
 	tearDown: helpers.destroyView

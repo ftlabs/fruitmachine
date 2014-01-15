@@ -1,3 +1,5 @@
+var assert = buster.assertions.assert;
+var refute = buster.assertions.refute;
 
 buster.testCase('View#fire()', {
 	setUp: helpers.createView,
@@ -7,7 +9,7 @@ buster.testCase('View#fire()', {
 
 		this.view.on('testevent', spy);
 		this.view.fire('testevent');
-	  assert.called(spy);
+		assert.called(spy);
 	},
 
 	"Events should bubble by default": function() {
@@ -17,7 +19,7 @@ buster.testCase('View#fire()', {
 		this.view.on('childtestevent', spy);
 		child.fire('childtestevent');
 
-	  assert.called(spy);
+		assert.called(spy);
 	},
 
 	"Calling event.stopPropagation() should stop bubbling": function() {
@@ -30,7 +32,7 @@ buster.testCase('View#fire()', {
 		});
 
 		child.fire('childtestevent');
-	  refute.called(spy);
+		refute.called(spy);
 	},
 
 	"Should pass arguments to the callback": function() {
@@ -42,9 +44,9 @@ buster.testCase('View#fire()', {
 		this.view.on('childtestevent', spy);
 		this.view.fire('childtestevent', arg1, arg2, arg3);
 
-	  assert.equals(spy.args[0][0], arg1);
-	  assert.equals(spy.args[0][1], arg2);
-	  assert.equals(spy.args[0][2], arg3);
+		assert.equals(spy.args[0][0], arg1);
+		assert.equals(spy.args[0][1], arg2);
+		assert.equals(spy.args[0][2], arg3);
 	},
 
 	"Should allow multiple events to be in progress on the same view": function() {

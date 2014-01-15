@@ -1,3 +1,5 @@
+var assert = buster.assertions.assert;
+var refute = buster.assertions.refute;
 
 buster.testCase('View#destroy()', {
   setUp: function() {
@@ -15,6 +17,7 @@ buster.testCase('View#destroy()', {
 
     this.view.destroy();
 
+    assert.called(destroy);
     assert.called(destroy2);
   },
 

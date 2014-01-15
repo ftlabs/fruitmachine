@@ -1,3 +1,4 @@
+var assert = buster.assertions.assert;
 
 buster.testCase('View#classes()', {
 

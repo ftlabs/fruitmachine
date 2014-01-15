@@ -1,3 +1,5 @@
+var assert = buster.assertions.assert;
+var refute = buster.assertions.refute;
 
 buster.testCase('View#remove()', {
 
@@ -37,7 +39,6 @@ buster.testCase('View#remove()', {
     var list = new helpers.Views.Layout();
     var Apple = helpers.Views.Apple;
     var apple = new Apple({ slot: 1 });
-    var inDOM;
 
     list
       .add(apple)
@@ -57,7 +58,6 @@ buster.testCase('View#remove()', {
     var list = new helpers.Views.Layout();
     var Apple = helpers.Views.Apple;
     var apple = new Apple();
-    var inDOM;
 
     list
       .add(apple, 1)
