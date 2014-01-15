@@ -4,7 +4,7 @@
   "version": "0.5.3",
   "main": "lib/fruitmachine.js",
   "scripts": [
-    "lib/fruitmachine.js"
+    "build/fruitmachine.js"
   ],
   "ignore": [
     "artwork/",
