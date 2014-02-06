@@ -7,6 +7,16 @@ buster.testCase('View#render()', {
     assert.defined(this.view.el);
   },
 
+  "before render and render events should be fired": function() {
+    var beforeRenderSpy = this.spy();
+    var renderSpy = this.spy();
+    this.view.on('before render', beforeRenderSpy);
+    this.view.on('render', renderSpy);
+
+    this.view.render();
+    assert.callOrder(beforeRenderSpy, renderSpy);
+  },
+
   "Data should be present in the generated markup.": function() {
     var text = 'some orange text';
     var orange = new Orange({
