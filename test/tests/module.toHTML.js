@@ -7,6 +7,14 @@ buster.testCase('View#toHTML()', {
     assert.isTrue('string' === typeof html);
   },
 
+  "Should fire `before tohtml event`": function() {
+    var spy = this.spy();
+    this.view.on('before tohtml', spy);
+    var html = this.view.toHTML();
+    assert.isTrue('string' === typeof html);
+    assert.called(spy);
+  },
+
   "Should print the child html into the corresponding slot": function() {
     var apple = new Apple({ slot: 1 });
     var layout = new Layout({
