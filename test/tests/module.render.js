@@ -100,5 +100,20 @@ buster.testCase('View#render()', {
     assert(apple3.el);
   },
 
+  "The outer DOM node should be recycled between #renders": function() {
+    var layout = new Layout({
+      children: {
+        1: { module: 'apple' }
+      }
+    });
+    layout.render();
+    layout.el.classList.add('should-not-be-blown-away');
+    layout.module('apple').el.classList.add('should-be-blown-away');
+
+    layout.render();
+    assert(layout.el.classList.contains('should-not-be-blown-away'), 'the DOM node of the FM module that render is called on should be recycled');
+    refute(layout.module('apple').el.classList.contains('should-be-blown-away'), 'the DOM node of a child FM module to the one render is called on should not be recycled');
+  },
+
   "tearDown": helpers.destroyView
 });
