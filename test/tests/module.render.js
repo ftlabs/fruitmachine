@@ -107,12 +107,20 @@ buster.testCase('View#render()', {
       }
     });
     layout.render();
-    layout.el.classList.add('should-not-be-blown-away');
-    layout.module('apple').el.classList.add('should-be-blown-away');
+    layout.el.setAttribute('data-test', 'should-not-be-blown-away');
+    layout.module('apple').el.setAttribute('data-test', 'should-be-blown-away');
 
     layout.render();
-    assert(layout.el.classList.contains('should-not-be-blown-away'), 'the DOM node of the FM module that render is called on should be recycled');
-    refute(layout.module('apple').el.classList.contains('should-be-blown-away'), 'the DOM node of a child FM module to the one render is called on should not be recycled');
+    assert.equals(layout.el.getAttribute('data-test'), 'should-not-be-blown-away', 'the DOM node of the FM module that render is called on should be recycled');
+    refute.equals(layout.module('apple').el.getAttribute('data-test'), 'should-be-blown-away', 'the DOM node of a child FM module to the one render is called on should not be recycled');
+  },
+
+  "Classes should be updated on render": function() {
+    var layout = new Layout();
+    layout.render();
+    layout.classes = ['should-be-added'];
+    layout.render();
+    assert.equals(layout.el.className, 'layout should-be-added');
   },
 
   "tearDown": helpers.destroyView
