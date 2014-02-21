@@ -123,5 +123,14 @@ buster.testCase('View#render()', {
     assert.equals(layout.el.className, 'layout should-be-added');
   },
 
+  "If a view's tag is changed it should be updated on next render": function() {
+    var layout = new Layout();
+    layout.render();
+    assert.equals('div', layout.el.tagName.toLowerCase());
+    layout.tag = 'span';
+    layout.render();
+    assert.equals('span', layout.el.tagName.toLowerCase());
+  },
+
   "tearDown": helpers.destroyView
 });
