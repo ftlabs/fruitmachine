@@ -123,5 +123,13 @@ buster.testCase('View#render()', {
     assert.equals(layout.el.className, 'layout should-be-added');
   },
 
+  "Classes added through the DOM should persist between renders": function() {
+    var layout = new Layout();
+    layout.render();
+    layout.el.classList.add('should-persist');
+    layout.render();
+    assert.equals(layout.el.className, 'layout should-persist');
+  },
+
   "tearDown": helpers.destroyView
 });
