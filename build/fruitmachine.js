@@ -140,75 +140,7 @@ module.exports = function(options) {
   return events(fm);
 };
 
-},{"./define":4,"./module":5,"utils":6,"event":7}],6:[function(require,module,exports){
-
-/*jshint browser:true, node:true*/
-
-'use strict';
-
-exports.bind = function(method, context) {
-  return function() { return method.apply(context, arguments); };
-};
-
-exports.isArray = function(arg) {
-  return arg instanceof Array;
-},
-
-exports.mixin = function(original, source) {
-  for (var key in source) original[key] = source[key];
-  return original;
-},
-
-exports.byId = function(id, el) {
-  if (el) return el.querySelector('#' + id);
-},
-
-/**
- * Inserts an item into an array.
- * Has the option to state an index.
- *
- * @param  {*} item
- * @param  {Array} array
- * @param  {Number} index
- * @return void
- */
-exports.insert = function(item, array, index) {
-  if (typeof index !== 'undefined') {
-    array.splice(index, 0, item);
-  } else {
-    array.push(item);
-  }
-},
-
-exports.toNode = function(html) {
-  var el = document.createElement('div');
-  el.innerHTML = html;
-  return el.removeChild(el.firstElementChild);
-},
-
-// Determine if we have a DOM
-// in the current environment.
-exports.hasDom = function() {
-  return typeof document !== 'undefined';
-};
-
-var i = 0;
-exports.uniqueId = function(prefix) {
-  return (prefix || 'id') + ((++i) * Math.round(Math.random() * 100000));
-};
-
-exports.keys = function(object) {
-  var keys = [];
-  for (var key in object) keys.push(key);
-  return keys;
-};
-
-exports.isPlainObject = function(ob) {
-  if (!ob) return false;
-  var c = (ob.constructor || '').toString();
-  return !!~c.indexOf('Object');
-};
-},{}],7:[function(require,module,exports){
+},{"./define":4,"./module":5,"utils":6,"event":7}],7:[function(require,module,exports){
 
 /**
  * Event
@@ -322,6 +254,74 @@ function mixin(a, b) {
   for (var key in b) a[key] = b[key];
   return a;
 }
+},{}],6:[function(require,module,exports){
+
+/*jshint browser:true, node:true*/
+
+'use strict';
+
+exports.bind = function(method, context) {
+  return function() { return method.apply(context, arguments); };
+};
+
+exports.isArray = function(arg) {
+  return arg instanceof Array;
+},
+
+exports.mixin = function(original, source) {
+  for (var key in source) original[key] = source[key];
+  return original;
+},
+
+exports.byId = function(id, el) {
+  if (el) return el.querySelector('#' + id);
+},
+
+/**
+ * Inserts an item into an array.
+ * Has the option to state an index.
+ *
+ * @param  {*} item
+ * @param  {Array} array
+ * @param  {Number} index
+ * @return void
+ */
+exports.insert = function(item, array, index) {
+  if (typeof index !== 'undefined') {
+    array.splice(index, 0, item);
+  } else {
+    array.push(item);
+  }
+},
+
+exports.toNode = function(html) {
+  var el = document.createElement('div');
+  el.innerHTML = html;
+  return el.removeChild(el.firstElementChild);
+},
+
+// Determine if we have a DOM
+// in the current environment.
+exports.hasDom = function() {
+  return typeof document !== 'undefined';
+};
+
+var i = 0;
+exports.uniqueId = function(prefix) {
+  return (prefix || 'id') + ((++i) * Math.round(Math.random() * 100000));
+};
+
+exports.keys = function(object) {
+  var keys = [];
+  for (var key in object) keys.push(key);
+  return keys;
+};
+
+exports.isPlainObject = function(ob) {
+  if (!ob) return false;
+  var c = (ob.constructor || '').toString();
+  return !!~c.indexOf('Object');
+};
 },{}],8:[function(require,module,exports){
 
 'use strict';
@@ -547,8 +547,8 @@ module.exports = function(fm) {
     this._id = options.id || util.uniqueId();
     this._fmid = options.fmid || util.uniqueId('fmid');
     this.tag = options.tag || this.tag || 'div';
-    this.classes = this.classes || options.classes || [];
-    this.helpers = this.helpers || options.helpers || [];
+    this.classes = options.classes || this.classes || [];
+    this.helpers = options.helpers || this.helpers || [];
     this.template = this._setTemplate(options.template || this.template);
     this.slot = options.slot;
 
@@ -1303,36 +1303,56 @@ module.exports = function(fm) {
   };
 
   /**
-   * Returns a JSON represention of
+   * @deprecated
+   */
+  proto.toJSON = function(options) {
+    return this.serialize(options);
+  };
+
+  /**
+   * Returns a serialized represention of
    * a FruitMachine Module. This can
    * be generated serverside and
-   * passed into new FruitMachine(json)
+   * passed into new FruitMachine(serialized)
    * to inflate serverside rendered
    * views.
    *
+   * Options:
+   *
+   *  - `inflatable` Whether the returned object should retain references to DOM ids for use with client-side inflation of views
+   *
+   * @param {Object} options
    * @return {Object}
    * @api public
    */
-  proto.toJSON = function() {
-    var json = {};
-    json.children = [];
+  proto.serialize = function(options) {
+    var serialized = {};
+
+    // Shallow clone the options
+    options = mixin({
+      inflatable: true
+    }, options);
+
+    serialized.children = [];
 
     // Recurse
     this.each(function(child) {
-      json.children.push(child.toJSON());
+      serialized.children.push(child.serialize());
     });
 
-    json.id = this.id();
-    json.fmid = this._fmid;
-    json.module = this.module();
-    json.model = this.model.toJSON();
-    json.slot = this.slot;
+    serialized.id = this.id();
+    serialized.module = this.module();
+    serialized.model = this.model.toJSON();
+    serialized.slot = this.slot;
+
+    if (options.inflatable) serialized.fmid = this._fmid;
 
     // Fire a hook to allow third
-    // parties to alter the json output
-    this.fireStatic('tojson', json);
+    // parties to alter the output
+    this.fireStatic('tojson', serialized); // @deprecated
+    this.fireStatic('serialize', serialized);
 
-    return json;
+    return serialized;
   };
 
   // Events

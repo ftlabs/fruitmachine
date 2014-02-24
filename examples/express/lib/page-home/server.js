@@ -10,7 +10,7 @@ var database = {
 
 module.exports = function(req, res){
 	var view = View(database);
-	res.expose(view.toJSON(), 'layout');
+	res.expose(view.serialize(), 'layout');
 	res.render('wrapper', {
 		title: 'Home',
 		body: view.toHTML()
