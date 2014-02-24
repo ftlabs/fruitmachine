@@ -100,5 +100,36 @@ buster.testCase('View#render()', {
     assert(apple3.el);
   },
 
+  "The outer DOM node should be recycled between #renders": function() {
+    var layout = new Layout({
+      children: {
+        1: { module: 'apple' }
+      }
+    });
+    layout.render();
+    layout.el.setAttribute('data-test', 'should-not-be-blown-away');
+    layout.module('apple').el.setAttribute('data-test', 'should-be-blown-away');
+
+    layout.render();
+    assert.equals(layout.el.getAttribute('data-test'), 'should-not-be-blown-away', 'the DOM node of the FM module that render is called on should be recycled');
+    refute.equals(layout.module('apple').el.getAttribute('data-test'), 'should-be-blown-away', 'the DOM node of a child FM module to the one render is called on should not be recycled');
+  },
+
+  "Classes should be updated on render": function() {
+    var layout = new Layout();
+    layout.render();
+    layout.classes = ['should-be-added'];
+    layout.render();
+    assert.equals(layout.el.className, 'layout should-be-added');
+  },
+
+  "Classes added through the DOM should persist between renders": function() {
+    var layout = new Layout();
+    layout.render();
+    layout.el.classList.add('should-persist');
+    layout.render();
+    assert.equals(layout.el.className, 'layout should-persist');
+  },
+
   "tearDown": helpers.destroyView
 });
