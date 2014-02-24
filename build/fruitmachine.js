@@ -10,7 +10,7 @@ return (function(e,t,n){function i(n,s){if(!t[n]){if(!e[n]){var o=typeof require
  * If views require custom interactions devs can extend
  * the basic functionality.
  *
- * @version 0.3.3
+ * @version 0.6.0
  * @copyright The Financial Times Limited [All Rights Reserved]
  * @author Wilson Page <wilson.page@ft.com>
  */
@@ -29,6 +29,7 @@ var Model = require('model');
  */
 
 module.exports = fruitMachine({ Model: Model });
+
 },{"./fruitmachine":2,"model":3}],4:[function(require,module,exports){
 
 /*jslint browser:true, node:true, laxbreak:true*/
@@ -140,7 +141,7 @@ module.exports = function(options) {
   return events(fm);
 };
 
-},{"./define":4,"./module":5,"utils":6,"event":7}],6:[function(require,module,exports){
+},{"./define":4,"./module":5,"event":7,"utils":6}],6:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -322,39 +323,6 @@ function mixin(a, b) {
   for (var key in b) a[key] = b[key];
   return a;
 }
-},{}],8:[function(require,module,exports){
-
-'use strict';
-
-/**
- * Locals
- */
-
-var has = {}.hasOwnProperty;
-
-/**
- * Exports
- */
-
-module.exports = function(main) {
-  var args = arguments;
-  var l = args.length;
-  var i = 0;
-  var src;
-  var key;
-
-  while (++i < l) {
-    src = args[i];
-    for (key in src) {
-      if (has.call(src, key)) {
-        main[key] = src[key];
-      }
-    }
-  }
-
-  return main;
-};
-
 },{}],3:[function(require,module,exports){
 
 'use strict';
@@ -400,7 +368,7 @@ function Model(data) {
  * @api public
  */
 proto.get = function(key) {
-  return key
+  return key !== undefined && key !== false
     ? this._data[key]
     : this._data;
 };
@@ -475,7 +443,154 @@ proto.toJSON = function() {
 // Mixin events
 events(proto);
 
-},{"mixin":8,"event":7}],5:[function(require,module,exports){
+},{"event":9,"mixin":8}],8:[function(require,module,exports){
+
+'use strict';
+
+/**
+ * Locals
+ */
+
+var has = {}.hasOwnProperty;
+
+/**
+ * Exports
+ */
+
+module.exports = function(main) {
+  var args = arguments;
+  var l = args.length;
+  var i = 0;
+  var src;
+  var key;
+
+  while (++i < l) {
+    src = args[i];
+    for (key in src) {
+      if (has.call(src, key)) {
+        main[key] = src[key];
+      }
+    }
+  }
+
+  return main;
+};
+
+},{}],9:[function(require,module,exports){
+
+/**
+ * Event
+ *
+ * A super lightweight
+ * event emitter library.
+ *
+ * @version 0.1.4
+ * @author Wilson Page <wilson.page@me.com>
+ */
+
+/**
+ * Locals
+ */
+
+var proto = Event.prototype;
+
+/**
+ * Expose `Event`
+ */
+
+module.exports = Event;
+
+/**
+ * Creates a new event emitter
+ * instance, or if passed an
+ * object, mixes the event logic
+ * into it.
+ *
+ * @param  {Object} obj
+ * @return {Object}
+ */
+function Event(obj) {
+  if (!(this instanceof Event)) return new Event(obj);
+  if (obj) return mixin(obj, proto);
+}
+
+/**
+ * Registers a callback
+ * with an event name.
+ *
+ * @param  {String}   name
+ * @param  {Function} cb
+ * @return {Event}
+ */
+proto.on = function(name, cb) {
+  this._cbs = this._cbs || {};
+  (this._cbs[name] || (this._cbs[name] = [])).unshift(cb);
+  return this;
+};
+
+/**
+ * Removes a single callback,
+ * or all callbacks associated
+ * with the passed event name.
+ *
+ * @param  {String}   name
+ * @param  {Function} cb
+ * @return {Event}
+ */
+proto.off = function(name, cb) {
+  this._cbs = this._cbs || {};
+
+  if (!name) return this._cbs = {};
+  if (!cb) return delete this._cbs[name];
+
+  var cbs = this._cbs[name] || [];
+  var i;
+
+  while (cbs && ~(i = cbs.indexOf(cb))) cbs.splice(i, 1);
+  return this;
+};
+
+/**
+ * Fires an event. Which triggers
+ * all callbacks registered on this
+ * event name.
+ *
+ * @param  {String} name
+ * @return {Event}
+ */
+proto.fire = function(options) {
+  this._cbs = this._cbs || {};
+  var name = options.name || options;
+  var ctx = options.ctx || this;
+  var cbs = this._cbs[name];
+
+  if (cbs) {
+    var args = [].slice.call(arguments, 1);
+    var l = cbs.length;
+    while (l--) cbs[l].apply(ctx, args);
+  }
+
+  return this;
+};
+
+/**
+ * Util
+ */
+
+/**
+ * Mixes in the properties
+ * of the second object into
+ * the first.
+ *
+ * @param  {Object} a
+ * @param  {Object} b
+ * @return {Object}
+ */
+function mixin(a, b) {
+  for (var key in b) a[key] = b[key];
+  return a;
+}
+},{}],5:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
 
@@ -547,8 +662,8 @@ module.exports = function(fm) {
     this._id = options.id || util.uniqueId();
     this._fmid = options.fmid || util.uniqueId('fmid');
     this.tag = options.tag || this.tag || 'div';
-    this.classes = this.classes || options.classes || [];
-    this.helpers = this.helpers || options.helpers || [];
+    this.classes = options.classes || this.classes || [];
+    this.helpers = options.helpers || this.helpers || [];
     this.template = this._setTemplate(options.template || this.template);
     this.slot = options.slot;
 
@@ -950,6 +1065,20 @@ module.exports = function(fm) {
    * @api public
    */
   proto.toHTML = function() {
+    var html = this._innerHTML();
+
+    // Wrap the html in a FruitMachine
+    // generated root element and return.
+    return this._wrapHTML(html);
+  };
+
+  /**
+   * Get the view's innerHTML
+   *
+   * @return {String}
+   */
+  proto._innerHTML = function() {
+    this.fireStatic('before tohtml');
     var data = {};
     var html;
     var tmp;
@@ -971,13 +1100,9 @@ module.exports = function(fm) {
     // passing children data (for looping
     // or child views) mixed with the
     // view's model data.
-    html = this.template
+    return this.template
       ? this.template(mixin(data, this.model.toJSON()))
       : '';
-
-    // Wrap the html in a FruitMachine
-    // generated root element and return.
-    return this._wrapHTML(html);
   };
 
   /**
@@ -989,7 +1114,18 @@ module.exports = function(fm) {
    * @api private
    */
   proto._wrapHTML = function(html) {
-    return '<' + this.tag + ' class="' + this.module() + ' ' + this.classes.join(' ') + '" id="' + this._fmid + '">' + html + '</' + this.tag + '>';
+    return '<' + this.tag + ' class="' + this._classes().join(' ') + '" id="' + this._fmid + '">' + html + '</' + this.tag + '>';
+  };
+
+  /**
+   * Gets a space separated list
+   * of all a view's classes
+   *
+   * @return {String}
+   * @api private
+   */
+  proto._classes = function() {
+    return [this.module()].concat(this.classes);
   };
 
   /**
@@ -1002,13 +1138,26 @@ module.exports = function(fm) {
    * @return {Module}
    */
   proto.render = function() {
-    var html = this.toHTML();
-    var el = util.toNode(html);
+    this.fireStatic('before render');
+
+    // If possible recycle outer element but
+    // build from scratch if there is no
+    // existing element or if tag changed
+    var el = this.el;
+    var classes;
+    if (el && el.tagName === this.tag.toUpperCase()) {
+      el.innerHTML = this._innerHTML();
+      classes = el.className.split(/\s+/);
+      this._classes().forEach(function(add) {
+        if (!~classes.indexOf(add)) el.className = el.className + ' ' + add;
+      });
 
     // Sets a new element as a view's
     // root element (purging descendent
     // element caches).
-    this._setEl(el);
+    } else {
+      this._setEl(util.toNode(this.toHTML()));
+    }
 
     // Fetch all child module elements
     this._fetchEls(this.el);
@@ -1352,7 +1501,7 @@ module.exports = function(fm) {
   return Module;
 };
 
-},{"./events":9,"utils":6,"extend":10}],9:[function(require,module,exports){
+},{"./events":10,"extend":11,"utils":6}],10:[function(require,module,exports){
 
 /**
  * Module Dependencies
@@ -1438,7 +1587,7 @@ function propagate(view, args, event) {
 
 exports.fireStatic = events.prototype.fire;
 exports.off = events.prototype.off;
-},{"event":7}],10:[function(require,module,exports){
+},{"event":7}],11:[function(require,module,exports){
 /*jshint browser:true, node:true*/
 
 'use strict';
@@ -1508,6 +1657,74 @@ function protect(keys, ob) {
     }
   }
 }
-},{"utils":6}]},{},[1])(1)
+},{"utils":12}],12:[function(require,module,exports){
+
+/*jshint browser:true, node:true*/
+
+'use strict';
+
+exports.bind = function(method, context) {
+  return function() { return method.apply(context, arguments); };
+};
+
+exports.isArray = function(arg) {
+  return arg instanceof Array;
+},
+
+exports.mixin = function(original, source) {
+  for (var key in source) original[key] = source[key];
+  return original;
+},
+
+exports.byId = function(id, el) {
+  if (el) return el.querySelector('#' + id);
+},
+
+/**
+ * Inserts an item into an array.
+ * Has the option to state an index.
+ *
+ * @param  {*} item
+ * @param  {Array} array
+ * @param  {Number} index
+ * @return void
+ */
+exports.insert = function(item, array, index) {
+  if (typeof index !== 'undefined') {
+    array.splice(index, 0, item);
+  } else {
+    array.push(item);
+  }
+},
+
+exports.toNode = function(html) {
+  var el = document.createElement('div');
+  el.innerHTML = html;
+  return el.removeChild(el.firstElementChild);
+},
+
+// Determine if we have a DOM
+// in the current environment.
+exports.hasDom = function() {
+  return typeof document !== 'undefined';
+};
+
+var i = 0;
+exports.uniqueId = function(prefix) {
+  return (prefix || 'id') + ((++i) * Math.round(Math.random() * 100000));
+};
+
+exports.keys = function(object) {
+  var keys = [];
+  for (var key in object) keys.push(key);
+  return keys;
+};
+
+exports.isPlainObject = function(ob) {
+  if (!ob) return false;
+  var c = (ob.constructor || '').toString();
+  return !!~c.indexOf('Object');
+};
+},{}]},{},[1])(1)
 });
 ;

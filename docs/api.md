@@ -135,6 +135,10 @@ and printed with `{{{child}}}}`.
         {{{child}}}
     {{/children}}
 
+### Module#_innerHTML()
+
+Get the view's innerHTML
+
 ### Module#render()
 
 Renders the view and replaces
