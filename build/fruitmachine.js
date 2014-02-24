@@ -141,75 +141,7 @@ module.exports = function(options) {
   return events(fm);
 };
 
-},{"./define":4,"./module":5,"event":7,"utils":6}],6:[function(require,module,exports){
-
-/*jshint browser:true, node:true*/
-
-'use strict';
-
-exports.bind = function(method, context) {
-  return function() { return method.apply(context, arguments); };
-};
-
-exports.isArray = function(arg) {
-  return arg instanceof Array;
-},
-
-exports.mixin = function(original, source) {
-  for (var key in source) original[key] = source[key];
-  return original;
-},
-
-exports.byId = function(id, el) {
-  if (el) return el.querySelector('#' + id);
-},
-
-/**
- * Inserts an item into an array.
- * Has the option to state an index.
- *
- * @param  {*} item
- * @param  {Array} array
- * @param  {Number} index
- * @return void
- */
-exports.insert = function(item, array, index) {
-  if (typeof index !== 'undefined') {
-    array.splice(index, 0, item);
-  } else {
-    array.push(item);
-  }
-},
-
-exports.toNode = function(html) {
-  var el = document.createElement('div');
-  el.innerHTML = html;
-  return el.removeChild(el.firstElementChild);
-},
-
-// Determine if we have a DOM
-// in the current environment.
-exports.hasDom = function() {
-  return typeof document !== 'undefined';
-};
-
-var i = 0;
-exports.uniqueId = function(prefix) {
-  return (prefix || 'id') + ((++i) * Math.round(Math.random() * 100000));
-};
-
-exports.keys = function(object) {
-  var keys = [];
-  for (var key in object) keys.push(key);
-  return keys;
-};
-
-exports.isPlainObject = function(ob) {
-  if (!ob) return false;
-  var c = (ob.constructor || '').toString();
-  return !!~c.indexOf('Object');
-};
-},{}],7:[function(require,module,exports){
+},{"./define":4,"./module":5,"event":6,"utils":7}],6:[function(require,module,exports){
 
 /**
  * Event
@@ -323,6 +255,74 @@ function mixin(a, b) {
   for (var key in b) a[key] = b[key];
   return a;
 }
+},{}],7:[function(require,module,exports){
+
+/*jshint browser:true, node:true*/
+
+'use strict';
+
+exports.bind = function(method, context) {
+  return function() { return method.apply(context, arguments); };
+};
+
+exports.isArray = function(arg) {
+  return arg instanceof Array;
+},
+
+exports.mixin = function(original, source) {
+  for (var key in source) original[key] = source[key];
+  return original;
+},
+
+exports.byId = function(id, el) {
+  if (el) return el.querySelector('#' + id);
+},
+
+/**
+ * Inserts an item into an array.
+ * Has the option to state an index.
+ *
+ * @param  {*} item
+ * @param  {Array} array
+ * @param  {Number} index
+ * @return void
+ */
+exports.insert = function(item, array, index) {
+  if (typeof index !== 'undefined') {
+    array.splice(index, 0, item);
+  } else {
+    array.push(item);
+  }
+},
+
+exports.toNode = function(html) {
+  var el = document.createElement('div');
+  el.innerHTML = html;
+  return el.removeChild(el.firstElementChild);
+},
+
+// Determine if we have a DOM
+// in the current environment.
+exports.hasDom = function() {
+  return typeof document !== 'undefined';
+};
+
+var i = 0;
+exports.uniqueId = function(prefix) {
+  return (prefix || 'id') + ((++i) * Math.round(Math.random() * 100000));
+};
+
+exports.keys = function(object) {
+  var keys = [];
+  for (var key in object) keys.push(key);
+  return keys;
+};
+
+exports.isPlainObject = function(ob) {
+  if (!ob) return false;
+  var c = (ob.constructor || '').toString();
+  return !!~c.indexOf('Object');
+};
 },{}],3:[function(require,module,exports){
 
 'use strict';
@@ -443,40 +443,7 @@ proto.toJSON = function() {
 // Mixin events
 events(proto);
 
-},{"event":9,"mixin":8}],8:[function(require,module,exports){
-
-'use strict';
-
-/**
- * Locals
- */
-
-var has = {}.hasOwnProperty;
-
-/**
- * Exports
- */
-
-module.exports = function(main) {
-  var args = arguments;
-  var l = args.length;
-  var i = 0;
-  var src;
-  var key;
-
-  while (++i < l) {
-    src = args[i];
-    for (key in src) {
-      if (has.call(src, key)) {
-        main[key] = src[key];
-      }
-    }
-  }
-
-  return main;
-};
-
-},{}],9:[function(require,module,exports){
+},{"event":8,"mixin":9}],8:[function(require,module,exports){
 
 /**
  * Event
@@ -590,6 +557,39 @@ function mixin(a, b) {
   for (var key in b) a[key] = b[key];
   return a;
 }
+},{}],9:[function(require,module,exports){
+
+'use strict';
+
+/**
+ * Locals
+ */
+
+var has = {}.hasOwnProperty;
+
+/**
+ * Exports
+ */
+
+module.exports = function(main) {
+  var args = arguments;
+  var l = args.length;
+  var i = 0;
+  var src;
+  var key;
+
+  while (++i < l) {
+    src = args[i];
+    for (key in src) {
+      if (has.call(src, key)) {
+        main[key] = src[key];
+      }
+    }
+  }
+
+  return main;
+};
+
 },{}],5:[function(require,module,exports){
 
 /*jshint browser:true, node:true*/
@@ -1501,7 +1501,7 @@ module.exports = function(fm) {
   return Module;
 };
 
-},{"./events":10,"extend":11,"utils":6}],10:[function(require,module,exports){
+},{"./events":10,"extend":11,"utils":7}],10:[function(require,module,exports){
 
 /**
  * Module Dependencies
@@ -1587,7 +1587,7 @@ function propagate(view, args, event) {
 
 exports.fireStatic = events.prototype.fire;
 exports.off = events.prototype.off;
-},{"event":7}],11:[function(require,module,exports){
+},{"event":6}],11:[function(require,module,exports){
 /*jshint browser:true, node:true*/
 
 'use strict';
