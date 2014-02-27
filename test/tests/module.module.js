@@ -41,5 +41,24 @@ buster.testCase('View#module()', {
 
     assert.equals(henry.module(), 'henry');
     assert.equals(henry.name, 'henry');
+  },
+
+  "Should walk down the fruitmachine tree, recursively": function() {
+    var Elizabeth = fruitmachine.define({ name: 'elizabeth' });
+    var elizabeth = new Elizabeth();
+    this.view.module('apple').add(elizabeth);
+
+    var elizabethInstance = this.view.module('elizabeth');
+    assert.equals(elizabethInstance.module(), 'elizabeth');
+    assert.equals(elizabethInstance.name, 'elizabeth');
+  },
+
+  "Regression Test: Should still recurse even if the root view used to have a module of the same type": function() {
+    var pear = this.view.module('pear').remove();
+    this.view.module('apple').add(pear);
+
+    var pearInstance = this.view.module('pear');
+    assert.equals(pearInstance.module(), 'pear');
+    assert.equals(pearInstance.name, 'pear');
   }
 });
