@@ -53,7 +53,7 @@ buster.testCase('View#module()', {
     assert.equals(elizabethInstance.name, 'elizabeth');
   },
 
-  "Should still recurse even if the root view used to have a module of the same type": function() {
+  "Regression Test: Should still recurse even if the root view used to have a module of the same type": function() {
     var pear = this.view.module('pear').remove();
     this.view.module('apple').add(pear);
 
