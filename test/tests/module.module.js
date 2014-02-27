@@ -48,12 +48,14 @@ buster.testCase('View#module()', {
     var elizabeth = new Elizabeth();
     this.view.module('apple').add(elizabeth);
 
-    var pear = this.view.module('pear').remove();
-    this.view.module('apple').add(pear);
-
     var elizabethInstance = this.view.module('elizabeth');
     assert.equals(elizabethInstance.module(), 'elizabeth');
     assert.equals(elizabethInstance.name, 'elizabeth');
+  },
+
+  "Should still recurse even if the root view used to have a module of the same type": function() {
+    var pear = this.view.module('pear').remove();
+    this.view.module('apple').add(pear);
 
     var pearInstance = this.view.module('pear');
     assert.equals(pearInstance.module(), 'pear');
