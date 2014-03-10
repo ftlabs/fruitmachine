@@ -201,7 +201,8 @@ and appends the view into it.
 ### Module#appendTo()
 
 Appends the view element into
-the destination element.
+the destination element. Optionally
+specify an element to insert before.
 
 ### Module#toJSON()
 
