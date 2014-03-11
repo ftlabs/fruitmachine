@@ -4,7 +4,7 @@ Once you have [assembled](layout-assembly.md) and [rendered](rendering.md) your 
 
 - `.inject(<Element>)` Empties the contents of the given element, then appends `view.el`.
 - `.appendTo(<Element>)` Appends `view.el` to the given Element.
-- `.appendTo(<Element>, <Element>)` Appends `view.el` to the given Element, inserting before the second Element parameter.
+- `.insertBefore(<Element>, <Element>)` Appends `view.el` to the given Element as a previous sibling of the second Element parameter.
 
 ### `View#inject()`
 
