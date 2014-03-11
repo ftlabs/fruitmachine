@@ -141,7 +141,75 @@ module.exports = function(options) {
   return events(fm);
 };
 
-},{"./define":4,"./module":5,"event":6,"utils":7}],6:[function(require,module,exports){
+},{"./define":4,"./module":5,"event":7,"utils":6}],6:[function(require,module,exports){
+
+/*jshint browser:true, node:true*/
+
+'use strict';
+
+exports.bind = function(method, context) {
+  return function() { return method.apply(context, arguments); };
+};
+
+exports.isArray = function(arg) {
+  return arg instanceof Array;
+},
+
+exports.mixin = function(original, source) {
+  for (var key in source) original[key] = source[key];
+  return original;
+},
+
+exports.byId = function(id, el) {
+  if (el) return el.querySelector('#' + id);
+},
+
+/**
+ * Inserts an item into an array.
+ * Has the option to state an index.
+ *
+ * @param  {*} item
+ * @param  {Array} array
+ * @param  {Number} index
+ * @return void
+ */
+exports.insert = function(item, array, index) {
+  if (typeof index !== 'undefined') {
+    array.splice(index, 0, item);
+  } else {
+    array.push(item);
+  }
+},
+
+exports.toNode = function(html) {
+  var el = document.createElement('div');
+  el.innerHTML = html;
+  return el.removeChild(el.firstElementChild);
+},
+
+// Determine if we have a DOM
+// in the current environment.
+exports.hasDom = function() {
+  return typeof document !== 'undefined';
+};
+
+var i = 0;
+exports.uniqueId = function(prefix) {
+  return (prefix || 'id') + ((++i) * Math.round(Math.random() * 100000));
+};
+
+exports.keys = function(object) {
+  var keys = [];
+  for (var key in object) keys.push(key);
+  return keys;
+};
+
+exports.isPlainObject = function(ob) {
+  if (!ob) return false;
+  var c = (ob.constructor || '').toString();
+  return !!~c.indexOf('Object');
+};
+},{}],7:[function(require,module,exports){
 
 /**
  * Event
@@ -255,74 +323,6 @@ function mixin(a, b) {
   for (var key in b) a[key] = b[key];
   return a;
 }
-},{}],7:[function(require,module,exports){
-
-/*jshint browser:true, node:true*/
-
-'use strict';
-
-exports.bind = function(method, context) {
-  return function() { return method.apply(context, arguments); };
-};
-
-exports.isArray = function(arg) {
-  return arg instanceof Array;
-},
-
-exports.mixin = function(original, source) {
-  for (var key in source) original[key] = source[key];
-  return original;
-},
-
-exports.byId = function(id, el) {
-  if (el) return el.querySelector('#' + id);
-},
-
-/**
- * Inserts an item into an array.
- * Has the option to state an index.
- *
- * @param  {*} item
- * @param  {Array} array
- * @param  {Number} index
- * @return void
- */
-exports.insert = function(item, array, index) {
-  if (typeof index !== 'undefined') {
-    array.splice(index, 0, item);
-  } else {
-    array.push(item);
-  }
-},
-
-exports.toNode = function(html) {
-  var el = document.createElement('div');
-  el.innerHTML = html;
-  return el.removeChild(el.firstElementChild);
-},
-
-// Determine if we have a DOM
-// in the current environment.
-exports.hasDom = function() {
-  return typeof document !== 'undefined';
-};
-
-var i = 0;
-exports.uniqueId = function(prefix) {
-  return (prefix || 'id') + ((++i) * Math.round(Math.random() * 100000));
-};
-
-exports.keys = function(object) {
-  var keys = [];
-  for (var key in object) keys.push(key);
-  return keys;
-};
-
-exports.isPlainObject = function(ob) {
-  if (!ob) return false;
-  var c = (ob.constructor || '').toString();
-  return !!~c.indexOf('Object');
-};
 },{}],3:[function(require,module,exports){
 
 'use strict';
@@ -976,7 +976,7 @@ module.exports = function(fm) {
     if (!arguments.length) return this._module || this.name;
 
     var view = this._modules[key];
-    if (view) return view[0];
+    if (view && view.length) return view[0];
 
     return this.each(function(view) {
       return view.module(key);
@@ -1427,7 +1427,7 @@ module.exports = function(fm) {
   proto.inject = function(dest) {
     if (dest) {
       dest.innerHTML = '';
-      this.appendTo(dest);
+      this.insertBefore(dest, null);
       this.fireStatic('inject');
     }
 
@@ -1443,8 +1443,23 @@ module.exports = function(fm) {
    * @api public
    */
   proto.appendTo = function(dest) {
-    if (this.el && dest && dest.appendChild) {
-      dest.appendChild(this.el);
+    return this.insertBefore(dest, null);
+  };
+
+  /**
+   * Inserts the view element before the
+   * given child of the destination element.
+   *
+   * @param  {Element} dest
+   * @param  {Element} beforeEl
+   * @return {Module}
+   * @api public
+   */
+  proto.insertBefore = function(dest, beforeEl) {
+    if (this.el && dest && dest.insertBefore) {
+      dest.insertBefore(this.el, beforeEl);
+
+      // This badly-named event is for legacy reasons; perhaps 'insert' would be better here?
       this.fireStatic('appendto');
     }
 
@@ -1501,7 +1516,7 @@ module.exports = function(fm) {
   return Module;
 };
 
-},{"./events":10,"extend":11,"utils":7}],10:[function(require,module,exports){
+},{"./events":10,"extend":11,"utils":6}],10:[function(require,module,exports){
 
 /**
  * Module Dependencies
@@ -1587,7 +1602,7 @@ function propagate(view, args, event) {
 
 exports.fireStatic = events.prototype.fire;
 exports.off = events.prototype.off;
-},{"event":6}],11:[function(require,module,exports){
+},{"event":7}],11:[function(require,module,exports){
 /*jshint browser:true, node:true*/
 
 'use strict';
