@@ -2,6 +2,17 @@
 buster.testCase('View#appendTo()', {
   setUp: helpers.createView,
 
+  "Should return the view for a fluent interface.": function() {
+    var sandbox = document.createElement('div'),
+        sandbox2 = document.createElement('div'),
+        existing = document.createElement('div');
+
+    sandbox2.appendChild(existing);
+
+    assert.same(this.view, this.view.render().appendTo(sandbox));
+    assert.same(this.view, this.view.render().insertBefore(sandbox2, existing));
+  },
+
   "Should append the view element as a child of the given element.": function() {
     var sandbox = document.createElement('div');
 
