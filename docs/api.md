@@ -200,13 +200,11 @@ and appends the view into it.
 
 ### Module#appendTo()
 
-Inserts the view element before the given child of the destination element.
+Appends the view element into the destination element.
 
 ### Module#insertBefore()
 
-Appends the view element into
-the destination element. Optionally
-specify an element to insert before.
+Inserts the view element before the given child of the destination element.
 
 ### Module#toJSON()
 
