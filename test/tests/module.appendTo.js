@@ -36,7 +36,7 @@ buster.testCase('View#appendTo()', {
 
     this.view
       .render()
-      .appendTo(sandbox, existing2);
+      .insertBefore(sandbox, existing2);
 
     assert.equals(existing1, sandbox.firstElementChild);
     assert.equals(this.view.el, existing1.nextSibling);
