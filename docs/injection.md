@@ -1,9 +1,10 @@
 ## DOM injection
 
-Once you have [assembled](layout-assembly.md) and [rendered](rendering.md) your View you'll want to inject it into the DOM at some point. *FruitMachine* has two ways of doing this:
+Once you have [assembled](layout-assembly.md) and [rendered](rendering.md) your View you'll want to inject it into the DOM at some point. *FruitMachine* has multiple ways of doing this:
 
 - `.inject(<Element>)` Empties the contents of the given element, then appends `view.el`.
 - `.appendTo(<Element>)` Appends `view.el` to the given Element.
+- `.insertBefore(<Element>, <Element>)` Appends `view.el` to the given Element as a previous sibling of the second Element parameter.
 
 ### `View#inject()`
 
