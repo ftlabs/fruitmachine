@@ -164,5 +164,16 @@ buster.testCase('View', {
     var berry = new Berry({ model: { foo: 'bar' }});
 
     assert(berry.model instanceof Backbone.Model);
+  },
+
+  "// Should not modify the options object": function() {
+    var options = {
+      classes: ['my class']
+    };
+
+    var orange = new Orange(options);
+    orange.classes.push('added');
+
+    assert.equals(['my class'], options.classes);
   }
 });
