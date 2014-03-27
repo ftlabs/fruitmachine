@@ -641,6 +641,9 @@ module.exports = function(fm) {
     this._configure(options);
     this._add(options.children);
 
+    // Fire before initialize event hook
+    this.fireStatic('before initialize', options);
+
     // Run initialize hooks
     if (this.initialize) this.initialize(options);
 
