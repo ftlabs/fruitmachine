@@ -58,3 +58,5 @@ apple.sayName();
 Helpers can be released as plugins, if you would like to submit your helper to this list [please raise an issue](https://github.com/ftlabs/fruitmachine/issues).
 
 - [fruitmachine-ftdomdelegate](https://github.com/ftlabs/fruitmachine-ftdomdelegate) provides [ftdomdelegate](https://github.com/ftlabs/ftdomdelegate) functionality within fruitmachine modules.
+- [fruitmachine-bindall](https://github.com/ftlabs/fruitmachine-bindall)] automatically binds all the methods in a module to instances of that module.
+- [fruitmachine-media(https://github.com/ftlabs/fruitmachine-media)] allows you to create resposnive components.  Set up media queries for different states and this plugin will allow you to hook into per state setup and teardown events when those media queries match.
