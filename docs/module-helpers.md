@@ -59,4 +59,4 @@ Helpers can be released as plugins, if you would like to submit your helper to t
 
 - [fruitmachine-ftdomdelegate](https://github.com/ftlabs/fruitmachine-ftdomdelegate) provides [ftdomdelegate](https://github.com/ftlabs/ftdomdelegate) functionality within fruitmachine modules.
 - [fruitmachine-bindall](https://github.com/ftlabs/fruitmachine-bindall) automatically binds all the methods in a module to instances of that module.
-- [fruitmachine-media](https://github.com/ftlabs/fruitmachine-media) allows you to create resposnive components.  Set up media queries for different states and this plugin will allow you to hook into per state setup and teardown events when those media queries match.
+- [fruitmachine-media](https://github.com/ftlabs/fruitmachine-media) allows you to create responsive components.  Set up media queries for different states and this plugin will allow you to hook into per state setup and teardown events when those media queries match.
