@@ -1528,8 +1528,10 @@ module.exports = function(fm) {
 var events = require('event');
 
 /**
- * Exports
+ * Local vars
  */
+
+var listenerMap = {};
 
 /**
  * Registers a event listener.
@@ -1540,10 +1542,11 @@ var events = require('event');
  * @return {View}
  */
 exports.on = function(name, module, cb) {
+  var l;
 
   // cb can be passed as
   // the second or third argument
-  if (arguments.length === 2) {
+  if (typeof module !== 'string') {
     cb = module;
     module = null;
   }
@@ -1553,13 +1556,58 @@ exports.on = function(name, module, cb) {
   // function that checks the
   // module
   if (module) {
-    events.prototype.on.call(this, name, function() {
-      if (this.event.target.module() === module) {
-        cb.apply(this, arguments);
+    if (!listenerMap[name]) listenerMap[name] = [];
+    l = listenerMap[name].push({
+      orig: cb,
+      cb: function() {
+        if (this.event.target.module() === module) {
+          cb.apply(this, arguments);
+        }
       }
     });
+    events.prototype.on.call(this, name, listenerMap[name][l-1].cb);
   } else {
     events.prototype.on.call(this, name, cb);
+  }
+
+  return this;
+};
+
+/**
+ * Unregisters a event listener.
+ *
+ * @param  {String}   name
+ * @param  {String}   module
+ * @param  {Function} cb
+ * @return {View}
+ */
+exports.off = function(name, module, cb) {
+
+  // cb can be passed as
+  // the second or third argument
+  if (typeof module !== 'string') {
+    cb = module;
+    module = null;
+  }
+
+  if (listenerMap[name]) {
+    listenerMap[name] = listenerMap[name].filter(function(map) {
+
+      // If a callback provided, keep it
+      // in the listener map if it doesn't match
+      if (cb && map.orig !== cb) {
+        return true;
+
+      // Otherwise remove it from the listener
+      // map and unbind the event listener
+      } else {
+        events.prototype.off.call(this, name, map.cb);
+        return false;
+      }
+    }, this);
+  }
+  if (!module) {
+    events.prototype.off.call(this, name, cb);
   }
 
   return this;
@@ -1604,7 +1652,7 @@ function propagate(view, args, event) {
 }
 
 exports.fireStatic = events.prototype.fire;
-exports.off = events.prototype.off;
+
 },{"event":7}],11:[function(require,module,exports){
 /*jshint browser:true, node:true*/
 
