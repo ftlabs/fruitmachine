@@ -1,4 +1,4 @@
-# {{pkg.title}} [![Build Status](https://travis-ci.org/ftlabs/fruitmachine.png?branch=master)](https://travis-ci.org/ftlabs/fruitmachine)
+# {{pkg.title}} [![Build Status](https://travis-ci.org/ftlabs/fruitmachine.svg?branch=master)](https://travis-ci.org/ftlabs/fruitmachine)
 
 {{pkg.description}}
 
