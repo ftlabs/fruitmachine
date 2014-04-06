@@ -79,5 +79,19 @@ buster.testCase('View#on()', {
 		assert(spy2.called);
 	},
 
+	"#off without a module should also unbind listeners, regardless of how they are bound": function() {
+		var spy = this.spy();
+		var apple = this.view.module('apple');
+
+		this.view.on('testevent', 'apple', spy);
+		apple.fire('testevent');
+		assert(spy.called);
+
+		spy.reset();
+		this.view.off('testevent', spy);
+		apple.fire('testevent');
+		refute(spy.called);
+	},
+
 	tearDown: helpers.destroyView
 });
