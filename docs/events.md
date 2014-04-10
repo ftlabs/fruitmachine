@@ -2,10 +2,15 @@
 
 Events are at the core of fruitmachine. They allows us to decouple View interactions from one another. By default *FruitMachine* fires the following events on View module instances:
 
+- `before initialize` Before the module is instantiated
 - `initialize` On instantiation
+- `before setup` Before the module is setup
 - `setup` When `.setup()` is called (remember 'setup' is recursive)
+- `before teardown` Before the module is torn down
 - `teardown` When `.teardown()` or `.destroy()` are called (remember 'destroy' calls 'teardown' which recurses)
+- `before destroy` Before the module is destroyed
 - `destroy` When `.setup()` is called (remember 'teardown' recurses)
+- `before tohtml` Before toHTML is called.  `render` events are only fired on the node being rendered - not any of the children so if you want to manipulate a module's data model prior to rendering, hook into this event)
 - `render` When `.render()` is called
 
 #### Bubbling
