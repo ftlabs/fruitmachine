@@ -21,7 +21,7 @@ orange.children.length; //=> 0
 
 ```js
 var layout = new Layout({
-  children: [
+  children: {
     1: {
       module: 'apple',
       children: {
