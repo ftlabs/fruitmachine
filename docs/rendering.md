@@ -1,6 +1,6 @@
 ## Rendering
 
-When you have [assembled](layout-assembly.md) your modules and populated them with the required [data](module-instantiation.md#options) you can call `.render()`. Render recursively renders the the nested module structure by calling each module's render function, from the bottom up, and then turns the output html string into a DOM node (`view.el`). `Module#render()` (like most module methods) returns the module instance (`this`) to allow for chaining.
+When you have [assembled](layout-assembly.md) your modules and populated them with the required [data](module-instantiation.md#options) you can call `.render()`. Render recursively renders the nested module structure by calling each module's render function, from the bottom up, and then turns the output html string into a DOM node (`view.el`). `Module#render()` (like most module methods) returns the module instance (`this`) to allow for chaining.
 
 #### Re-rendering
 
