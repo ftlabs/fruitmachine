@@ -25,7 +25,7 @@ Internally `define` extends the default `fruitmachine.Module.prototype` with the
 ### Options
 
 - `name {String}` Your name for this module.
-- `template {Function}` A function that will return the module's html (we like [Hogan](http://twitter.github.com/hogan.js/)
+- `template {Function}` A function that will return the module's html (we like [Hogan](http://twitter.github.com/hogan.js/))
 - `tag {String}` The html tag to use on the root element (defaults to 'div') *(optional)*
 - `classes {Array}` A list of classes to add to the root element. *(optional)*
 - `initialize {Function}` Define a function to run when the module is first instantiated (only ever runs once) *(optional)*
