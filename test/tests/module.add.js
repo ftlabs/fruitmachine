@@ -3,6 +3,17 @@ buster.testCase('View#add()', {
     this.view = new helpers.Views.List();
   },
 
+  "Should throw when adding undefined module": function() {
+    var thrown;
+    try {
+      this.view.add({module: 'invalidFruit'});
+    } catch(e) {
+      assert.match(e.message, 'invalidFruit');
+      thrown = true;
+    }
+    assert.isTrue(thrown);
+  },
+
   "Should accept a View instance": function() {
     var pear = new helpers.Views.Pear();
     this.view.add(pear);
