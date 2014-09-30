@@ -1,17 +1,20 @@
 ## Events
 
-Events are at the core of fruitmachine. They allows us to decouple View interactions from one another. By default *FruitMachine* fires the following events on View module instances:
+Events are at the core of fruitmachine. They allows us to decouple View interactions from one another. By default *FruitMachine* fires the following events on View module instances during creation, in the following order:
 
 - `before initialize` Before the module is instantiated
 - `initialize` On instantiation
+- `before render` At the very start of the render process, triggered by the view having `.render()` called on it
+- `before tohtml` Before toHTML is called.  `render` events are only fired on the node being rendered - not any of the children so if you want to manipulate a module's data model prior to rendering, hook into this event)
+- `render` When the `.render()` process is complete
 - `before setup` Before the module is setup
-- `setup` When `.setup()` is called (remember 'setup' is recursive)
+- `setup` When `.setup()` is called to set up events after render (remember 'setup' is recursive)
+
+And during destruction, in the following order:
 - `before teardown` Before the module is torn down
 - `teardown` When `.teardown()` or `.destroy()` are called (remember 'destroy' calls 'teardown' which recurses)
 - `before destroy` Before the module is destroyed
-- `destroy` When `.setup()` is called (remember 'teardown' recurses)
-- `before tohtml` Before toHTML is called.  `render` events are only fired on the node being rendered - not any of the children so if you want to manipulate a module's data model prior to rendering, hook into this event)
-- `render` When `.render()` is called
+- `destroy` When `.destroy()` is called (remember 'teardown' recurses)
 
 #### Bubbling
 
@@ -32,6 +35,8 @@ layout.on('shout', function() {
 apple.fire('shout');
 //=> alert 'layout heard apple shout'
 ```
+
+The FruitMachine default events (eg `initialize`, `setup`, `teardown`) do not bubble.
 
 #### Passing parameters
 
