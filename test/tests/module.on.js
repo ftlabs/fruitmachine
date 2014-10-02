@@ -93,5 +93,47 @@ buster.testCase('View#on()', {
 		refute(spy.called);
 	},
 
+  "#on events should fire the correct number of times when re-fired": function() {
+    var orange = this.view.module("orange");
+    var apple  = this.view.module("apple");
+
+    var callCount = {
+      orange: 0,
+      apple:  0
+    }
+
+    this.view.on("foo", "apple", function(data) {
+      callCount.apple += 1;
+      orange.foo();
+    });
+
+    this.view.on("foo", "orange", function(data) {
+      // This is called twice and should only be called once.
+      callCount.orange += 1;
+    });
+
+    apple.foo();
+
+    assert.equals(callCount.apple,  1);
+    assert.equals(callCount.orange, 1);
+  },
+
+  "#on events fire with the correct event object when re-fired": function() {
+    var orange = this.view.module("orange");
+    var apple  = this.view.module("apple");
+
+    this.view.on("foo", "apple", function(data) {
+      assert.equals(data, "from apple");
+      orange.foo();
+    });
+
+    this.view.on("foo", "orange", function(data) {
+      // This is "from apple" rather than "from orange",
+      assert.equals(data, "from orange");
+    });
+
+    apple.foo();
+  },
+
 	tearDown: helpers.destroyView
 });

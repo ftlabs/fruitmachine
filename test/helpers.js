@@ -35,7 +35,10 @@ var Apple = helpers.Views.Apple = fruitmachine.define({
   initialize: function() {},
   setup: function() {},
   teardown: function() {},
-  destroy: function() {}
+  destroy: function() {},
+  foo: function() {
+    this.fire("foo", "from apple");
+  }
 });
 
 var List = helpers.Views.List = fruitmachine.define({
@@ -55,7 +58,10 @@ var Orange = helpers.Views.Orange = fruitmachine.define({
   initialize: function() {},
   setup: function() {},
   teardown: function() {},
-  destroy: function() {}
+  destroy: function() {},
+  foo: function() {
+    this.fire("foo", "from orange");
+  }
 });
 
 var Pear = helpers.Views.Pear = fruitmachine.define({
