@@ -32,7 +32,7 @@
     "coveralls": "cat coverage/lcov.info | coveralls"
   },
   "dependencies": {
-    "events": "git://github.com/wilsonpage/events.git",
+    "evt": "git://github.com/wilsonpage/evt.git",
     "model": "git://github.com/wilsonpage/model.git",
     "utils": "git://github.com/wilsonpage/utils.git",
     "extend": "git://github.com/wilsonpage/extend.git"
