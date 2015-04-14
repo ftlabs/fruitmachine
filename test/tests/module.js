@@ -1,3 +1,4 @@
+var assert = buster.assertions.assert;
 
 buster.testCase('View', {
   "Should add any children passed into the constructor": function() {
@@ -64,7 +65,7 @@ buster.testCase('View', {
       }
     });
 
-    assert.equals(layout.module('apple').slot, 2);
+    assert.equals(layout.module('apple').slot, '2');
   },
 
   "Should create a model": function() {

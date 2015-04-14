@@ -1,3 +1,5 @@
+var assert = buster.assertions.assert;
+var refute = buster.assertions.refute;
 
 buster.testCase('fruitmachine.define()', {
 	setUp: function() {},

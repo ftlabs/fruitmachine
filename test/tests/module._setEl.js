@@ -1,3 +1,4 @@
+var assert = buster.assertions.assert;
 
 buster.testCase('View#_setEl()', {
 
@@ -20,7 +21,6 @@ buster.testCase('View#_setEl()', {
 
     var apple = layout.module('apple');
     var orange = layout.module('orange');
-    var original = orange.el;
     var replacement = document.createElement('div');
 
     orange._setEl(replacement);

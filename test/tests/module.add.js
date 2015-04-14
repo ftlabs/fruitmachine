@@ -1,3 +1,6 @@
+var assert = buster.assertions.assert;
+var refute = buster.assertions.refute;
+
 buster.testCase('View#add()', {
   "setUp": function() {
     this.view = new helpers.Views.List();

@@ -1,3 +1,5 @@
+var assert = buster.assertions.assert;
+
 buster.testCase('fruitmachine#helpers()', {
   setUp: function() {
     var helper = this.helper = function(view) {
