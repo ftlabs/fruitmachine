@@ -7,6 +7,7 @@ Eventually a module has to be destroyed. To do this you simply call `mymodule.de
 1. It runs `.teardown()` to undo any setup logic.
 2. It removes the module from any module it may be nested inside.
 3. It removes the module from the DOM.
+3. It unmounts the module from element.
 4. It runs your module's custom destroy logic.
 5. It fires a `destroy` event hook.
 6. It sets `module.destroyed` to `true` (useful for checking for destroyed views).

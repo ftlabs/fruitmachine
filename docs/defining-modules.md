@@ -10,6 +10,7 @@ var Apple = fruitmachine.define({
   // Event callbacks (optional)
   initialize: function(options){},
   setup: function(){},
+  mount: function(){},
   teardown: function(){},
   destroy: function(){}
 });
@@ -29,6 +30,7 @@ Internally `define` extends the default `fruitmachine.Module.prototype` with the
 - `tag {String}` The html tag to use on the root element (defaults to 'div') *(optional)*
 - `classes {Array}` A list of classes to add to the root element. *(optional)*
 - `initialize {Function}` Define a function to run when the module is first instantiated (only ever runs once) *(optional)*
-- `setup {Function}` A function to be run every time `Module#setup()` is called. Should be used to bind any DOM event listeners. You can safely assume the presence of `this.el` at this point. *(optional)*
+- `setup {Function}` A function to be run every time `Module#setup()` is called. You can safely assume the presence of `this.el` at this point; however, this element is not guaranteed to exist or be associated with the module in the future, for example if the module's parent is re-rendered. *(optional)*
+- `mount {Function}` A function to be run every time `Module#mount()` is called, i.e. when the module has been associated with a new DOM element. Should be used to bind any DOM event listeners. *(optional)*
 - `teardown {Function}` A function to be run when `Module#teardown()` or `Module#destroy()` is called. `teardown` will also run if you attempt to setup an already 'setup' module.
 - `destroy {Function}` Run when `Module#destroy()` is called (will only ever run once) *(optional)*

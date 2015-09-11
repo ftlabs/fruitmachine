@@ -1,61 +1,16 @@
-## Interactions
+## Interacting with the DOM
 
-Not all modules need interaction or logic, but when they do FruitMachine has everything you need.
-
-#### Setting up
+Sometimes, modules need to interact with the DOM, for example to register event handlers or set up a non-fruitmachine component. The `mount` lifecycle method is called whenever a module is associated with a new DOM element, allowing you to perform setup that requires the DOM:
 
 ```js
 var Apple = fruitmachine.define({
   name: 'apple',
-  template: function(){ return '<button>Click Me</button>'; },
-  setup: function() {
-    var self = this;
-    this.button = this.el.querySelector('tear me down');
-    this.onButtonClick = function() {
+  template: function() { return '<button>Click me</button>' },
+
+  mount: function() {
+    this.el.addEventListener('click', function() {
       alert('clicked');
-    };
-
-    this.button.addEventListener('click', this.onButtonClick);
-  }
-});
-
-var apple = new Apple();
-
-apple
-  .render()
-  .inject(document.body)
-  .setup(); /* 1 */
-```
-
-1. *The button is now active*
-
-#### Tearing down ([example](http://ftlabs.github.io/fruitmachine/example/interactions))
-
-```js
-var Apple = fruitmachine.define({
-  name: 'apple',
-  template: function(){ return '<button>Click Me</button>'; },
-  setup: function() {
-    var self = this;
-    this.button = this.el.querySelector('tear me down');
-    this.onButtonClick = function() {
-      alert('tearing down');
-      self.teardown(); /* 1 */
-    };
-
-    this.button.addEventListener('click', this.onButtonClick);
+    });
   },
-  teardown: function() {
-    this.button.removeEventListener('click', this.onButtonClick);
-  }
 });
-
-var apple = new Apple();
-
-apple
-  .render()
-  .inject(document.body)
-  .setup(); /* 1 */
 ```
-
-1. *Teardown is called when the button is clicked, removing the event listener*
