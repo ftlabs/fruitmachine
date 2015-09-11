@@ -132,5 +132,25 @@ buster.testCase('View#render()', {
     assert.equals(layout.el.className, 'layout should-persist');
   },
 
+  "Should fire unmount on children when rerendering": function() {
+    var appleSpy = this.spy();
+    var orangeSpy = this.spy();
+    var pearSpy = this.spy();
+
+    this.view.module('apple').on('unmount', appleSpy);
+    this.view.module('orange').on('unmount', orangeSpy);
+    this.view.module('pear').on('unmount', pearSpy);
+
+    this.view.render();
+    refute.called(appleSpy);
+    refute.called(orangeSpy);
+    refute.called(pearSpy);
+
+    this.view.render();
+    assert.called(appleSpy);
+    assert.called(orangeSpy);
+    assert.called(pearSpy);
+  },
+
   "tearDown": helpers.destroyView
 });

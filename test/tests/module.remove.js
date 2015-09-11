@@ -72,6 +72,40 @@ buster.testCase('View#remove()', {
     assert(sandbox.querySelector('#' + apple._fmid));
   },
 
+  "Should unmount the view by default": function() {
+    var list = new Layout({
+      children: {
+        1: new Apple()
+      }
+    });
+
+    var layoutSpy = this.spy(); list.on('unmount', layoutSpy);
+    var appleSpy = this.spy(); list.module('apple').on('unmount', appleSpy);
+
+    list.render().inject(sandbox).setup();
+    list.remove();
+
+    assert.called(layoutSpy);
+    assert.called(appleSpy);
+  },
+
+  "Should not unmount the view if `fromDOM` option is false": function() {
+    var list = new Layout({
+      children: {
+        1: new Apple()
+      }
+    });
+
+    var layoutSpy = this.spy(); list.on('unmount', layoutSpy);
+    var appleSpy = this.spy(); list.module('apple').on('unmount', appleSpy);
+
+    list.render().inject(sandbox).setup();
+    list.remove({fromDOM: false});
+
+    refute.called(layoutSpy);
+    refute.called(appleSpy);
+  },
+
   "Should remove itself if called with no arguments": function() {
     var list = new helpers.Views.Layout();
     var Apple = helpers.Views.Apple;
