@@ -4,7 +4,7 @@ When you have [assembled](layout-assembly.md) your modules and populated them wi
 
 #### Re-rendering
 
-Often data changes and you need to re-render your modules. Render replaces the root element with a new one, which means you can easily keep Views up to date.
+Often data changes and you need to re-render your modules. Render replaces the root element with a new one, which means you can easily keep Views up to date. This will remove any child module elements and immediately re-mount them.
 
 ```js
 var model = new fruitmachine.Model({ name: 'Wilson' });
