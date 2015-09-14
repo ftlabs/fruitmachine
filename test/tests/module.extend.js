@@ -1,4 +1,4 @@
-var assert = buster.assertions.assert;
+var assert = buster.referee.assert;
 
 buster.testCase('Extend', {
 	"Defining reserved methods should rewrite keys with prefixed with '_'": function() {

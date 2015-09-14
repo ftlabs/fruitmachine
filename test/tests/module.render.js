@@ -1,4 +1,4 @@
-var assert = buster.assertions.assert;
+var assert = buster.referee.assert;
 
 buster.testCase('View#render()', {
   setUp: helpers.createView,

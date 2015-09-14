@@ -1,5 +1,5 @@
-var assert = buster.assertions.assert;
-var refute = buster.assertions.refute;
+var assert = buster.referee.assert;
+var refute = buster.referee.refute;
 
 buster.testCase('View#_getEl()', {
   "setUp": helpers.createView,

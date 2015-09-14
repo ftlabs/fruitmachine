@@ -1,4 +1,4 @@
-var assert = buster.assertions.assert;
+var assert = buster.referee.assert;
 
 buster.testCase('View#mount()', {
   setUp: helpers.createView,
@@ -64,7 +64,7 @@ buster.testCase('View#mount()', {
     });
 
     var m = new Module();
-    
+
     var layout = new Layout({
       children: {
         1: m
@@ -90,7 +90,7 @@ buster.testCase('View#mount()', {
 
     this.view.render();
     assert.callOrder(beforeMountSpy, mountSpy);
-  }, 
+  },
 
   "Should only fire events if the element is new": function() {
     var mountSpy = this.spy();
@@ -99,7 +99,7 @@ buster.testCase('View#mount()', {
     this.view.render();
     this.view._getEl();
     assert.calledOnce(mountSpy);
-  }, 
+  },
 
   tearDown: helpers.destroyView
 });
