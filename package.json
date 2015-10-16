@@ -29,7 +29,8 @@
   },
   "scripts": {
     "test": "grunt test",
-    "coveralls": "cat coverage/lcov.info | coveralls"
+    "coveralls": "cat coverage/lcov.info | coveralls",
+    "prepublish": "grunt"
   },
   "dependencies": {
     "evt": "git://github.com/wilsonpage/evt.git",
