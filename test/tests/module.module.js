@@ -1,8 +1,8 @@
-var assert = buster.referee.assert;
-var refute = buster.referee.refute;
 
-buster.testCase('View#module()', {
-  setUp: function() {
+describe('View#module()', function() {
+  var viewToTest;
+
+  beforeEach(function() {
     var layout = new Layout({});
     var apple = new Apple({ slot: 1 });
     var orange = new Orange({ slot: 2 });
@@ -13,55 +13,55 @@ buster.testCase('View#module()', {
       .add(orange)
       .add(pear);
 
-    this.view = layout;
-  },
+    viewToTest = layout;
+  });
 
-  "Should return module type if no arguments given": function() {
-    assert.equals(this.view.module(), 'layout');
-  },
+  test("Should return module type if no arguments given", function() {
+    expect(viewToTest.module()).toBe('layout');
+  });
 
-  "Should return the first child module with the specified type.": function() {
-    var child = this.view.module('pear');
+  test("Should return the first child module with the specified type.", function() {
+    var child = viewToTest.module('pear');
 
-    assert.equals(child, this.view.children[2]);
-  },
+    expect(child).toBe(viewToTest.children[2]);
+  });
 
-  "If there is more than one child of this module type, only the first is returned.": function() {
-    this.view
+  test("If there is more than one child of this module type, only the first is returned.", function() {
+    viewToTest
       .add({ module: 'apple' });
 
-    var child = this.view.module('apple');
-    var firstChild = this.view.children[0];
-    var lastChild = this.view.children[this.view.children.length-1];
+    var child = viewToTest.module('apple');
+    var firstChild = viewToTest.children[0];
+    var lastChild = viewToTest.children[viewToTest.children.length-1];
 
-    assert.equals(child, firstChild);
-    refute.equals(child, lastChild);
-  },
+    expect(child).toBe(firstChild);
+    expect(child).not.toEqual(lastChild);
+  });
 
-  "Should return the module name if defined with the name key": function() {
+  test("Should return the module name if defined with the name key", function() {
     var Henry = fruitmachine.define({ name: 'henry' });
     var henry = new Henry();
 
-    assert.equals(henry.module(), 'henry');
-    assert.equals(henry.name, 'henry');
-  },
+    expect(henry.module()).toBe('henry');
+    expect(henry.name).toBe('henry');
+  });
 
-  "Should walk down the fruitmachine tree, recursively": function() {
+  test("Should walk down the fruitmachine tree, recursively", function() {
     var Elizabeth = fruitmachine.define({ name: 'elizabeth' });
     var elizabeth = new Elizabeth();
-    this.view.module('apple').add(elizabeth);
+    viewToTest.module('apple').add(elizabeth);
 
-    var elizabethInstance = this.view.module('elizabeth');
-    assert.equals(elizabethInstance.module(), 'elizabeth');
-    assert.equals(elizabethInstance.name, 'elizabeth');
-  },
+    var elizabethInstance = viewToTest.module('elizabeth');
+    expect(elizabethInstance.module()).toBe('elizabeth');
+    expect(elizabethInstance.name).toBe('elizabeth');
+  });
 
-  "Regression Test: Should still recurse even if the root view used to have a module of the same type": function() {
-    var pear = this.view.module('pear').remove();
-    this.view.module('apple').add(pear);
+  test("Regression Test: Should still recurse even if the root view used to have a module of the same type", function() {
+    var pear = viewToTest.module('pear').remove();
+    viewToTest.module('apple').add(pear);
 
-    var pearInstance = this.view.module('pear');
-    assert.equals(pearInstance.module(), 'pear');
-    assert.equals(pearInstance.name, 'pear');
-  }
+    var pearInstance = viewToTest.module('pear');
+    expect(pearInstance.module()).toBe('pear');
+    expect(pearInstance.name).toBe('pear');
+  });
 });

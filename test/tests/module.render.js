@@ -1,24 +1,27 @@
-var assert = buster.referee.assert;
 
-buster.testCase('View#render()', {
-  setUp: helpers.createView,
+describe('View#render()', function() {
+  var viewToTest;
 
-  "The master view should have an element post render.": function() {
-    this.view.render();
-    assert.defined(this.view.el);
-  },
+  beforeEach(function() {
+    viewToTest = helpers.createView();
+  });
 
-  "before render and render events should be fired": function() {
-    var beforeRenderSpy = this.spy();
-    var renderSpy = this.spy();
-    this.view.on('before render', beforeRenderSpy);
-    this.view.on('render', renderSpy);
+  test("The master view should have an element post render.", function() {
+    viewToTest.render();
+    expect(viewToTest.el).toBeDefined();
+  });
 
-    this.view.render();
-    assert.callOrder(beforeRenderSpy, renderSpy);
-  },
+  test("before render and render events should be fired", function() {
+    var beforeRenderSpy = jest.fn();
+    var renderSpy = jest.fn();
+    viewToTest.on('before render', beforeRenderSpy);
+    viewToTest.on('render', renderSpy);
 
-  "Data should be present in the generated markup.": function() {
+    viewToTest.render();
+    expect(beforeRenderSpy.mock.invocationCallOrder[0]).toBeLessThan(renderSpy.mock.invocationCallOrder[0]);
+  });
+
+  test("Data should be present in the generated markup.", function() {
     var text = 'some orange text';
     var orange = new Orange({
       model: {
@@ -30,10 +33,21 @@ buster.testCase('View#render()', {
       .render()
       .inject(sandbox);
 
-    assert.equals(orange.el.innerText, text);
-  },
+    expect(orange.el.innerHTML).toEqual(text);
+  });
 
-  "Child html should be present in the parent.": function() {
+  test("Should be able to use Backbone models", function() {
+    var orange = new Orange({
+      model: {
+        text: 'orange text'
+      }
+    });
+
+    orange.render();
+    expect(orange.el.innerHTML).toEqual('orange text');
+  });
+
+  test("Child html should be present in the parent.", function() {
     var layout = new Layout();
     var apple = new Apple();
 
@@ -42,36 +56,36 @@ buster.testCase('View#render()', {
       .render();
 
     firstChild = layout.el.firstElementChild;
-    assert.isTrue(firstChild.classList.contains('apple'));
-  },
+    expect(firstChild.classList.contains('apple')).toBe(true);
+  });
 
-  "Should be of the tag specified": function() {
+  test("Should be of the tag specified", function() {
     var apple = new Apple({ tag: 'ul' });
 
     apple.render();
-    assert.equals('UL', apple.el.tagName);
-  },
+    expect('UL').toEqual(apple.el.tagName);
+  });
 
-  "Should have classes on the element": function() {
+  test("Should have classes on the element", function() {
     var apple = new Apple({
       classes: ['foo', 'bar']
     });
 
     apple.render();
-    assert.equals('apple foo bar', apple.el.className);
-  },
+    expect('apple foo bar').toEqual(apple.el.className);
+  });
 
-  "Should have an id attribute with the value of `fmid`": function() {
+  test("Should have an id attribute with the value of `fmid`", function() {
     var apple = new Apple({
       classes: ['foo', 'bar']
     });
 
     apple.render();
 
-    assert.equals(apple._fmid, apple.el.id);
-  },
+    expect(apple._fmid).toEqual(apple.el.id);
+  });
 
-  "Should have populated all child module.el properties": function() {
+  test("Should have populated all child module.el properties", function() {
     var layout = new Layout({
       children: {
         1: {
@@ -96,12 +110,12 @@ buster.testCase('View#render()', {
 
     layout.render();
 
-    assert(apple1.el);
-    assert(apple2.el);
-    assert(apple3.el);
-  },
+    expect(apple1.el).toBeTruthy();
+    expect(apple2.el).toBeTruthy();
+    expect(apple3.el).toBeTruthy();
+  });
 
-  "The outer DOM node should be recycled between #renders": function() {
+  test("The outer DOM node should be recycled between #renders", function() {
     var layout = new Layout({
       children: {
         1: { module: 'apple' }
@@ -112,45 +126,52 @@ buster.testCase('View#render()', {
     layout.module('apple').el.setAttribute('data-test', 'should-be-blown-away');
 
     layout.render();
-    assert.equals(layout.el.getAttribute('data-test'), 'should-not-be-blown-away', 'the DOM node of the FM module that render is called on should be recycled');
-    refute.equals(layout.module('apple').el.getAttribute('data-test'), 'should-be-blown-away', 'the DOM node of a child FM module to the one render is called on should not be recycled');
-  },
 
-  "Classes should be updated on render": function() {
+    // The DOM node of the FM module that render is called on should be recycled
+    expect(layout.el.getAttribute('data-test')).toEqual('should-not-be-blown-away');
+
+    // The DOM node of a child FM module to the one render is called on should not be recycled
+    expect(layout.module('apple').el.getAttribute('data-test')).not.toEqual('should-be-blown-away');
+  });
+
+  test("Classes should be updated on render", function() {
     var layout = new Layout();
     layout.render();
     layout.classes = ['should-be-added'];
     layout.render();
-    assert.equals(layout.el.className, 'layout should-be-added');
-  },
+    expect(layout.el.className).toEqual('layout should-be-added');
+  });
 
-  "Classes added through the DOM should persist between renders": function() {
+  test("Classes added through the DOM should persist between renders", function() {
     var layout = new Layout();
     layout.render();
     layout.el.classList.add('should-persist');
     layout.render();
-    assert.equals(layout.el.className, 'layout should-persist');
-  },
+    expect(layout.el.className).toEqual('layout should-persist');
+  });
 
-  "Should fire unmount on children when rerendering": function() {
-    var appleSpy = this.spy();
-    var orangeSpy = this.spy();
-    var pearSpy = this.spy();
+  test("Should fire unmount on children when rerendering", function() {
+    var appleSpy = jest.fn();
+    var orangeSpy = jest.fn();
+    var pearSpy = jest.fn();
 
-    this.view.module('apple').on('unmount', appleSpy);
-    this.view.module('orange').on('unmount', orangeSpy);
-    this.view.module('pear').on('unmount', pearSpy);
+    viewToTest.module('apple').on('unmount', appleSpy);
+    viewToTest.module('orange').on('unmount', orangeSpy);
+    viewToTest.module('pear').on('unmount', pearSpy);
 
-    this.view.render();
-    refute.called(appleSpy);
-    refute.called(orangeSpy);
-    refute.called(pearSpy);
+    viewToTest.render();
+    expect(appleSpy).not.toHaveBeenCalled();
+    expect(orangeSpy).not.toHaveBeenCalled();
+    expect(pearSpy).not.toHaveBeenCalled();
 
-    this.view.render();
-    assert.called(appleSpy);
-    assert.called(orangeSpy);
-    assert.called(pearSpy);
-  },
+    viewToTest.render();
+    expect(appleSpy).toHaveBeenCalled();
+    expect(orangeSpy).toHaveBeenCalled();
+    expect(pearSpy).toHaveBeenCalled();
+  });
 
-  "tearDown": helpers.destroyView
+  afterEach(function() {
+    helpers.destroyView();
+    viewToTest = null;
+  });
 });

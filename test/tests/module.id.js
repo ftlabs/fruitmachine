@@ -1,10 +1,11 @@
-var assert = buster.referee.assert;
-var refute = buster.referee.refute;
+describe('View#id()', function() {
+  var viewToTest;
 
-buster.testCase('View#id()', {
-  setUp: helpers.createView,
+  beforeEach(function() {
+    viewToTest = helpers.createView();
+  });
 
-  "Should return a child by id.": function() {
+  test("Should return a child by id.", function() {
     var layout = new Layout({
       children: {
         1: {
@@ -15,21 +16,24 @@ buster.testCase('View#id()', {
     });
 
     var child = layout.id('some_id');
-    assert.defined(child);
-  },
+    expect(child).toBeDefined();
+  });
 
-  "Should return the view's own id if no arguments given.": function() {
+  test("Should return the view's own id if no arguments given.", function() {
     var id = 'a_view_id';
     var view = new Apple({ id: id });
 
-    assert.equals(view.id(), id);
-  },
+    expect(view.id()).toBe(id);
+  });
 
-  "Should not return the view's own id the first argument is undefined": function() {
+  test("Should not return the view's own id the first argument is undefined", function() {
     var id = 'a_view_id';
     var view = new Apple({ id: id });
-    refute(view.id(undefined));
-  },
+    expect(view.id(undefined)).toBeUndefined();
+  });
 
-  tearDown: helpers.tearDown
+  afterEach(function() {
+    helpers.destroyView();
+    viewToTest = null;
+  });
 });

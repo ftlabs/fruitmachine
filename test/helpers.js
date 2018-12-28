@@ -1,3 +1,6 @@
+var Hogan = require('hogan.js');
+var fruitmachine = require('../lib/');
+
 var helpers = {};
 
 /**
@@ -90,8 +93,9 @@ helpers.createView = function() {
  * Destroy View
  */
 
-helpers.destroyView = function() {
-  this.view.destroy();
+helpers.destroyView = function(view) {
+  var viewToDestroy = this.view || view;
+  viewToDestroy.destroy();
   this.view = null;
 };
 
@@ -109,3 +113,12 @@ helpers.emptySandbox = function() {
 };
 
 var sandbox = helpers.createSandbox();
+
+global.fruitmachine = fruitmachine;
+global.helpers = helpers;
+global.sandbox = sandbox;
+global.Layout = Layout;
+global.Apple = Apple;
+global.List = List;
+global.Orange = Orange;
+global.Pear = Pear;

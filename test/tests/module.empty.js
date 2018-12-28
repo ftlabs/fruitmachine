@@ -1,15 +1,12 @@
-var assert = buster.referee.assert;
-var refute = buster.referee.refute;
 
-buster.testCase('View#empty()', {
-
-  "Should run destroy on each child": function() {
+describe('View#empty()', function() {
+  test("Should run destroy on each child", function() {
     var Apple = helpers.Views.Apple;
     var list = new helpers.Views.List();
     var apple1 = new Apple();
     var apple2 = new Apple();
-    var destroy1 = this.spy(apple1, 'destroy');
-    var destroy2 = this.spy(apple2, 'destroy');
+    var destroy1 = jest.spyOn(apple1, 'destroy');
+    var destroy2 = jest.spyOn(apple2, 'destroy');
 
     list
       .add(apple1)
@@ -19,11 +16,11 @@ buster.testCase('View#empty()', {
 
     list.empty();
 
-    assert.isTrue(destroy1.calledOnce);
-    assert.isTrue(destroy2.calledOnce);
-  },
+    expect(destroy1).toHaveBeenCalledTimes(1);
+    expect(destroy2).toHaveBeenCalledTimes(1);
+  });
 
-  "Should remove elements from the DOM": function() {
+  test("Should remove elements from the DOM", function() {
     var Apple = helpers.Views.Apple;
     var list = new helpers.Views.List();
     var apple1 = new Apple();
@@ -38,6 +35,6 @@ buster.testCase('View#empty()', {
 
     list.empty();
 
-    refute(list.el.querySelector('apple'));
-  }
+    expect(list.el.querySelector('apple')).toBeNull();
+  });
 });

@@ -2,6 +2,9 @@
 
 ### fruitmachine.define()
 
+slint browser:true, node:true, laxbreak:true
+### fruitmachine.define()
+
 Defines a module.
 \nOptions:
 
@@ -15,6 +18,15 @@ Defines a module.
  - `teardown {Function}` custom logic to unbind/undo anything setup introduced (called on `.destroy()` and sometimes on `.setup()` to avoid double binding events)
  - `destroy {Function}` logic to permanently destroy all references
 
+### Module#undefined
+
+shint browser:true, node:true
+### Module#util
+
+Module Dependencies
+### Module#exports()
+
+Exports
 ### Module#Module
 
 Module constructor
@@ -193,6 +205,13 @@ Options:
 Destroys all children.
 \nIs this needed?
 
+### Module#mount()
+
+Associate the view with an element.
+Provide events and lifecycle methods
+to fire when the element is newly
+associated.
+
 ### Module#inject()
 
 Empties the destination element
@@ -217,9 +236,19 @@ passed into new FruitMachine(json)
 to inflate serverside rendered
 views.
 
+### Module#events
+
+Module Dependencies
+### Module#listenerMap
+
+Local vars
 ### Module#on()
 
 Registers a event listener.
+
+### Module#off()
+
+Unregisters a event listener.
 
 ### Module#fire()
 

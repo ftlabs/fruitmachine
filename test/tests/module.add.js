@@ -1,91 +1,92 @@
-var assert = buster.referee.assert;
-var refute = buster.referee.refute;
 
-buster.testCase('View#add()', {
-  "setUp": function() {
-    this.view = new helpers.Views.List();
-  },
+describe('View#add()', function() {
+  var viewToTest;
 
-  "Should throw when adding undefined module": function() {
+  beforeEach(function() {
+    viewToTest = new helpers.Views.List();
+  });
+
+  test("Should throw when adding undefined module", function() {
     var thrown;
     try {
-      this.view.add({module: 'invalidFruit'});
+      viewToTest.add({module: 'invalidFruit'});
     } catch(e) {
-      assert.match(e.message, 'invalidFruit');
+      expect(e.message).toMatch('invalidFruit');
       thrown = true;
     }
-    assert.isTrue(thrown);
-  },
+    expect(thrown).toBe(true);
+  });
 
-  "Should accept a View instance": function() {
+  test("Should accept a View instance", function() {
     var pear = new helpers.Views.Pear();
-    this.view.add(pear);
-    assert.equals(this.view.children.length, 1);
-  },
+    viewToTest.add(pear);
+    expect(viewToTest.children.length).toBe(1);
+  });
 
-  "Should store a reference to the child via slot if the view added has a slot": function() {
+  test("Should store a reference to the child via slot if the view added has a slot", function() {
     var apple = new Apple({ slot: 1 });
     var layout = new Layout();
 
     layout.add(apple);
 
-    assert.equals(layout.slots[1], apple);
-  },
+    expect(layout.slots[1]).toBe(apple);
+  });
 
-  "Should aceept JSON": function() {
-    this.view.add({ module: 'pear' });
-    assert.equals(this.view.children.length, 1);
-  },
+  test("Should aceept JSON", function() {
+    viewToTest.add({ module: 'pear' });
+    expect(viewToTest.children.length).toBe(1);
+  });
 
-  "Should allow the second parameter to define the slot": function() {
+  test("Should allow the second parameter to define the slot", function() {
     var apple = new Apple();
     var layout = new Layout();
 
     layout.add(apple, 1);
-    assert.equals(layout.slots[1], apple);
-  },
+    expect(layout.slots[1]).toBe(apple);
+  });
 
-  "Should be able to define the slot in the options object": function() {
+  test("Should be able to define the slot in the options object", function() {
     var apple = new Apple();
     var layout = new Layout();
 
     layout.add(apple, { slot: 1 });
-    assert.equals(layout.slots[1], apple);
-  },
+    expect(layout.slots[1]).toBe(apple);
+  });
 
-  "Should remove a module if it already occupies this slot": function() {
+  test("Should remove a module if it already occupies this slot", function() {
     var apple = new Apple();
     var orange = new Orange();
     var layout = new Layout();
 
     layout.add(apple, 1);
 
-    assert.equals(layout.slots[1], apple);
+    expect(layout.slots[1]).toBe(apple);
 
     layout.add(orange, 1);
 
-    assert.equals(layout.slots[1], orange);
-    refute(layout.module('apple'));
-  },
+    expect(layout.slots[1]).toBe(orange);
+    expect(layout.module('apple')).toBeUndefined();
+  });
 
-  "Should remove the module if it already has parent before being added": function() {
+  test("Should remove the module if it already has parent before being added", function() {
     var apple = new Apple();
     var layout = new Layout();
-    var spy = this.spy(apple, 'remove');
+    var spy = jest.spyOn(apple, 'remove');
 
     layout.add(apple, 1);
 
-    refute(spy.called);
-    assert.equals(layout.slots[1], apple);
+    expect(spy).toHaveBeenCalledTimes(0);
+    expect(layout.slots[1]).toBe(apple);
 
     layout.add(apple, 2);
 
-    refute.equals(layout.slots[1], apple);
-    assert.equals(layout.slots[2], apple);
-    assert(spy.called);
-  },
+    expect(layout.slots[1]).not.toEqual(apple);
+    expect(layout.slots[2]).toBe(apple);
+    expect(spy).toHaveBeenCalled();
+  });
 
-  "tearDown": function() {
-    this.view = null;
-  }
+  afterEach(function() {
+    helpers.destroyView(viewToTest);
+    viewToTest = null;
+  });
 });

@@ -1,99 +1,104 @@
-var assert = buster.referee.assert;
-var refute = buster.referee.refute;
 
-buster.testCase('View#on()', {
-	setUp: helpers.createView,
+describe('View#on()', function() {
+	var viewToTest;
 
-	"Should recieve the callback when fire is called directly on a view": function() {
-		var spy = this.spy();
+	beforeEach(function() {
+		viewToTest = helpers.createView();
+	});
 
-		this.view.on('testevent', spy);
-		this.view.fire('testevent');
-		assert(spy.called);
-	},
+	test("Should recieve the callback when fire is called directly on a view", function() {
+		var spy = jest.fn();
 
-	"Should recieve the callback when event is fired on a sub view": function() {
-		var spy = this.spy();
-		var apple = this.view.module('apple');
+		viewToTest.on('testevent', spy);
+		viewToTest.fire('testevent');
+		expect(spy).toHaveBeenCalled();
+	});
 
-		this.view.on('testevent', spy);
+	test("Should recieve the callback when event is fired on a sub view", function() {
+		var spy = jest.fn();
+		var apple = viewToTest.module('apple');
+
+		viewToTest.on('testevent', spy);
 		apple.fire('testevent');
-		assert(spy.called);
-	},
+		expect(spy).toHaveBeenCalled();
+	});
 
-	"Should *not* recieve the callback when event is fired on a sub view that *doesn't* match the target": function() {
-		var spy = this.spy();
-		var apple = this.view.module('apple');
+	test("Should *not* recieve the callback when event is fired on a sub view that *doesn't* match the target", function() {
+		var spy = jest.fn();
+		var apple = viewToTest.module('apple');
 
-		this.view.on('testevent', 'orange', spy);
+		viewToTest.on('testevent', 'orange', spy);
 		apple.fire('testevent');
-		refute(spy.called);
-	},
+		expect(spy).not.toHaveBeenCalled();
+	});
 
-	"Should receive the callback when event is fired on a sub view that *does* match the target": function() {
-		var spy = this.spy();
-		var apple = this.view.module('apple');
+	test("Should receive the callback when event is fired on a sub view that *does* match the target", function() {
+		var spy = jest.fn();
+		var apple = viewToTest.module('apple');
 
-		this.view.on('testevent', 'apple', spy);
+		viewToTest.on('testevent', 'apple', spy);
 		apple.fire('testevent');
-		assert(spy.called);
-	},
+		expect(spy).toHaveBeenCalled();
+	});
 
-	"Should pass the correct arguments to delegate event listeners": function() {
-		var spy = this.spy();
-		var apple = this.view.module('apple');
+	test("Should pass the correct arguments to delegate event listeners", function() {
+		var spy = jest.fn();
+		var apple = viewToTest.module('apple');
 
-		this.view.on('testevent', 'apple', spy);
+		viewToTest.on('testevent', 'apple', spy);
 		apple.fire('testevent', 'foo', 'bar');
-		assert(spy.calledWith('foo', 'bar'));
-	},
+		expect(spy).toHaveBeenCalledWith('foo', 'bar');
+	});
 
-	"Should be able to unbind event listeners if initially bound with module name": function() {
-		var spy = this.spy();
-		var apple = this.view.module('apple');
+	test("Should be able to unbind event listeners if initially bound with module name", function() {
+		var spy = jest.fn();
+		var apple = viewToTest.module('apple');
 
-		this.view.on('testevent', 'apple', spy);
+		viewToTest.on('testevent', 'apple', spy);
 		apple.fire('testevent');
-		assert(spy.called);
+		expect(spy).toHaveBeenCalled();
 
-		spy.reset();
-		this.view.off('testevent', 'apple', spy);
+		spy.mockClear();
+		viewToTest.off('testevent', 'apple', spy);
 		apple.fire('testevent', 'foo', 'bar');
-		refute(spy.called);
-	},
+		expect(spy).not.toHaveBeenCalled();
+	});
 
-	"#off with module will unbind all matching listeners, regardless of how they are bound": function() {
-		var spy = this.spy();
-		var spy2 = this.spy();
-		var apple = this.view.module('apple');
+	test("#off with module will unbind all matching listeners, regardless of how they are bound", function() {
+		var spy = jest.fn();
+		var spy2 = jest.fn();
+		var apple = viewToTest.module('apple');
 
-		this.view.on('testevent', 'apple', spy);
-		this.view.on('testevent', spy2);
+		viewToTest.on('testevent', 'apple', spy);
+		viewToTest.on('testevent', spy2);
 		apple.fire('testevent');
-		assert(spy.called);
-		assert(spy2.called);
+		expect(spy).toHaveBeenCalled();
+		expect(spy2).toHaveBeenCalled();
 
-		spy.reset();
-		spy2.reset();
-		this.view.off('testevent', 'apple');
+		spy.mockClear();
+		spy2.mockClear();
+		viewToTest.off('testevent', 'apple');
 		apple.fire('testevent');
-		refute(spy.called);
-		assert(spy2.called);
-	},
+		expect(spy).not.toHaveBeenCalled();
+		expect(spy2).toHaveBeenCalled();
+	});
 
-	"#off without a module should also unbind listeners, regardless of how they are bound": function() {
-		var spy = this.spy();
-		var apple = this.view.module('apple');
+	test("#off without a module should also unbind listeners, regardless of how they are bound", function() {
+		var spy = jest.fn();
+		var apple = viewToTest.module('apple');
 
-		this.view.on('testevent', 'apple', spy);
+		viewToTest.on('testevent', 'apple', spy);
 		apple.fire('testevent');
-		assert(spy.called);
+		expect(spy).toHaveBeenCalled();
 
-		spy.reset();
-		this.view.off('testevent', spy);
+		spy.mockClear();
+		viewToTest.off('testevent', spy);
 		apple.fire('testevent');
-		refute(spy.called);
-	},
+		expect(spy).not.toHaveBeenCalled();
+	});
 
-	tearDown: helpers.destroyView
+	afterEach(function() {
+		helpers.destroyView();
+		viewToTest = null;
+	});
 });

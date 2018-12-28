@@ -1,59 +1,64 @@
-var assert = buster.referee.assert;
-var refute = buster.referee.refute;
 
-buster.testCase('View#_getEl()', {
-  "setUp": helpers.createView,
+describe('View#_getEl()', function() {
+  var viewToTest;
 
-  "Should return undefined if not rendered": function() {
-    var el = this.view._getEl();
-    refute(el);
-  },
+  beforeEach(function() {
+    viewToTest = helpers.createView();
+  });
 
-  "Should return an element if rendered directly": function() {
+  test("Should return undefined if not rendered", function() {
+    var el = viewToTest._getEl();
+    expect(el).toBeUndefined();
+  });
+
+  test("Should return an element if rendered directly", function() {
     var el;
-    this.view.render();
-    el = this.view._getEl();
-    assert.defined(el);
-  },
+    viewToTest.render();
+    el = viewToTest._getEl();
+    expect(el).toBeDefined();
+  });
 
-  "Should return the view element if the view was rendered indirectly": function() {
-    var spy = this.spy(fruitmachine.util, 'byId');
+  test("Should return the view element if the view was rendered indirectly", function() {
+    var spy = jest.spyOn(fruitmachine.util, 'byId');
     var el;
 
-    this.view.render();
-    el = this.view.module('orange')._getEl();
+    viewToTest.render();
+    el = viewToTest.module('orange')._getEl();
 
-    assert.defined(el);
-    assert.called(spy);
+    expect(el).toBeDefined();
+    expect(spy).toHaveBeenCalled();
 
-    fruitmachine.util.byId.restore();
-  },
+    fruitmachine.util.byId.mockRestore();
+  });
 
-  "Should return a different element if parent is re-rendered in DOM": function() {
+  test("Should return a different element if parent is re-rendered in DOM", function() {
     var el1, el2;
 
-    this.view
+    viewToTest
       .render()
       .inject(sandbox);
 
-    el1 = this.view.module('orange')._getEl();
-    this.view.render();
-    el2 = this.view.module('orange')._getEl();
+    el1 = viewToTest.module('orange')._getEl();
+    viewToTest.render();
+    el2 = viewToTest.module('orange')._getEl();
 
-    refute.equals(el1, el2);
-  },
+    expect(el1).not.toBe(el2);
+  });
 
-  "Should return a different element if parent is re-rendered in memory": function() {
+  test("Should return a different element if parent is re-rendered in memory", function() {
     var el1, el2;
 
-    this.view.render();
+    viewToTest.render();
 
-    el1 = this.view.module('orange')._getEl();
-    this.view.render();
-    el2 = this.view.module('orange')._getEl();
+    el1 = viewToTest.module('orange')._getEl();
+    viewToTest.render();
+    el2 = viewToTest.module('orange')._getEl();
 
-    refute.equals(el1, el2);
-  },
+    expect(el1).not.toBe(el2);
+  });
 
-  "tearDown": helpers.destroyView
+  afterEach(function() {
+    helpers.destroyView();
+    viewToTest = null;
+  });
 });

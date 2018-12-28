@@ -4,18 +4,6 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
 
-    buster: {
-      test: {}
-    },
-
-    version: {
-      src: [
-        'component.json',
-        'package.json',
-        'lib/index.js'
-      ]
-    },
-
     browserify: {
       build: {
         src: 'lib/index.js',
@@ -30,17 +18,10 @@ module.exports = function(grunt) {
       }
     },
 
-    readme: {
-      dest: {
-        code: [
-          { path: 'lib/define.js', ctx: { receiver: 'fruitmachine', name: 'define', type: 'method' }},
-          { path: 'lib/module/index.js', ctx: { cons: 'Module' }},
-          { path: 'lib/module/events.js', ctx: { cons: 'Module' }}
-        ],
-        output: {
-          'docs/templates/api.hogan': 'docs/api.md',
-          'docs/templates/readme.hogan': 'README.md'
-        }
+    run: {
+      test: {
+        cmd: 'npm',
+        args: [ 'test' ],
       }
     },
 
@@ -66,15 +47,12 @@ module.exports = function(grunt) {
     },
   });
 
-  grunt.loadNpmTasks('grunt-buster');
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-readme');
-  grunt.loadNpmTasks('grunt-version');
-  grunt.loadNpmTasks('grunt-istanbul');
+  grunt.loadNpmTasks('grunt-run');
 
   // Default task.
-  grunt.registerTask('default', ['browserify:build', 'uglify', 'readme']);
-  grunt.registerTask('test', ['instrument', 'browserify:test', 'buster:test']);
+  grunt.registerTask('default', ['browserify:build', 'uglify']);
+  grunt.registerTask('test', ['browserify:test', 'run:test']);
 };

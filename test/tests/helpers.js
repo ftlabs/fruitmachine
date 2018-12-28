@@ -1,59 +1,58 @@
-var assert = buster.referee.assert;
 
-buster.testCase('fruitmachine#helpers()', {
-  setUp: function() {
-    var helper = this.helper = function(view) {
-      view.on('before initialize', helper.beforeInitialize);
-      view.on('initialize', helper.initialize);
-      view.on('setup', helper.setup);
-      view.on('teardown', helper.teardown);
-      view.on('destroy', helper.destroy);
+describe('fruitmachine#helpers()', function() {
+  var testHelper;
+
+  beforeEach(function() {
+    testHelper = function(view) {
+      view.on('before initialize', testHelper.beforeInitialize);
+      view.on('initialize', testHelper.initialize);
+      view.on('setup', testHelper.setup);
+      view.on('teardown', testHelper.teardown);
+      view.on('destroy', testHelper.destroy);
     };
 
-    helper.beforeInitialize = function() {};
-    helper.initialize = function() {};
-    helper.setup = function() {};
-    helper.teardown = function() {};
-    helper.destroy = function() {};
+    testHelper.beforeInitialize = jest.fn();
+    testHelper.initialize = jest.fn();
+    testHelper.setup = jest.fn();
+    testHelper.teardown = jest.fn();
+    testHelper.destroy = jest.fn();
+  });
 
-    this.spys = {
-      beforeInitialize: this.spy(this.helper, 'beforeInitialize'),
-      initialize: this.spy(this.helper, 'initialize'),
-      setup: this.spy(this.helper, 'setup'),
-      teardown: this.spy(this.helper, 'teardown'),
-      destroy: this.spy(this.helper, 'destroy')
-    };
-  },
-
-  "helpers `before initialize` and `initialize` should have been called, in that order": function() {
+  test("helpers `before initialize` and `initialize` should have been called, in that order", function() {
     var view = fruitmachine({
       module: 'apple',
-      helpers: [this.helper]
+      helpers: [testHelper]
     });
 
-    assert.isTrue(this.spys.initialize.called);
-    assert.isTrue(this.spys.beforeInitialize.called);
-    assert.callOrder(this.spys.beforeInitialize, this.spys.initialize);
-  },
+    expect(testHelper.initialize).toHaveBeenCalled();
+    expect(testHelper.beforeInitialize).toHaveBeenCalled();
+    expect(testHelper.initialize.mock.invocationCallOrder).toEqual([2]);
+    expect(testHelper.beforeInitialize.mock.invocationCallOrder).toEqual([1]);
+    expect(testHelper.setup).toHaveBeenCalledTimes(0);
+    expect(testHelper.teardown).toHaveBeenCalledTimes(0);
+    expect(testHelper.destroy).toHaveBeenCalledTimes(0);
+  });
 
-  "helper `setup` should have been called": function() {
+  test("helper `setup` should have been called", function() {
     var view = fruitmachine({
       module: 'apple',
-      helpers: [this.helper]
+      helpers: [testHelper]
     });
+
+    expect(testHelper.setup).toHaveBeenCalledTimes(0);
 
     view
       .render()
       .inject(sandbox)
       .setup();
 
-    assert.called(this.spys.setup);
-  },
+    expect(testHelper.setup).toHaveBeenCalledTimes(1);
+  });
 
-  "helper `teardown` and `destroy` should have been called": function() {
+  test("helper `teardown` and `destroy` should have been called", function() {
     var view = fruitmachine({
       module: 'apple',
-      helpers: [this.helper]
+      helpers: [testHelper]
     });
 
     view
@@ -63,14 +62,7 @@ buster.testCase('fruitmachine#helpers()', {
       .teardown()
       .destroy();
 
-    assert.called(this.spys.teardown);
-    assert.called(this.spys.destroy);
-  },
-
-  tearDown: function() {
-    this.spys.initialize.restore();
-    this.spys.setup.restore();
-    this.spys.teardown.restore();
-    this.spys.destroy.restore();
-  }
+    expect(testHelper.teardown).toHaveBeenCalled();
+    expect(testHelper.destroy).toHaveBeenCalled();
+  });
 });

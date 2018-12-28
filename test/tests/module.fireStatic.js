@@ -1,39 +1,41 @@
-var assert = buster.referee.assert;
-var refute = buster.referee.refute;
+describe('View#fireStatic()', function() {
+	var viewToTest;
 
-buster.testCase('View#fireStatic()', {
-	setUp: helpers.createView,
+	beforeEach(function() {
+		viewToTest = helpers.createView();
+	});
 
-	"Should run on callbacks registered on the view": function() {
-		var spy = this.spy();
+	test("Should run on callbacks registered on the view", function() {
+		var spy = jest.fn();
 
-		this.view.on('testevent', spy);
-		this.view.fireStatic('testevent');
-		assert.called(spy);
-	},
+		viewToTest.on('testevent', spy);
+		viewToTest.fireStatic('testevent');
+		expect(spy).toHaveBeenCalledTimes(1);
+	});
 
-	"Events should not bubble up to parent views": function() {
-		var spy = this.spy();
-		var child = this.view.module('orange');
+	test("Events should not bubble up to parent views", function() {
+		var spy = jest.fn();
+		var child = viewToTest.module('orange');
 
-		this.view.on('childtestevent', spy);
+		viewToTest.on('childtestevent', spy);
 		child.fireStatic('childtestevent');
-		refute.called(spy);
-	},
+		expect(spy).not.toHaveBeenCalled();
+	});
 
-	"Should pass arguments to the callback": function() {
-		var spy = this.spy();
+	test("Should pass arguments to the callback", function() {
+		var spy = jest.fn();
 		var arg1 = 'arg1';
 		var arg2 = 'arg2';
 		var arg3 = 'arg3';
 
-		this.view.on('childtestevent', spy);
-		this.view.fireStatic('childtestevent', arg1, arg2, arg3);
+		viewToTest.on('childtestevent', spy);
+		viewToTest.fireStatic('childtestevent', arg1, arg2, arg3);
 
-		assert.equals(spy.args[0][0], arg1);
-		assert.equals(spy.args[0][1], arg2);
-		assert.equals(spy.args[0][2], arg3);
-	},
+		expect(spy).toHaveBeenCalledWith(arg1, arg2, arg3);
+	});
 
-	tearDown: helpers.destroyView
+	afterEach(function() {
+		helpers.destroyView();
+		viewToTest = null;
+	});
 });

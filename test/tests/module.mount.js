@@ -1,36 +1,39 @@
-var assert = buster.referee.assert;
 
-buster.testCase('View#mount()', {
-  setUp: helpers.createView,
+describe('View#mount()', function() {
+  var viewToTest;
 
-  "Should give a view an element": function() {
+  beforeEach(function() {
+    viewToTest = helpers.createView();
+  });
+
+  test("Should give a view an element", function() {
     var el = document.createElement('div');
-    this.view.mount(el);
+    viewToTest.mount(el);
 
-    assert.equals(this.view.el, el);
-  },
+    expect(viewToTest.el).toBe(el);
+  });
 
-  "Should be called when the view is rendered": function() {
-    var mount = this.spy(this.view, 'mount');
-    this.view.render();
-    assert.called(mount);
-  },
+  test("Should be called when the view is rendered", function() {
+    var mount = jest.spyOn(viewToTest, 'mount');
+    viewToTest.render();
+    expect(mount).toHaveBeenCalled();
+  });
 
-  "Should be called on a child when its parent is rendered": function() {
-    var mount = this.spy(this.view.module('apple'), 'mount');
-    this.view.render();
-    assert.called(mount);
-  },
+  test("Should be called on a child when its parent is rendered", function() {
+    var mount = jest.spyOn(viewToTest.module('apple'), 'mount');
+    viewToTest.render();
+    expect(mount).toHaveBeenCalled();
+  });
 
-  "Should be called on a child when its parent is rerendered": function() {
-    var mount = this.spy(this.view.module('apple'), 'mount');
-    this.view.render();
-    this.view.render();
-    assert.calledTwice(mount);
-  },
+  test("Should be called on a child when its parent is rerendered", function() {
+    var mount = jest.spyOn(viewToTest.module('apple'), 'mount');
+    viewToTest.render();
+    viewToTest.render();
+    expect(mount).toHaveBeenCalledTimes(2);
+  });
 
-  "Should call custom mount logic": function() {
-    var mount = this.spy();
+  test("Should call custom mount logic", function() {
+    var mount = jest.fn();
 
     var Module = fruitmachine.define({
       name: 'module',
@@ -44,12 +47,11 @@ buster.testCase('View#mount()', {
     var m = new Module();
     m.render();
 
-    assert.called(mount);
-  },
+    expect(mount).toHaveBeenCalled();
+  });
 
-
-  "Should be a good place to attach event handlers that don't get trashed on parent rerender": function() {
-    var handler = this.spy();
+  test("Should be a good place to attach event handlers that don't get trashed on parent rerender", function() {
+    var handler = jest.fn();
 
     var Module = fruitmachine.define({
       name: 'module',
@@ -74,32 +76,35 @@ buster.testCase('View#mount()', {
     layout.render();
     m.el.click();
 
-    assert.called(handler);
+    expect(handler).toHaveBeenCalledTimes(1);
 
     layout.render();
     m.el.click();
 
-    assert.calledTwice(handler);
-  },
+    expect(handler).toHaveBeenCalledTimes(2);
+  });
 
-  "before mount and mount events should be fired": function() {
-    var beforeMountSpy = this.spy();
-    var mountSpy = this.spy();
-    this.view.on('before mount', beforeMountSpy);
-    this.view.on('mount', mountSpy);
+  test("before mount and mount events should be fired", function() {
+    var beforeMountSpy = jest.fn();
+    var mountSpy = jest.fn();
+    viewToTest.on('before mount', beforeMountSpy);
+    viewToTest.on('mount', mountSpy);
 
-    this.view.render();
-    assert.callOrder(beforeMountSpy, mountSpy);
-  },
+    viewToTest.render();
+    expect(beforeMountSpy.mock.invocationCallOrder[0]).toBeLessThan(mountSpy.mock.invocationCallOrder[0]);
+  });
 
-  "Should only fire events if the element is new": function() {
-    var mountSpy = this.spy();
-    this.view.on('mount', mountSpy);
+  test("Should only fire events if the element is new", function() {
+    var mountSpy = jest.fn();
+    viewToTest.on('mount', mountSpy);
 
-    this.view.render();
-    this.view._getEl();
-    assert.calledOnce(mountSpy);
-  },
+    viewToTest.render();
+    viewToTest._getEl();
+    expect(mountSpy).toHaveBeenCalledTimes(1)
+  });
 
-  tearDown: helpers.destroyView
+  afterEach(function() {
+    helpers.destroyView();
+    viewToTest = null;
+  });
 });
