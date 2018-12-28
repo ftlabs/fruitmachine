@@ -1,43 +1,38 @@
-var assert = buster.referee.assert;
-var refute = buster.referee.refute;
 
-buster.testCase('fruitmachine.define()', {
-	setUp: function() {},
-
-	"Should store the module in fruitmachine.store under module type": function() {
+describe('fruitmachine.define()', function() {
+	test("Should store the module in fruitmachine.store under module type", function() {
 		fruitmachine.define({ module: 'my-module-1' });
-		assert.defined(fruitmachine.modules['my-module-1']);
-	},
+		expect(fruitmachine.modules['my-module-1']).toBeDefined();
+	});
 
-	"Should return an instantiable constructor": function() {
+	test("Should return an instantiable constructor", function() {
 		var View = fruitmachine.define({ module: 'new-module-1' });
 		var view = new View();
 
-		assert.defined(view._fmid);
-		assert.equals('new-module-1', view.module());
-	},
+		expect(view._fmid).toBeDefined();
+		expect(view.module()).toBe('new-module-1');
+	});
 
-	"Should find module from internal module store if a `module` parameter is passed": function() {
+	test("Should find module from internal module store if a `module` parameter is passed", function() {
 		var apple = new fruitmachine({ module: 'apple' });
 
-		assert.equals('apple', apple.module());
-		assert.defined(apple.template);
-	},
+		expect(apple.module()).toBe('apple');
+		expect(apple.template).toBeDefined();
+	});
 
-	"Not defining reserved methods should not rewrite keys with prefixed with '_'": function() {
-		var setup = this.spy();
+	test("Not defining reserved methods should not rewrite keys with prefixed with '_'", function() {
 		var View = fruitmachine.define({
-			module: 'foobar'
+			module: 'foobar',
 		});
 
-		refute.defined(View.prototype._setup);
-	},
+		expect(View.prototype._setup).toBeUndefined();
+	});
 
-	"Should be able to accept a Module class, so that a Module can be defined from extended modules": function() {
-		var initialize1 = this.spy();
-		var initialize2 = this.spy();
-		var setup1 = this.spy();
-		var setup2 = this.spy();
+	test("Should be able to accept a Module class, so that a Module can be defined from extended modules", function() {
+		var initialize1 = jest.fn();
+		var initialize2 = jest.fn();
+		var setup1 = jest.fn();
+		var setup2 = jest.fn();
 
 		var View1 = fruitmachine.define({
 			module: 'new-module-1',
@@ -62,17 +57,13 @@ buster.testCase('fruitmachine.define()', {
 			.render()
 			.setup();
 
-		assert.equals(View1.prototype._module, 'new-module-1');
-		assert.equals(View2.prototype._module, 'new-module-2');
-		assert.equals(View2.prototype.random, 'different');
-		assert.isTrue(initialize1.calledOnce);
-		assert.isTrue(initialize2.calledOnce);
-		assert.isTrue(setup1.calledOnce);
-		assert.isTrue(setup2.calledOnce);
-	},
 
-	tearDown: function() {
-		delete fruitmachine.modules['my-module-1'];
-		delete fruitmachine.modules['my-module-2'];
-	}
+		expect(View1.prototype._module).toBe('new-module-1');
+		expect(View2.prototype._module).toBe('new-module-2');
+		expect(View2.prototype.random).toBe('different');
+		expect(initialize1.mock.calls.length).toBe(1);
+		expect(initialize2.mock.calls.length).toBe(1);
+		expect(setup1.mock.calls.length).toBe(1);
+		expect(setup2.mock.calls.length).toBe(1);
+	});
 });

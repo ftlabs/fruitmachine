@@ -1,9 +1,7 @@
-var assert = buster.referee.assert;
-var refute = buster.referee.refute;
 
-buster.testCase('View#remove()', {
+describe('View#remove()', function() {
 
-  "Should remove the child passed from the parent's children array": function() {
+  test("Should remove the child passed from the parent's children array", function() {
     var list = new helpers.Views.Layout();
     var Apple = helpers.Views.Apple;
     var apple1 = new Apple();
@@ -15,26 +13,26 @@ buster.testCase('View#remove()', {
 
     list.remove(apple1);
 
-    assert(!~list.children.indexOf(apple1));
-  },
+    expect(list.children.indexOf(apple1)).toBe(-1);
+  });
 
-  "Should remove all lookup references": function() {
+  test("Should remove all lookup references", function() {
     var list = new helpers.Views.Layout();
     var Apple = helpers.Views.Apple;
     var apple = new Apple({ id: 'foo' });
 
     list.add(apple);
 
-    assert(list._ids.foo);
-    assert.equals(list._modules.apple[0], apple);
+    expect(list._ids.foo).toBeTruthy();
+    expect(list._modules.apple[0]).toBe(apple);
 
     list.remove(apple);
 
-    refute(list._ids.foo);
-    refute(list._modules.apple[0]);
-  },
+    expect(list._ids.foo).toBeUndefined();
+    expect(list._modules.apple[0]).toBeUndefined();
+  });
 
-  "Should remove the child from the DOM by default": function() {
+  test("Should remove the child from the DOM by default", function() {
     var sandbox = helpers.createSandbox();
     var list = new helpers.Views.Layout();
     var Apple = helpers.Views.Apple;
@@ -46,14 +44,14 @@ buster.testCase('View#remove()', {
       .inject(sandbox)
       .setup();
 
-    assert(!!sandbox.querySelector('#' + apple._fmid));
+    expect(sandbox.querySelector('#' + apple._fmid)).toBeTruthy();
 
     list.remove(apple);
 
-    refute(!!sandbox.querySelector('#' + apple._fmid));
-  },
+    expect(sandbox.querySelector('#' + apple._fmid)).toBeFalsy();
+  });
 
-  "Should *not* remove the child from the DOM if `fromDOM` option is false": function() {
+  test("Should *not* remove the child from the DOM if `fromDOM` option is false", function() {
     var sandbox = document.createElement('div');
     var list = new helpers.Views.Layout();
     var Apple = helpers.Views.Apple;
@@ -65,48 +63,48 @@ buster.testCase('View#remove()', {
       .setup()
       .inject(sandbox);
 
-    assert(sandbox.querySelector('#' + apple._fmid));
+    expect(sandbox.querySelector('#' + apple._fmid)).toBeTruthy();
 
     list.remove(apple, { fromDOM: false });
 
-    assert(sandbox.querySelector('#' + apple._fmid));
-  },
+    expect(sandbox.querySelector('#' + apple._fmid)).toBeTruthy();
+  });
 
-  "Should unmount the view by default": function() {
+  test("Should unmount the view by default", function() {
     var list = new Layout({
       children: {
         1: new Apple()
       }
     });
 
-    var layoutSpy = this.spy(); list.on('unmount', layoutSpy);
-    var appleSpy = this.spy(); list.module('apple').on('unmount', appleSpy);
+    var layoutSpy = jest.fn(); list.on('unmount', layoutSpy);
+    var appleSpy = jest.fn(); list.module('apple').on('unmount', appleSpy);
 
     list.render().inject(sandbox).setup();
     list.remove();
 
-    assert.called(layoutSpy);
-    assert.called(appleSpy);
-  },
+    expect(layoutSpy).toBeCalled();
+    expect(appleSpy).toBeCalled();
+  });
 
-  "Should not unmount the view if `fromDOM` option is false": function() {
+  test("Should not unmount the view if `fromDOM` option is false", function() {
     var list = new Layout({
       children: {
         1: new Apple()
       }
     });
 
-    var layoutSpy = this.spy(); list.on('unmount', layoutSpy);
-    var appleSpy = this.spy(); list.module('apple').on('unmount', appleSpy);
+    var layoutSpy = jest.fn(); list.on('unmount', layoutSpy);
+    var appleSpy = jest.fn(); list.module('apple').on('unmount', appleSpy);
 
     list.render().inject(sandbox).setup();
     list.remove({fromDOM: false});
 
-    refute.called(layoutSpy);
-    refute.called(appleSpy);
-  },
+    expect(layoutSpy).not.toBeCalled();
+    expect(appleSpy).not.toBeCalled();
+  });
 
-  "Should remove itself if called with no arguments": function() {
+  test("Should remove itself if called with no arguments", function() {
     var list = new helpers.Views.Layout();
     var Apple = helpers.Views.Apple;
     var apple = new Apple({ id: 'foo' });
@@ -114,43 +112,43 @@ buster.testCase('View#remove()', {
     list.add(apple);
     apple.remove();
 
-    refute(~list.children.indexOf(apple));
-    refute(list._ids.foo);
-  },
+    expect(list.children.indexOf(apple)).toBe(-1);
+    expect(list._ids.foo).toBeUndefined();
+  });
 
-  "Should remove the reference back to the parent view": function() {
+  test("Should remove the reference back to the parent view", function() {
     var layout = new Layout();
     var apple = new Apple({ slot: 1 });
 
     layout.add(apple);
 
-    assert.equals(apple.parent, layout);
+    expect(apple.parent).toBe(layout);
 
     layout.remove(apple);
 
-    refute(apple.parent);
-  },
+    expect(apple.parent).toBeUndefined();
+  });
 
-  "Should remove slot reference": function() {
+  test("Should remove slot reference", function() {
     var layout = new Layout();
     var apple = new Apple({ slot: 1 });
 
     layout.add(apple);
 
-    assert.equals(layout.slots[1], apple);
+    expect(layout.slots[1]).toBe(apple);
 
     layout.remove(apple);
 
-    refute(layout.slots[1]);
-  },
+    expect(layout.slots[1]).toBeUndefined();
+  });
 
-  "Should not remove itself if first argument is undefined": function() {
+  test("Should not remove itself if first argument is undefined", function() {
     var layout = new Layout();
     var apple = new Apple({ slot: 1 });
 
     layout.add(apple);
     apple.remove(undefined);
 
-    assert(layout.module('apple'));
-  }
+    expect(layout.module('apple')).toBeTruthy();
+  });
 });

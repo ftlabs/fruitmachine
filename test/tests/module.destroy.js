@@ -1,111 +1,112 @@
-var assert = buster.referee.assert;
-var refute = buster.referee.refute;
 
-buster.testCase('View#destroy()', {
-  setUp: function() {
-    helpers.createView.call(this);
-  },
+describe('View#destroy()', function() {
+  var viewToTest;
 
-  "Should recurse.": function() {
-    var destroy = this.spy(this.view, 'destroy');
-    var destroy2 = this.spy(this.view.module('orange'), 'destroy');
+  beforeEach(function() {
+    viewToTest = helpers.createView();
+  });
 
-    this.view
+  test("Should recurse.", function() {
+    var destroy = jest.spyOn(viewToTest, 'destroy');
+    var destroy2 = jest.spyOn(viewToTest.module('orange'), 'destroy');
+
+    viewToTest
       .render()
       .inject(sandbox)
       .setup();
 
-    this.view.destroy();
+    viewToTest.destroy();
 
-    assert.called(destroy);
-    assert.called(destroy2);
-  },
+    expect(destroy).toHaveBeenCalled();
+    expect(destroy2).toHaveBeenCalled();
+  });
 
-  "Should call teardown once per view.": function() {
-    var teardown1 = this.spy(this.view, 'teardown');
-    var teardown2 = this.spy(this.view.module('orange'), 'teardown');
+  test("Should call teardown once per view.", function() {
+    var teardown1 = jest.spyOn(viewToTest, 'teardown');
+    var teardown2 = jest.spyOn(viewToTest.module('orange'), 'teardown');
 
-    this.view
+    viewToTest
       .render()
       .inject(sandbox)
       .setup()
       .destroy();
 
-    assert(teardown1.calledOnce);
-    assert(teardown2.calledOnce);
-  },
+    expect(teardown1).toHaveBeenCalledTimes(1)
+    expect(teardown2).toHaveBeenCalledTimes(1)
+  });
 
-  "Should remove only the first view element from the DOM.": function() {
-    var layout = this.view;
-    var orange = this.view.module('orange');
+  test("Should remove only the first view element from the DOM.", function() {
+    var layout = viewToTest;
+    var orange = viewToTest.module('orange');
 
     layout
       .render()
       .inject(sandbox)
       .setup();
 
-    var layoutRemoveChild = this.spy(layout.el.parentNode, 'removeChild');
-    var orangeRemoveChild = this.spy(orange.el.parentNode, 'removeChild');
+    var layoutRemoveChild = jest.spyOn(layout.el.parentNode, 'removeChild');
+    var orangeRemoveChild = jest.spyOn(orange.el.parentNode, 'removeChild');
 
-    this.view.destroy();
+    viewToTest.destroy();
 
-    assert(layoutRemoveChild.called);
-    refute(orangeRemoveChild.called);
+    expect(layoutRemoveChild).toHaveBeenCalledTimes(1)
+    expect(orangeRemoveChild).toHaveBeenCalledTimes(0)
 
-    layoutRemoveChild.restore();
-    orangeRemoveChild.restore();
-  },
+    layoutRemoveChild.mockRestore();
+    orangeRemoveChild.mockRestore();
+  });
 
-  "Should fire `destroy` event.": function() {
-    var spy = this.spy();
+  test("Should fire `destroy` event.", function() {
+    var spy = jest.fn();
 
-    this.view.on('destroy', spy);
+    viewToTest.on('destroy', spy);
 
-    this.view
+    viewToTest
       .render()
       .inject(sandbox)
       .setup()
       .destroy();
 
-    assert(spy.called);
-  },
+    expect(spy).toHaveBeenCalled();
+  });
 
-  "Should unbind all event listeners.": function() {
-    var eventSpy = this.spy(this.view, 'off');
+  test("Should unbind all event listeners.", function() {
+    var eventSpy = jest.spyOn(viewToTest, 'off');
 
-    this.view
+    viewToTest
       .render()
       .inject(sandbox)
       .setup()
       .destroy();
 
-    assert.isTrue(eventSpy.called);
-  },
+    expect(eventSpy).toHaveBeenCalled();
+  });
 
-  "Should flag the view as 'destroyed'.": function() {
-    this.view
+  test("Should flag the view as 'destroyed'.", function() {
+    viewToTest
       .render()
       .inject(sandbox)
       .setup()
       .destroy();
 
-    assert.isTrue(this.view.destroyed);
-  },
+    expect(viewToTest.destroyed).toBe(true);
+  });
 
-  "Should unset primary properties.": function() {
-    this.view
+  test("Should unset primary properties.", function() {
+    viewToTest
       .render()
       .inject(sandbox)
       .setup()
       .destroy();
 
-    assert.equals(this.view.el, null);
-    assert.equals(this.view.model, null);
-    assert.equals(this.view.parent, null);
-    assert.equals(this.view._id, null);
-  },
+    expect(viewToTest.el).toBeNull()
+    expect(viewToTest.model).toBeNull()
+    expect(viewToTest.parent).toBeNull()
+    expect(viewToTest._id).toBeNull()
+  });
 
-  tearDown: function() {
-    helpers.destroyView.call(this);
-  }
+  afterEach(function() {
+    helpers.destroyView();
+    viewToTest = null;
+  });
 });

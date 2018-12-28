@@ -1,86 +1,85 @@
-var assert = buster.referee.assert;
-var refute = buster.referee.refute;
 
-buster.testCase('View#setup()', {
-  setUp: function() {
-    helpers.createView.call(this);
+describe('View#setup()', function() {
+  var viewToTest;
 
+  beforeEach(function() {
+    viewToTest = helpers.createView();
+  });
 
-  },
+  test("Setup should recurse.", function() {
+    var setup = jest.spyOn(viewToTest.module('orange'), 'setup');
 
-  "Setup should recurse.": function() {
-    var setup = this.spy(this.view.module('orange'), 'setup');
-
-    this.view
+    viewToTest
       .render()
       .setup();
 
-    assert.called(setup);
-  },
+    expect(setup).toHaveBeenCalled();
+  });
 
-  "Should not recurse if used with the `shallow` option.": function() {
-    var setup = this.spy(this.view.module('orange'), 'setup');
+  test("Should not recurse if used with the `shallow` option.", function() {
+    var setup = jest.spyOn(viewToTest.module('orange'), 'setup');
 
-    this.view
+    viewToTest
       .render()
       .setup({ shallow: true });
 
-    refute.called(setup);
-  },
+    expect(setup).not.toHaveBeenCalled();
+  });
 
-  "Custom `setup` logic should be called": function() {
-    var setup = this.spy(helpers.Views.Apple.prototype, 'setup');
+  test("Custom `setup` logic should be called", function() {
+    var setup = jest.spyOn(helpers.Views.Apple.prototype, 'setup');
     var apple = new helpers.Views.Apple();
 
     apple
       .render()
       .setup();
 
-    assert.called(setup);
-    setup.restore();
-  },
+    expect(setup).toHaveBeenCalled();
+    setup.mockReset();
+  });
 
-  "Once setup, a View should be flagged as such.": function() {
-    this.view
+  test("Once setup, a View should be flagged as such.", function() {
+    viewToTest
       .render()
       .setup();
 
-    assert.isTrue(this.view.isSetup);
-    assert.isTrue(this.view.module('orange').isSetup);
-  },
+    expect(viewToTest.isSetup).toBe(true);
+    expect(viewToTest.module('orange').isSetup).toBe(true);
+  });
 
-  "Custom `setup` logic should not be run if no root element is found.": function() {
-    var setup = this.spy(this.view, '_setup');
-    var setup2 = this.spy(this.view.module('orange'), '_setup');
+  test("Custom `setup` logic should not be run if no root element is found.", function() {
+    var setup = jest.spyOn(viewToTest, '_setup');
+    var setup2 = jest.spyOn(viewToTest.module('orange'), '_setup');
 
-    this.view
+    viewToTest
       .setup();
 
     // Check `onSetup` was not called
-    refute.called(setup);
-    refute.called(setup2);
+    expect(setup).not.toHaveBeenCalled();
+    expect(setup2).not.toHaveBeenCalled();
 
     // Check the view hasn't been flagged as setup
-    refute.isTrue(this.view.isSetup);
-    refute.isTrue(this.view.module('orange').isSetup);
-  },
+    expect(viewToTest.isSetup).not.toBe(true);
+    expect(viewToTest.module('orange').isSetup).not.toBe(true);
+  });
 
-  "onTeardown should be called if `setup()` is called twice.": function() {
-    var teardown = this.spy(this.view, 'teardown');
-    var teardown2 = this.spy(this.view.module('orange'), 'teardown');
+  test("onTeardown should be called if `setup()` is called twice.", function() {
+    var teardown = jest.spyOn(viewToTest, 'teardown');
+    var teardown2 = jest.spyOn(viewToTest.module('orange'), 'teardown');
 
     //debugger;
-    this.view
+    viewToTest
       .render()
       .inject(sandbox)
       .setup()
       .setup();
 
-    assert.called(teardown);
-    assert.called(teardown2);
-  },
+    expect(teardown).toHaveBeenCalled();
+    expect(teardown2).toHaveBeenCalled();
+  });
 
-  tearDown: function() {
-    helpers.destroyView.call(this);
-  }
+  afterEach(function() {
+    helpers.destroyView();
+    viewToTest = null;
+  });
 });

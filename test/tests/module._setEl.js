@@ -1,9 +1,12 @@
-var assert = buster.referee.assert;
 
-buster.testCase('View#_setEl()', {
-  setUp: helpers.createView,
+describe('View#_setEl()', function() {
+  var viewToTest;
 
-  "Should replace the element in context if it has a context": function() {
+  beforeEach(function() {
+    viewToTest = helpers.createView();
+  });
+
+  test("Should replace the element in context if it has a context", function() {
     var layout = fruitmachine({
       module: 'layout',
       children: {
@@ -26,28 +29,31 @@ buster.testCase('View#_setEl()', {
 
     orange._setEl(replacement);
 
-    assert.equals(replacement.parentNode, apple.el);
-  },
+    expect(replacement.parentNode).toBe(apple.el);
+  });
 
-  "Should call unmount if replacing the element": function() {
-    var layoutSpy = this.spy();
-    var appleSpy = this.spy();
-    var orangeSpy = this.spy();
-    var pearSpy = this.spy();
+  test("Should call unmount if replacing the element", function() {
+    var layoutSpy = jest.fn();
+    var appleSpy = jest.fn();
+    var orangeSpy = jest.fn();
+    var pearSpy = jest.fn();
 
-    this.view.on('unmount', layoutSpy);
-    this.view.module('apple').on('unmount', appleSpy);
-    this.view.module('orange').on('unmount', orangeSpy);
-    this.view.module('pear').on('unmount', pearSpy);
+    viewToTest.on('unmount', layoutSpy);
+    viewToTest.module('apple').on('unmount', appleSpy);
+    viewToTest.module('orange').on('unmount', orangeSpy);
+    viewToTest.module('pear').on('unmount', pearSpy);
 
-    this.view.render().inject(sandbox);
-    this.view._setEl(document.createElement('div'));
+    viewToTest.render().inject(sandbox);
+    viewToTest._setEl(document.createElement('div'));
 
-    assert.called(layoutSpy);
-    assert.called(appleSpy);
-    assert.called(orangeSpy);
-    assert.called(pearSpy);
-  },
+    expect(layoutSpy).toHaveBeenCalled();
+    expect(appleSpy).toHaveBeenCalled();
+    expect(orangeSpy).toHaveBeenCalled();
+    expect(pearSpy).toHaveBeenCalled();
+  });
 
-  tearDown: helpers.destroyView
+  afterEach(function() {
+    helpers.destroyView();
+    viewToTest = null;
+  });
 });

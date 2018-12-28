@@ -1,8 +1,6 @@
-var assert = buster.referee.assert;
 
-buster.testCase('View#classes()', {
-
-	"Should be able to define classes on the base class": function() {
+describe('View#classes()', function() {
+	test("Should be able to define classes on the base class", function() {
 		var View = fruitmachine.define({
 			classes: ['foo', 'bar']
 		});
@@ -10,27 +8,27 @@ buster.testCase('View#classes()', {
 		var view = new View()
 			.render();
 
-		assert.isTrue(!!~view.el.className.indexOf('foo'));
-		assert.isTrue(!!~view.el.className.indexOf('bar'));
-	},
+		expect(!!~view.el.className.indexOf('foo')).toBe(true)
+		expect(!!~view.el.className.indexOf('bar')).toBe(true);
+	});
 
-	"Should be able to manipulate the classes array at any time": function() {
+	test("Should be able to manipulate the classes array at any time", function() {
 		var apple = new helpers.Views.Apple();
 
 		apple.classes.push('foo');
 		apple.render();
 
-		assert.isTrue(!!~apple.el.className.indexOf('foo'));
-	},
+		expect(!!~apple.el.className.indexOf('foo')).toBe(true);
+	});
 
-	"Should be able to define classes at instnatiation": function() {
+	test("Should be able to define classes at instnatiation", function() {
 		var apple = new helpers.Views.Apple({
 			classes: ['foo', 'bar']
 		});
 
 		apple.render();
 
-		assert.isTrue(!!~apple.el.className.indexOf('foo'));
-		assert.isTrue(!!~apple.el.className.indexOf('bar'));
-	}
+		expect(!!~apple.el.className.indexOf('foo')).toBe(true);
+		expect(!!~apple.el.className.indexOf('bar')).toBe(true);
+	});
 });

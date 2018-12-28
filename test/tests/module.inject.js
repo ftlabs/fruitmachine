@@ -1,20 +1,24 @@
-var assert = buster.referee.assert;
 
-buster.testCase('View#inject()', {
-  setUp: helpers.createView,
+describe('View#inject()', function() {
+  var viewToTest;
 
-  "Should inject the view element into the given element.": function() {
+  beforeEach(function() {
+    viewToTest = helpers.createView();
+  });
+
+  test("Should inject the view element into the given element.", function() {
     var sandbox = document.createElement('div');
 
-    this.view
+    viewToTest
       .render()
       .inject(sandbox);
 
-    assert.equals(this.view.el, sandbox.firstElementChild);
-  },
+    expect(viewToTest.el).toBe(sandbox.firstElementChild);
+  });
 
-  tearDown: function() {
+  afterEach(function() {
     helpers.emptySandbox();
-    helpers.destroyView.call(this);
-  }
+    helpers.destroyView();
+    viewToTest = null;
+  });
 });

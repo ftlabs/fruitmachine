@@ -1,43 +1,47 @@
 
-buster.testCase('View#appendTo()', {
-  setUp: helpers.createView,
+describe('View#appendTo()', function() {
+  var viewToTest;
 
-  "Should return the view for a fluent interface.": function() {
+  beforeEach(function() {
+    viewToTest = helpers.createView();
+  });
+
+  test("Should return the view for a fluent interface.", function() {
     var sandbox = document.createElement('div'),
         sandbox2 = document.createElement('div'),
         existing = document.createElement('div');
 
     sandbox2.appendChild(existing);
 
-    assert.same(this.view, this.view.render().appendTo(sandbox));
-    assert.same(this.view, this.view.render().insertBefore(sandbox2, existing));
-  },
+    expect(viewToTest.render().appendTo(sandbox)).toBe(viewToTest);
+    expect(viewToTest.render().insertBefore(sandbox2, existing)).toBe(viewToTest);
+  });
 
-  "Should append the view element as a child of the given element.": function() {
+  test("Should append the view element as a child of the given element.", function() {
     var sandbox = document.createElement('div');
 
-    this.view
+    viewToTest
       .render()
       .appendTo(sandbox);
 
-    assert.equals(this.view.el, sandbox.firstElementChild);
-  },
+    expect(viewToTest.el).toBe(sandbox.firstElementChild);
+  });
 
-  "Should not destroy existing element contents.": function() {
+  test("Should not destroy existing element contents.", function() {
     var sandbox = document.createElement('div'),
         existing = document.createElement('div');
 
     sandbox.appendChild(existing);
 
-    this.view
+    viewToTest
       .render()
       .appendTo(sandbox);
 
-    assert.equals(existing, sandbox.firstElementChild);
-    assert.equals(this.view.el, sandbox.lastElementChild);
-  },
+    expect(existing).toBe(sandbox.firstElementChild);
+    expect(viewToTest.el).toBe(sandbox.lastElementChild);
+  });
 
-  "Should insert before specified element.": function() {
+  test("Should insert before specified element.", function() {
     var sandbox = document.createElement('div'),
         existing1 = document.createElement('div'),
         existing2 = document.createElement('div');
@@ -45,17 +49,18 @@ buster.testCase('View#appendTo()', {
     sandbox.appendChild(existing1);
     sandbox.appendChild(existing2);
 
-    this.view
+    viewToTest
       .render()
       .insertBefore(sandbox, existing2);
 
-    assert.equals(existing1, sandbox.firstElementChild);
-    assert.equals(this.view.el, existing1.nextSibling);
-    assert.equals(existing2, this.view.el.nextSibling);
-  },
+    expect(existing1).toBe(sandbox.firstElementChild);
+    expect(viewToTest.el).toBe(existing1.nextSibling);
+    expect(existing2).toBe(viewToTest.el.nextSibling);
+  });
 
-  tearDown: function() {
+  afterEach(function() {
     helpers.emptySandbox();
-    helpers.destroyView.call(this);
-  }
+    helpers.destroyView();
+    viewToTest = null;
+  });
 });

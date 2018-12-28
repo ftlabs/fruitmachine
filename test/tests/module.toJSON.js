@@ -1,25 +1,24 @@
-var assert = buster.referee.assert;
 
-buster.testCase('View#toJSON()', {
+describe('View#toJSON()', function() {
 
-  "Should return an fmid": function() {
+  test("Should return an fmid", function() {
     var apple = new Apple();
     var json = apple.toJSON();
 
-    assert(json.fmid);
-  },
+    expect(json.fmid).toBeTruthy();
+  });
 
-  "Should fire `tojson` event": function() {
+  test("Should fire `tojson` event", function() {
     var apple = new Apple();
-    var spy = this.spy();
+    var spy = jest.fn();
 
     apple.on('tojson', spy);
     apple.toJSON();
 
-    assert(spy.called);
-  },
+    expect(spy).toHaveBeenCalled();
+  });
 
-  "Should be able to manipulate json output via `tojson` event": function() {
+  test("Should be able to manipulate json output via `tojson` event", function() {
     var apple = new Apple();
 
     apple.on('tojson', function(json) {
@@ -28,10 +27,10 @@ buster.testCase('View#toJSON()', {
 
     var json = apple.toJSON();
 
-    assert.equals(json.test, 'data');
-  },
+    expect(json.test).toEqual('data');
+  });
 
-  "Should be able to inflate the output": function() {
+  test("Should be able to inflate the output", function() {
     var sandbox = helpers.createSandbox();
     var layout = new Layout({
       children: {
@@ -54,7 +53,7 @@ buster.testCase('View#toJSON()', {
     var layoutElInflated = inflated.el;
     var appleElInflated = inflated.module('apple').el;
 
-    assert.equals(layoutEl, layoutElInflated);
-    assert.equals(appleEl, appleElInflated);
-  }
+    expect(layoutEl).toEqual(layoutElInflated);
+    expect(appleEl).toEqual(appleElInflated);
+  });
 });

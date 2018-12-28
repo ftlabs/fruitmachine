@@ -1,6 +1,8 @@
 
-buster.testCase('View#modules()', {
-  setUp: function() {
+describe('View#modules()', function() {
+  var viewToTest;
+
+  beforeEach(function() {
     var layout = new Layout({});
     var apple = new Apple({ id: 'slot_1' });
     var orange = new Orange({ id: 'slot_2' });
@@ -11,25 +13,28 @@ buster.testCase('View#modules()', {
       .add(orange)
       .add(pear);
 
-    this.view = layout;
-  },
+    viewToTest = layout;
+  });
 
-  "Should return all descendant views matching the given module type": function() {
-    var oranges = this.view.modules('orange');
-    var pears = this.view.modules('pear');
+  test("Should return all descendant views matching the given module type", function() {
+    var oranges = viewToTest.modules('orange');
+    var pears = viewToTest.modules('pear');
 
-    assert.equals(oranges.length, 1);
-    assert.equals(pears.length, 1);
-  },
+    expect(oranges.length).toBe(1);
+    expect(pears.length).toBe(1);
+  });
 
-  "Should return multiple views if they exist": function() {
-    this.view
+  test("Should return multiple views if they exist", function() {
+    viewToTest
       .add({ module: 'pear' });
 
-    var pears = this.view.modules('pear');
+    var pears = viewToTest.modules('pear');
 
-    assert.equals(pears.length, 2);
-  },
+    expect(pears.length).toBe(2);
+  });
 
-  tearDown: helpers.destroyView
+  afterEach(function() {
+    helpers.destroyView(viewToTest);
+    viewToTest = null;
+  });
 });

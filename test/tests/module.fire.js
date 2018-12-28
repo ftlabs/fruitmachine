@@ -1,76 +1,80 @@
-var assert = buster.referee.assert;
-var refute = buster.referee.refute;
 
-buster.testCase('View#fire()', {
-	setUp: helpers.createView,
+describe('View#fire()', function() {
+	var viewToTest;
 
-	"Should run on callbacks registered on the view": function() {
-		var spy = this.spy();
+	beforeEach(function() {
+		viewToTest = helpers.createView();
+	});
 
-		this.view.on('testevent', spy);
-		this.view.fire('testevent');
-		assert.called(spy);
-	},
+	test("Should run on callbacks registered on the view", function() {
+		var spy = jest.fn();
 
-	"Events should bubble by default": function() {
-		var spy = this.spy();
-		var child = this.view.module('orange');
+		viewToTest.on('testevent', spy);
+		viewToTest.fire('testevent');
 
-		this.view.on('childtestevent', spy);
+		expect(spy).toHaveBeenCalledTimes(1);
+	});
+
+	test("Events should bubble by default", function() {
+		var spy = jest.fn();
+		var child = viewToTest.module('orange');
+
+		viewToTest.on('childtestevent', spy);
 		child.fire('childtestevent');
 
-		assert.called(spy);
-	},
+		expect(spy).toHaveBeenCalledTimes(1);
+	});
 
-	"Calling event.stopPropagation() should stop bubbling": function() {
-		var spy = this.spy();
-		var child = this.view.module('orange');
+	test("Calling event.stopPropagation() should stop bubbling", function() {
+		var spy = jest.fn();
+		var child = viewToTest.module('orange');
 
-		this.view.on('childtestevent', spy);
+		viewToTest.on('childtestevent', spy);
 		child.on('childtestevent', function(){
 			this.event.stopPropagation();
 		});
 
 		child.fire('childtestevent');
-		refute.called(spy);
-	},
+		expect(spy).toHaveBeenCalledTimes(0);
+	});
 
-	"Should pass arguments to the callback": function() {
-		var spy = this.spy();
+	test("Should pass arguments to the callback", function() {
+		var spy = jest.fn();
 		var arg1 = 'arg1';
 		var arg2 = 'arg2';
 		var arg3 = 'arg3';
 
-		this.view.on('childtestevent', spy);
-		this.view.fire('childtestevent', arg1, arg2, arg3);
+		viewToTest.on('childtestevent', spy);
+		viewToTest.fire('childtestevent', arg1, arg2, arg3);
 
-		assert.equals(spy.args[0][0], arg1);
-		assert.equals(spy.args[0][1], arg2);
-		assert.equals(spy.args[0][2], arg3);
-	},
+		expect(spy).toHaveBeenCalledWith(arg1, arg2, arg3);
+	});
 
-	"Should allow multiple events to be in progress on the same view": function() {
-		var layout = this.view;
+	test("Should allow multiple events to be in progress on the same view", function() {
+		var layout = viewToTest;
 		var apple = layout.module('apple');
 		var event;
 
 		apple.on('testevent1', function() {
 			event = this.event;
-			assert.equals(this.event.target, apple, "testevent1 match failed");
+			expect(this.event.target).toBe(apple);
 		});
 
 		apple.on('testevent1', function() {
-			assert.equals(event, this.event, "testevent1 listener 2 match failed");
+			expect(event).toBe(this.event);
 			apple.fire('testevent2');
 		});
 
 		apple.on('testevent2', function() {
-			refute.equals(event, this.event, "testevent2 match failed");
-			assert.equals(this.event.target, apple);
+			expect(event).not.toBe(this.event);
+			expect(this.event.target).toBe(apple);
 		});
 
 		apple.fire('testevent1');
-	},
+	});
 
-	tearDown: helpers.destroyView
+	afterEach(function() {
+		helpers.destroyView();
+		viewToTest = null;
+	});
 });

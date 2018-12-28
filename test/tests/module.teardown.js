@@ -1,52 +1,53 @@
-var assert = buster.referee.assert;
-var refute = buster.referee.refute;
 
-buster.testCase('View#teardown()', {
-  setUp: function() {
-    helpers.createView.call(this);
-  },
+describe('View#teardown()', function() {
+  var viewToTest;
 
-  "Teardown should recurse.": function() {
-    var teardown1 = this.spy(this.view, 'teardown');
-    var teardown2 = this.spy(this.view.module('orange'), 'teardown');
+  beforeEach(function() {
+    viewToTest = helpers.createView();
+  });
 
-    this.view
+  test("Teardown should recurse.", function() {
+    var teardown1 = jest.spyOn(viewToTest, 'teardown');
+    var teardown2 = jest.spyOn(viewToTest.module('orange'), 'teardown');
+
+    viewToTest
       .render()
       .setup()
       .teardown();
 
-    assert.called(teardown1);
-    assert.called(teardown2);
-  },
+    expect(teardown1).toHaveBeenCalled();
+    expect(teardown2).toHaveBeenCalled();
+  });
 
-  "Should not recurse if used with the `shallow` option.": function() {
-    var teardown1 = this.spy(this.view, 'teardown');
-    var teardown2 = this.spy(this.view.module('orange'), 'teardown');
-    var _teardown2 = this.spy(this.view.module('orange'), '_teardown');
+  test("Should not recurse if used with the `shallow` option.", function() {
+    var teardown1 = jest.spyOn(viewToTest, 'teardown');
+    var teardown2 = jest.spyOn(viewToTest.module('orange'), 'teardown');
+    var _teardown2 = jest.spyOn(viewToTest.module('orange'), '_teardown');
 
-    this.view
+    viewToTest
       .render()
       .setup()
       .teardown({ shallow: true });
 
-    assert.called(teardown1);
-    refute.called(teardown2);
-    refute.called(_teardown2);
-  },
+    expect(teardown1).toHaveBeenCalled();
+    expect(teardown2).not.toHaveBeenCalled();
+    expect(_teardown2).not.toHaveBeenCalled();
+  });
 
-  "Should not run custom teardown logic if the view has not been setup": function() {
-    var teardown = this.spy(this.view, 'teardown');
-    var _teardown = this.spy(this.view, '_teardown');
+  test("Should not run custom teardown logic if the view has not been setup", function() {
+    var teardown = jest.spyOn(viewToTest, 'teardown');
+    var _teardown = jest.spyOn(viewToTest, '_teardown');
 
-    this.view
+    viewToTest
       .render()
       .teardown();
 
-    assert.called(teardown);
-    refute.called(_teardown);
-  },
+    expect(teardown).toHaveBeenCalled();
+    expect(_teardown).not.toHaveBeenCalled();
+  });
 
-  tearDown: function() {
-    helpers.destroyView.call(this);
-  }
+  afterEach(function() {
+    helpers.destroyView();
+    viewToTest = null;
+  });
 });
