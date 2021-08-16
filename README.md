@@ -1,4 +1,4 @@
-# FruitMachine [![Build Status](https://travis-ci.org/ftlabs/fruitmachine.svg?branch=master)](https://travis-ci.org/ftlabs/fruitmachine) [![Coverage Status](https://coveralls.io/repos/ftlabs/fruitmachine/badge.png?branch=master)](https://coveralls.io/r/ftlabs/fruitmachine?branch=master) [![Dependency Status](https://gemnasium.com/ftlabs/fruitmachine.png)](https://gemnasium.com/ftlabs/fruitmachine)
+# FruitMachine [![Build Status](https://api.travis-ci.com/ftlabs/fruitmachine.svg)](https://travis-ci.com/ftlabs/fruitmachine) [![Coverage Status](https://coveralls.io/repos/ftlabs/fruitmachine/badge.png)](https://coveralls.io/r/ftlabs/fruitmachine)
 
 A lightweight component layout engine for client and server.
 
