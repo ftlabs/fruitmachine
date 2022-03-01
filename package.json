@@ -33,10 +33,10 @@
     "prepublish": "grunt"
   },
   "dependencies": {
-    "evt": "git://github.com/wilsonpage/evt.git",
-    "extend": "git://github.com/wilsonpage/extend.git",
-    "model": "git://github.com/wilsonpage/model.git",
-    "utils": "git://github.com/wilsonpage/utils.git"
+    "evt": "github:wilsonpage/evt",
+    "extend": "github:wilsonpage/extend",
+    "model": "github:wilsonpage/model",
+    "utils": "github:wilsonpage/utils"
   },
   "devDependencies": {
     "backbone": "^1.2.0",
