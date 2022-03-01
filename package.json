@@ -35,7 +35,7 @@
   "dependencies": {
     "evt": "github:wilsonpage/evt",
     "extend": "github:wilsonpage/extend",
-    "model": "github:wilsonpage/model",
+    "model": "github:financial-times/ft-app-model",
     "utils": "github:wilsonpage/utils"
   },
   "devDependencies": {
