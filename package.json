@@ -33,10 +33,10 @@
     "prepublish": "grunt"
   },
   "dependencies": {
-    "evt": "github:wilsonpage/evt",
-    "extend": "github:wilsonpage/extend",
+    "evt": "github:financial-times/ft-app-evt",
+    "extend": "github:financial-times/ft-app-extend",
     "model": "github:financial-times/ft-app-model",
-    "utils": "github:wilsonpage/utils"
+    "utils": "github:financial-times/ft-app-utils"
   },
   "devDependencies": {
     "backbone": "^1.2.0",
